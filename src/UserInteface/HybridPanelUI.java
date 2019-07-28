@@ -27,10 +27,11 @@ import api.PoleDisplayAPI;
 
 import api.PreEntranceAPI;
 import api.ReadMIFARE;
-
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
@@ -40,6 +41,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Random;
@@ -67,6 +69,8 @@ import modules.SystemStatus;
 
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
+    public String entryIPCamera = "192.168.100.220";
+    public String exitIPCamera = "192.168.100.219";    
     boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -76,6 +80,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     ResourceBundle myResources = ResourceBundle.getBundle(bundleName, Locale.getDefault());
     static Logger log = LogManager.getLogger(HybridPanelUI.class.getName());
 
+    public int waitMultiplier = 0;
     //public USBEpsonHandler eh = new USBEpsonHandler();
     public boolean ExitSwitch = true;
 //      short secret = 0;
@@ -87,6 +92,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public boolean lostEnabled = false;
     public boolean settlementEnabled = false;
     public boolean reprintEnabled = true;
+    private boolean exitCamPressed = false;
     boolean online = false;
     boolean KeyAccepted = true;
     //--exit
@@ -233,6 +239,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             LogoutPanelX.setVisible(false);
             MainFuncPad.setVisible(true);
             SecretFuncPad.setVisible(false);
+            SearchPanel.setVisible(false);
+            ManualEntryPanel.setVisible(false);
 
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             log.info("User Interface Loading... Done");
@@ -322,6 +330,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.setVisible(settlementEnabled);
         settlementEnabled = false;
         PWDoscaID.setEditable(settlementEnabled);
+        entryCamera.setText("");
+        exitCamera.setText("");
 
         //ImagePanel panel = new ImagePanel(new ImageIcon(getClass().getResource("/hybrid/resources/wallpaper.jpg")).getImage());
         //inputPanel = panel;
@@ -535,6 +545,27 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         XFunc4 = new javax.swing.JLabel();
         XFunc2 = new javax.swing.JLabel();
         spacer = new javax.swing.JLabel();
+        fullScreenCamera = new javax.swing.JLabel();
+        ManualEntryPanel = new javax.swing.JPanel();
+        closeButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        manualEntryTime = new com.github.lgooddatepicker.components.TimePicker();
+        manualEntryDate = new datechooser.beans.DateChooserCombo();
+        Create = new javax.swing.JButton();
+        manualEntryPlate = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        SearchPanel = new javax.swing.JPanel();
+        SearchDisplayPanel = new javax.swing.JPanel();
+        closeButton = new javax.swing.JButton();
+        SearchDateTo = new datechooser.beans.DateChooserCombo();
+        SearchTimeTo = new com.github.lgooddatepicker.components.TimePicker();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        SearchTimeFrom = new com.github.lgooddatepicker.components.TimePicker();
+        SearchDateFrom = new datechooser.beans.DateChooserCombo();
+        jButton1 = new javax.swing.JButton();
         PasswordPanel = new javax.swing.JPanel();
         PWORDlbl = new javax.swing.JLabel();
         PWORDInput2 = new javax.swing.JLabel();
@@ -602,6 +633,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         amntlbl1 = new javax.swing.JLabel();
         amntlbl = new javax.swing.JLabel();
         AMOUNTdisplay = new javax.swing.JLabel();
+        AmtTendered = new javax.swing.JTextField();
+        amntlbl2 = new javax.swing.JLabel();
+        amntlbl3 = new javax.swing.JLabel();
+        ChangeDisplay = new javax.swing.JLabel();
         LeftMIDMsgPanel = new javax.swing.JPanel();
         SysMessage1 = new javax.swing.JLabel();
         SysMessage11 = new javax.swing.JLabel();
@@ -834,6 +869,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         XFunc8 = new javax.swing.JLabel();
         MasterFun = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        XFunc11 = new javax.swing.JLabel();
+        XFunc12 = new javax.swing.JLabel();
         SecretFuncPad = new javax.swing.JPanel();
         XFunc9 = new javax.swing.JLabel();
         XFunc10 = new javax.swing.JLabel();
@@ -1257,6 +1294,149 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         });
         getContentPane().setLayout(null);
 
+        fullScreenCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        fullScreenCamera.setFocusable(false);
+        fullScreenCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        fullScreenCamera.setForeground(new java.awt.Color(255, 255, 0));
+        fullScreenCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fullScreenCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fullScreenCamera.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fullScreenCameraMouseClicked(evt);
+            }
+        });
+        getContentPane().add(fullScreenCamera);
+        fullScreenCamera.setBounds(0, 0, 71, 30);
+
+        ManualEntryPanel.setBackground(new java.awt.Color(255, 255, 255));
+        ManualEntryPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        ManualEntryPanel.setLayout(null);
+
+        closeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/close window.png"))); // NOI18N
+        closeButton1.setOpaque(false);
+        closeButton1.setPreferredSize(new java.awt.Dimension(50, 50));
+        closeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeButton1MouseClicked(evt);
+            }
+        });
+        ManualEntryPanel.add(closeButton1);
+        closeButton1.setBounds(0, 0, 60, 50);
+
+        jLabel5.setText("Plate Number");
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 153, 153));
+        ManualEntryPanel.add(jLabel5);
+        jLabel5.setBounds(80, 0, 130, 20);
+
+        manualEntryTime.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ManualEntryPanel.add(manualEntryTime);
+        manualEntryTime.setBounds(220, 80, 130, 30);
+
+        manualEntryDate.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+        manualEntryDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
+        ManualEntryPanel.add(manualEntryDate);
+        manualEntryDate.setBounds(80, 80, 130, 30);
+
+        Create.setText("Submit");
+        Create.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Create.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CreateMouseClicked(evt);
+            }
+        });
+        ManualEntryPanel.add(Create);
+        Create.setBounds(360, 70, 120, 50);
+        ManualEntryPanel.add(manualEntryPlate);
+        manualEntryPlate.setBounds(80, 20, 130, 30);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Entry Time");
+        ManualEntryPanel.add(jLabel6);
+        jLabel6.setBounds(220, 60, 140, 20);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Entry Date");
+        ManualEntryPanel.add(jLabel8);
+        jLabel8.setBounds(80, 60, 140, 20);
+
+        jLabel7.setBackground(new java.awt.Color(0, 153, 255));
+        jLabel7.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel7.setOpaque(true);
+        ManualEntryPanel.add(jLabel7);
+        jLabel7.setBounds(10, 60, 490, 70);
+
+        getContentPane().add(ManualEntryPanel);
+        ManualEntryPanel.setBounds(470, 310, 510, 140);
+
+        SearchPanel.setBackground(new java.awt.Color(255, 255, 255));
+        SearchPanel.setLayout(null);
+
+        SearchDisplayPanel.setBackground(new java.awt.Color(0, 153, 255));
+        SearchDisplayPanel.setFocusable(false);
+        SearchDisplayPanel.setAutoscrolls(true);
+        java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING);
+        flowLayout2.setAlignOnBaseline(true);
+        SearchDisplayPanel.setLayout(flowLayout2);
+        SearchPanel.add(SearchDisplayPanel);
+        SearchDisplayPanel.setBounds(0, 70, 1090, 650);
+
+        closeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/close window.png"))); // NOI18N
+        closeButton.setOpaque(false);
+        closeButton.setPreferredSize(new java.awt.Dimension(50, 50));
+        closeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeButtonMouseClicked(evt);
+            }
+        });
+        SearchPanel.add(closeButton);
+        closeButton.setBounds(0, 0, 70, 70);
+
+        SearchDateTo.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+        SearchDateTo.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
+        SearchPanel.add(SearchDateTo);
+        SearchDateTo.setBounds(380, 30, 130, 30);
+
+        SearchTimeTo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        SearchPanel.add(SearchTimeTo);
+        SearchTimeTo.setBounds(520, 30, 130, 30);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 153, 153));
+        jLabel3.setText("Search From");
+        SearchPanel.add(jLabel3);
+        jLabel3.setBounds(80, 4, 140, 20);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 153, 153));
+        jLabel4.setText("To");
+        SearchPanel.add(jLabel4);
+        jLabel4.setBounds(380, 4, 50, 20);
+
+        SearchTimeFrom.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        SearchPanel.add(SearchTimeFrom);
+        SearchTimeFrom.setBounds(220, 30, 130, 30);
+
+        SearchDateFrom.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+        SearchDateFrom.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
+        SearchPanel.add(SearchDateFrom);
+        SearchDateFrom.setBounds(80, 30, 130, 30);
+
+        jButton1.setText("Search");
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        SearchPanel.add(jButton1);
+        jButton1.setBounds(660, 10, 120, 50);
+
+        getContentPane().add(SearchPanel);
+        SearchPanel.setBounds(320, 110, 1090, 570);
+
         PasswordPanel.setFocusable(false);
         PasswordPanel.setOpaque(false);
         PasswordPanel.setLayout(new java.awt.GridLayout(1, 5, 1, 0));
@@ -1392,10 +1572,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         NorthPanel.setOpaque(false);
         NorthPanel.setLayout(new java.awt.BorderLayout());
 
-        ProductName.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
-        ProductName.setForeground(new java.awt.Color(255, 255, 255));
         ProductName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/small SilverLogo.png"))); // NOI18N
         ProductName.setText("PARKING AREA SENTINEL SYSTEM");
+        ProductName.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
+        ProductName.setForeground(new java.awt.Color(255, 255, 255));
         NorthPanel.add(ProductName, java.awt.BorderLayout.WEST);
         ProductName.getAccessibleContext().setAccessibleName("PARKING AREA SENTINEL SYSTEM\nTheoretics Inc");
 
@@ -1440,10 +1620,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ServerStatus.setText("checking..."); // NOI18N
         Status.add(ServerStatus);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("THEORETICS INC.");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         Status.add(jLabel1);
@@ -1669,11 +1849,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainPanel.setOpaque(false);
         MainPanel.setLayout(null);
 
-        amntlbl1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        amntlbl1.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         amntlbl1.setText("AMOUNT DUE:");
         amntlbl1.setFocusable(false);
+        amntlbl1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        amntlbl1.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl1.setRequestFocusEnabled(false);
         amntlbl1.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(amntlbl1);
@@ -1693,6 +1873,51 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         AMOUNTdisplay.setForeground(new java.awt.Color(102, 255, 153));
         MainPanel.add(AMOUNTdisplay);
         AMOUNTdisplay.setBounds(80, 40, 440, 70);
+
+        AmtTendered.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        AmtTendered.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        AmtTendered.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                AmtTenderedKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                AmtTenderedKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                AmtTenderedKeyTyped(evt);
+            }
+        });
+        MainPanel.add(AmtTendered);
+        AmtTendered.setBounds(240, 110, 100, 60);
+
+        amntlbl2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        amntlbl2.setForeground(new java.awt.Color(255, 255, 204));
+        amntlbl2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        amntlbl2.setText("TENDERED:");
+        amntlbl2.setFocusable(false);
+        amntlbl2.setRequestFocusEnabled(false);
+        amntlbl2.setVerifyInputWhenFocusTarget(false);
+        MainPanel.add(amntlbl2);
+        amntlbl2.setBounds(0, 110, 200, 60);
+
+        amntlbl3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        amntlbl3.setForeground(new java.awt.Color(255, 255, 204));
+        amntlbl3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        amntlbl3.setText("CHANGE:");
+        amntlbl3.setFocusable(false);
+        amntlbl3.setRequestFocusEnabled(false);
+        amntlbl3.setVerifyInputWhenFocusTarget(false);
+        MainPanel.add(amntlbl3);
+        amntlbl3.setBounds(340, 110, 80, 60);
+
+        ChangeDisplay.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        ChangeDisplay.setForeground(new java.awt.Color(255, 255, 204));
+        ChangeDisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ChangeDisplay.setFocusable(false);
+        ChangeDisplay.setRequestFocusEnabled(false);
+        ChangeDisplay.setVerifyInputWhenFocusTarget(false);
+        MainPanel.add(ChangeDisplay);
+        ChangeDisplay.setBounds(430, 110, 100, 60);
 
         newMidPanel.add(MainPanel);
 
@@ -1759,9 +1984,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SysMessage16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LeftMIDMsgPanel.add(SysMessage16);
 
+        SysMessage7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         SysMessage7.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         SysMessage7.setForeground(new java.awt.Color(255, 255, 255));
-        SysMessage7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LeftMIDMsgPanel.add(SysMessage7);
 
         SysMessage17.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
@@ -1965,7 +2190,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         CollectionDate.setNothingAllowed(false);
         CollectionDate.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
         CollectionDate.setNavigateFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
-        CollectionDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
         LowerLeftPanel.add(CollectionDate);
         CollectionDate.setBounds(20, 40, 190, 40);
 
@@ -2083,12 +2307,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.setOpaque(false);
         SettPanel.setLayout(null);
 
-        PWDoscaID.setBackground(new java.awt.Color(51, 51, 255));
-        PWDoscaID.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        PWDoscaID.setForeground(new java.awt.Color(255, 255, 51));
         PWDoscaID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        PWDoscaID.setBackground(new java.awt.Color(51, 51, 255));
         PWDoscaID.setCaretColor(new java.awt.Color(255, 255, 0));
         PWDoscaID.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+        PWDoscaID.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        PWDoscaID.setForeground(new java.awt.Color(255, 255, 51));
         PWDoscaID.setNextFocusableComponent(oscaName);
         PWDoscaID.setOpaque(false);
         PWDoscaID.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2099,12 +2323,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(PWDoscaID);
         PWDoscaID.setBounds(200, 0, 170, 40);
 
-        oscaName.setBackground(new java.awt.Color(51, 51, 255));
-        oscaName.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaName.setForeground(new java.awt.Color(255, 255, 51));
         oscaName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaName.setBackground(new java.awt.Color(51, 51, 255));
         oscaName.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaName.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+        oscaName.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        oscaName.setForeground(new java.awt.Color(255, 255, 51));
         oscaName.setNextFocusableComponent(oscaAddr);
         oscaName.setOpaque(false);
         oscaName.addActionListener(new java.awt.event.ActionListener() {
@@ -2120,12 +2344,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaName);
         oscaName.setBounds(80, 60, 170, 40);
 
-        oscaAddr.setBackground(new java.awt.Color(51, 51, 255));
-        oscaAddr.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaAddr.setForeground(new java.awt.Color(255, 255, 51));
         oscaAddr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaAddr.setBackground(new java.awt.Color(51, 51, 255));
         oscaAddr.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaAddr.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+        oscaAddr.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        oscaAddr.setForeground(new java.awt.Color(255, 255, 51));
         oscaAddr.setNextFocusableComponent(oscaTIN);
         oscaAddr.setOpaque(false);
         oscaAddr.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2136,12 +2360,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaAddr);
         oscaAddr.setBounds(80, 120, 170, 40);
 
-        oscaTIN.setBackground(new java.awt.Color(51, 51, 255));
-        oscaTIN.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaTIN.setForeground(new java.awt.Color(255, 255, 51));
         oscaTIN.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaTIN.setBackground(new java.awt.Color(51, 51, 255));
         oscaTIN.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaTIN.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+        oscaTIN.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        oscaTIN.setForeground(new java.awt.Color(255, 255, 51));
         oscaTIN.setNextFocusableComponent(oscaBusStyle);
         oscaTIN.setOpaque(false);
         oscaTIN.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2152,12 +2376,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaTIN);
         oscaTIN.setBounds(310, 60, 170, 40);
 
-        oscaBusStyle.setBackground(new java.awt.Color(51, 51, 255));
-        oscaBusStyle.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaBusStyle.setForeground(new java.awt.Color(255, 255, 51));
         oscaBusStyle.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaBusStyle.setBackground(new java.awt.Color(51, 51, 255));
         oscaBusStyle.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaBusStyle.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+        oscaBusStyle.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        oscaBusStyle.setForeground(new java.awt.Color(255, 255, 51));
         oscaBusStyle.setNextFocusableComponent(PWDoscaID);
         oscaBusStyle.setOpaque(false);
         oscaBusStyle.addActionListener(new java.awt.event.ActionListener() {
@@ -3681,6 +3905,25 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainFuncPad.add(MasterFun);
         MainFuncPad.add(jSeparator1);
 
+        XFunc11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/plate_searchie.png"))); // NOI18N
+        XFunc11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                XFunc11MouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                XFunc11MousePressed(evt);
+            }
+        });
+        MainFuncPad.add(XFunc11);
+
+        XFunc12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/manual-entry.png"))); // NOI18N
+        XFunc12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                XFunc12MouseClicked(evt);
+            }
+        });
+        MainFuncPad.add(XFunc12);
+
         WestPanel.add(MainFuncPad);
 
         SecretFuncPad.setFocusable(false);
@@ -3805,7 +4048,32 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING);
         flowLayout1.setAlignOnBaseline(true);
         CamPanel.setLayout(flowLayout1);
+
+        entryCamera.setText("ENTRY");
+        entryCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        entryCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        entryCamera.setForeground(new java.awt.Color(255, 255, 0));
+        entryCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        entryCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         CamPanel.add(entryCamera);
+
+        exitCamera.setText("EXIT");
+        exitCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        exitCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        exitCamera.setForeground(new java.awt.Color(255, 255, 0));
+        exitCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        exitCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        exitCamera.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exitCameraMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exitCameraMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                exitCameraMousePressed(evt);
+            }
+        });
         CamPanel.add(exitCamera);
 
         getContentPane().add(CamPanel);
@@ -4749,6 +5017,115 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void refundOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refundOutActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_refundOutActionPerformed
+
+    private void AmtTenderedKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AmtTenderedKeyPressed
+        int code = evt.getKeyCode();
+        switch (code) {
+            case 10:
+                goEnter();
+                break;
+            case 27:
+                break;
+            default:
+        }
+    }//GEN-LAST:event_AmtTenderedKeyPressed
+
+    private void AmtTenderedKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AmtTenderedKeyTyped
+
+        char ch = evt.getKeyChar();
+        if (!((ch == KeyEvent.VK_BACK_SPACE) || (ch == KeyEvent.VK_DELETE)
+                || (ch == KeyEvent.VK_ENTER) || (ch == KeyEvent.VK_PERIOD) || (ch == KeyEvent.VK_TAB)
+                || (Character.isDigit(ch)))) {
+            evt.consume();
+        }
+
+
+    }//GEN-LAST:event_AmtTenderedKeyTyped
+
+    private void AmtTenderedKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AmtTenderedKeyReleased
+        try {
+            KeyAccepted = dumpInfo("Pressed", evt);
+            if (KeyAccepted = false) {      //special keys
+                AmtTendered.requestFocus(false);
+            }
+            String amount = AMOUNTdisplay.getText();
+            amount = amount.replace("P", "");
+            if (amount.compareTo("") != 0) {
+                float amt = Float.parseFloat(amount);
+                String tend = AmtTendered.getText();
+                if (null == tend || tend.compareToIgnoreCase("") == 0) {
+                    tend = "0";
+                }
+                float tendered = Float.parseFloat(tend);
+                float change = tendered - amt;
+                DecimalFormat df2 = new DecimalFormat("#.00");
+                
+                if (change > 0) {
+                    ChangeDisplay.setText("" + df2.format(change));
+                } else {
+                    ChangeDisplay.setText("0.00");
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_AmtTenderedKeyReleased
+
+    private void XFunc11MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc11MousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_XFunc11MousePressed
+
+    private void XFunc11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc11MouseClicked
+        SearchPanel.setVisible(true);
+        SearchTimeTo.setTimeToNow();
+    }//GEN-LAST:event_XFunc11MouseClicked
+
+    private void closeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButtonMouseClicked
+        SearchPanel.setVisible(false);
+    }//GEN-LAST:event_closeButtonMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        startLostCardSearch();
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void exitCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseClicked
+        exitCamPressed = true;
+    }//GEN-LAST:event_exitCameraMouseClicked
+
+    private void exitCameraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseExited
+        exitCamPressed = false;
+    }//GEN-LAST:event_exitCameraMouseExited
+
+    private void fullScreenCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fullScreenCameraMouseClicked
+        exitCamPressed = false;
+    }//GEN-LAST:event_fullScreenCameraMouseClicked
+
+    private void exitCameraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMousePressed
+        exitCamPressed = true;
+    }//GEN-LAST:event_exitCameraMousePressed
+
+    private void closeButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButton1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_closeButton1MouseClicked
+
+    private void CreateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CreateMouseClicked
+        EntranceAPI na = new EntranceAPI(this);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        manualEntryDate.setDateFormat(sdf);
+        SimpleDateFormat sdtf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                
+        String dateManuallyCreated = manualEntryDate.getText() + " " + manualEntryTime.getTime();
+        
+        na.createManualEntry(trtype, dateManuallyCreated, manualEntryPlate.getText());
+        ManualEntryPanel.setVisible(false);
+    }//GEN-LAST:event_CreateMouseClicked
+
+    private void XFunc12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc12MouseClicked
+        ManualEntryPanel.setVisible(true);
+        manualEntryPlate.requestFocus();
+        manualEntryTime.setTimeToNow();
+    }//GEN-LAST:event_XFunc12MouseClicked
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
@@ -6020,9 +6397,25 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 
     private void testShowCameraOnScreen() {
-        dbh.insertImageFromURLToDB("192.168.1.190", "admin", "admin888888");
+        dbh.insertImageFromURLToDB(entryIPCamera, "admin", "admin888888");
         BufferedImage buf = dbh.GetImageFromDB("CA034E2D");
         entryCamera.setIcon(new ImageIcon(buf));
+    }
+
+    private void startLostCardSearch() {        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SearchDateFrom.setDateFormat(sdf);
+        SearchDateTo.setDateFormat(sdf);
+        String DateFrom = SearchDateFrom.getText();
+        String DateTo = SearchDateTo.getText();
+        
+        int x = dbh.GetImageCountFromDB_byDate(DateFrom + " " + SearchTimeFrom, DateTo + " " + SearchTimeTo);
+        BufferedImage[] buf = dbh.GetImageFromDB_byDate(DateFrom + " " + SearchTimeFrom, DateTo + " " + SearchTimeTo);
+        for (int i = 0; i < x; i++) {
+            javax.swing.JLabel Picture = new javax.swing.JLabel();
+            Picture.setIcon(new ImageIcon(buf[i]));
+            SearchDisplayPanel.add(Picture);
+        }        
     }
 
     //-----------------Threads------------------------
@@ -6030,21 +6423,57 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
         @Override
         public void run() {
+            while (true) {
+                //System.out.println(new Date());
+                try {
 
-            try {
-                while (true) {
                     //dbh.insertImageFromURLToDB();
-                    BufferedImage buf = dbh.getImageFromCamera("192.168.1.190", "admin", "admin888888");
-                    //entryCamera.setIcon(new ImageIcon(buf));
-                    exitCamera.setIcon(new ImageIcon(buf));
+                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "user1234");
+                    if (null != buf) {
+                        //entryCamera.setIcon(new ImageIcon(buf));       
+                        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                        
+                        if (exitCamPressed) {
+                            Image img = getScaledImage(buf, screenSize.width, screenSize.height);
+                            fullScreenCamera.setIcon(new ImageIcon(new ImageIcon(buf)
+                            .getImage()
+                            .getScaledInstance(screenSize.width, screenSize.height, Image.SCALE_DEFAULT)));
+                            fullScreenCamera.setBounds(0, 0, screenSize.width, screenSize.height);                            
+                        } else {
+                            Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
+                            fullScreenCamera.setIcon(null);
+                            fullScreenCamera.setText("");
+                            fullScreenCamera.setBounds(0, 0, 0, 0);      
+                            exitCamera.setIcon(new ImageIcon(img));
+                            exitCamera.setText("EXIT");
+                        }
+                    }
+                    waitMultiplier = 1;
+                } catch (Exception ex) {
+                    waitMultiplier++;
+                    exitCamera.setText("");
+                    log.error(ex.getMessage());
+                    try {
+                        Thread.sleep(5000 * waitMultiplier);
+                    } catch (InterruptedException ex1) {
+                        log.error(ex1.getMessage());
+                    }
                 }
-            } catch (Exception ex) {
-                log.error(ex.getMessage());
             }
         }
 
     }
+    
+    private Image getScaledImage(Image srcImg, int w, int h) {
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
 
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
+    }
     class DigitalClock implements Runnable {
 
         @Override
@@ -6399,6 +6828,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                     MainFuncPad.setVisible(true);
                                     SecretFuncPad.setVisible(false);
                                     entryCamera.setIcon(new ImageIcon(""));
+                                    entryCamera.setText("");
+                                    AmtTendered.setText("");
+                                    ChangeDisplay.setText("");
                                 }
                             }
                         }
@@ -6519,6 +6951,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel A;
     public javax.swing.JLabel AMOUNTdisplay;
     private javax.swing.JLabel AllClear;
+    public javax.swing.JTextField AmtTendered;
     private javax.swing.JLabel B;
     private javax.swing.JLabel BACKSPACE;
     private javax.swing.JLabel BG;
@@ -6561,11 +6994,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     public javax.swing.JLabel CardInput2;
     private javax.swing.JLabel CardNumberlbl;
     private javax.swing.JPanel CenterPanel;
+    private javax.swing.JLabel ChangeDisplay;
     private javax.swing.JLabel ClientName;
     private javax.swing.JLabel Cnamelbl;
     private datechooser.beans.DateChooserCombo CollectionDate;
     private javax.swing.JLabel CouponNolbl;
     private javax.swing.JPanel CouponPanel;
+    private javax.swing.JButton Create;
     private javax.swing.JLabel D;
     private javax.swing.JLabel DASH;
     private javax.swing.JLabel DateLabel;
@@ -6645,6 +7080,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel M;
     private javax.swing.JPanel MainFuncPad;
     private javax.swing.JPanel MainPanel;
+    private javax.swing.JPanel ManualEntryPanel;
     private javax.swing.JLabel MasterCardInput2;
     private javax.swing.JLabel MasterCardLbl;
     private javax.swing.JPanel MasterCardPanel;
@@ -6720,6 +7156,12 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel RightMsgPanellbl;
     private javax.swing.JLabel S;
     private javax.swing.JLabel SUBMIT;
+    private datechooser.beans.DateChooserCombo SearchDateFrom;
+    private datechooser.beans.DateChooserCombo SearchDateTo;
+    private javax.swing.JPanel SearchDisplayPanel;
+    private javax.swing.JPanel SearchPanel;
+    private com.github.lgooddatepicker.components.TimePicker SearchTimeFrom;
+    private com.github.lgooddatepicker.components.TimePicker SearchTimeTo;
     private javax.swing.JPanel SecretFuncPad;
     private javax.swing.JLabel SentinelIDlbl;
     public javax.swing.JLabel ServedExit;
@@ -6768,6 +7210,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel WestPanel;
     private javax.swing.JLabel X;
     private javax.swing.JLabel XFunc10;
+    private javax.swing.JLabel XFunc11;
+    private javax.swing.JLabel XFunc12;
     private javax.swing.JLabel XFunc2;
     private javax.swing.JLabel XFunc4;
     private javax.swing.JLabel XFunc5;
@@ -6791,11 +7235,15 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel adminPanel;
     private javax.swing.JLabel amntlbl;
     private javax.swing.JLabel amntlbl1;
+    private javax.swing.JLabel amntlbl2;
+    private javax.swing.JLabel amntlbl3;
     private javax.swing.JLabel background;
     private javax.swing.JLabel carsMinusbtn;
     private javax.swing.JTextField carsNum;
     private javax.swing.JLabel carsPlusbtn;
     private javax.swing.JLabel cashColLbl;
+    private javax.swing.JButton closeButton;
+    private javax.swing.JButton closeButton1;
     private javax.swing.JLabel datedisplay;
     private javax.swing.JLabel daydisplay;
     public javax.swing.JLabel entryCamera;
@@ -6811,10 +7259,18 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel exitCamera;
     private javax.swing.JButton exitTicket;
     private javax.swing.JPanel fullKeyBoard;
+    private javax.swing.JLabel fullScreenCamera;
     private javax.swing.JButton goLostBtn;
     private javax.swing.JPanel inputPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -6827,6 +7283,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel lostLbl1;
     private javax.swing.JLabel lostLbl2;
     private com.github.lgooddatepicker.components.TimePicker lostTimeIN;
+    private datechooser.beans.DateChooserCombo manualEntryDate;
+    private javax.swing.JTextField manualEntryPlate;
+    private com.github.lgooddatepicker.components.TimePicker manualEntryTime;
     private javax.swing.JLabel motorMinusbtn;
     private javax.swing.JTextField motorNum;
     private javax.swing.JLabel motorPlusbtn;
@@ -7275,6 +7734,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 return goEnter();
             case 27: //"Escape"
                 PreviousCard = "";
+                exitCamPressed = false;
                 resetAllOverrides();
                 CamPanel.setVisible(true);
                 if (MasterIN == true) {
@@ -7349,7 +7809,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             case 112: //F1
                 showHelp();
                 break;
-
+            case 113: //F2
+                if (AmtTendered.isEnabled() == false) {
+                    AmtTendered.setEnabled(true);
+                } else {
+                    AmtTendered.setEnabled(false);
+                }
+                break;
             case 114: //F3
                 log.info("Entry Mode");
                 trtype = "R";
@@ -7424,6 +7890,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             case 121:
                 startMasterCard();
                 return false;
+            case 122:
+                startLostCardSearch();
+                return false;
+
             case 524:
                 this.validate();
                 return false;

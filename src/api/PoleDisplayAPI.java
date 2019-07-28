@@ -172,7 +172,6 @@ public class PoleDisplayAPI extends javax.swing.JFrame implements
         VIPS.getAccessibleContext().setAccessibleName("Vips");
 
         BG.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        BG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/shoppesville.jpg"))); // NOI18N
         BG.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         BG.setMaximumSize(new java.awt.Dimension(800, 400));
         BG.setMinimumSize(new java.awt.Dimension(800, 400));

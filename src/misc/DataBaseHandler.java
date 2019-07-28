@@ -78,8 +78,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-    private String USERNAME = "base";
-    private String PASSWORD = "theoreticsinc";
+    //private String USERNAME = "base";
+    //private String PASSWORD = "theoreticsinc";
+    private String USERNAME = "root";
+    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -100,6 +102,8 @@ public class DataBaseHandler extends Thread {
             XMLreader xr = new XMLreader();
             MainServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "main1") + "";
             SubServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "sub1") + "";
+//            MainServer_URL = "jdbc:mysql://192.168.100.240";
+//            SubServer_URL = "jdbc:mysql://192.168.100.240";
             BackupMainServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "backupmain1") + "";
             BackupSubServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "backupsub1") + "";
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
@@ -229,7 +233,8 @@ public class DataBaseHandler extends Thread {
 
             //URL url = new URL("http://www.avajava.com/images/avajavalogo.jpg");
             //URL url = new URL("http://admin:user1234@192.168.1.64/Streaming/channels/1/picture");
-            URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvif-http/snapshot?Profile_1");//HIKVISION IP Cameras
+            //HIKVISION IP Cameras
+            URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvif-http/snapshot?Profile_1");
             //URL url = new URL("http://192.168.100.220/onvifsnapshot/media_service/snapshot?channel=1&subtype=1");
 
             //URL url = new URL("http://admin:user1234@192.168.100.220/cgi-bin/snapshot.cgi?loginuse=admin&loginpas=user1234");
@@ -315,15 +320,13 @@ public class DataBaseHandler extends Thread {
             String encoded = new sun.misc.BASE64Encoder().encode(loginPassword.getBytes());
 
             //URL url = new URL("http://www.avajava.com/images/avajavalogo.jpg");
+            //OLD HIKVISION IP Cameras
             //URL url = new URL("http://admin:user1234@192.168.1.64/Streaming/channels/1/picture");
-            //http://192.168.100.220/onvif-http/snapshot?Profile_1
             //HIKVISION DVR
-            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
+            //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //HIKVISION IP Cameras
-            //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
-            //URL url = new URL("http://192.168.100.220/onvifsnapshot/media_service/snapshot?channel=1&subtype=1");
-
-            //URL url = new URL("http://admin:user1234@192.168.100.220/cgi-bin/snapshot.cgi?loginuse=admin&loginpas=user1234");
+            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
+            
             //HttpURLConnection yc = (HttpURLConnection) url.openConnection();
             //yc.setRequestProperty("Authorization", "Basic " + encoded);
             //InputStream is = url.openStream();
@@ -487,6 +490,78 @@ public class DataBaseHandler extends Thread {
 
                 //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
                 img = ImageIO.read(is);
+                is.close();
+                //fos.close();
+                //show(name, img, 7);
+            }
+
+            //Kernel kernel = new Kernel(3, 3, new float[] { -1, -1, -1, -1, 9, -1, -1,
+            //    -1, -1 });
+            //BufferedImageOp op = new ConvolveOp(kernel);
+            //img = op.filter(img, null);
+//        JFrame frame = new JFrame();
+//        frame.getContentPane().setLayout(new FlowLayout());
+//        frame.getContentPane().add(new JLabel(new ImageIcon(img)));
+//        frame.pack();
+//        frame.setVisible(true);
+            //mediaPlayer.controls().stop();
+            //show("Captured", img, 7);
+            return img;
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+    
+    public int GetImageCountFromDB_byDate(String BeginDate, String EndDate) {
+        
+        try {
+            connection = getConnection(false);
+            String sql = "SELECT COUNT(CardCode) AS Count FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+            
+            int count = 0;
+            while (resultSet.next()) {
+                count = resultSet.getInt(1);                
+            }
+            return count;
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    
+    public BufferedImage[] GetImageFromDB_byDate(String BeginDate, String EndDate) {
+        BufferedImage[] img = new BufferedImage[10];
+        try {
+            connection = getConnection(false);
+            String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+
+            img[0] = new BufferedImage(400, 400,
+                    BufferedImage.TYPE_BYTE_INDEXED);
+            int i = 0;
+            while (resultSet.next()) {
+                String name = resultSet.getString(1);
+                String description = resultSet.getString(2);
+                //File image = new File("C:\\card" + name + ".jpg");
+                //FileOutputStream fos = new FileOutputStream(image);
+
+                byte[] buffer = new byte[1];
+                InputStream is = resultSet.getBinaryStream(3);
+                //while (is.read(buffer) > 0) {
+                //    fos.write(buffer);
+                //}
+                //is.close();
+
+                //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
+                img[i] = ImageIO.read(is);
+                i++;
                 is.close();
                 //fos.close();
                 //show(name, img, 7);
@@ -1670,7 +1745,7 @@ public class DataBaseHandler extends Thread {
             } else {
                 isLoststr = "0";
             }
-
+            //New LOST Input
             st.execute("INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp) VALUES ('P1', 'EN01', '" + CardNumber + "', '' , '" + trtype + "', " + isLost + ", '" + DateIN + "','" + DateInStamp + "')");
             st.close();
             connection.close();
@@ -2883,7 +2958,7 @@ public class DataBaseHandler extends Thread {
             //DBH.copyZReadfromLocal("zread.main", "server_zread.main");
             //DBH.getEntranceCard();
 //            DBH.insertImageToDB();
-            DBH.insertImageFromURLToDB("192.168.1.190", "admin", "admin888888");
+            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
             DBH.ShowImageFromDB();
 
 //            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";

@@ -411,7 +411,7 @@ public class ComputeAPI {
                 if (ParkerType.compareToIgnoreCase("V") == 0) {
                     AmountDue = 0;
                 } else {
-                    AmountDue = this.birComputation(ParkerType, firstscan, isLost);
+                    AmountDue = this.Computation(ParkerType, firstscan, isLost);
                 }
                 /////////////////*+*+*+*+*+*+*+*+*+*////////////////////////
                 AmountDue = AmountDue - AmountPaid;
@@ -517,7 +517,9 @@ public class ComputeAPI {
             PrksMsg[18] = "Amount Already Paid:";
 
             RNos = "0" + stn.EX_SentinelID.substring(2, 4) + RNos;
-            stn.AMOUNTdisplay.setText("P" + String.valueOf(AmountDue) + "0");
+            DecimalFormat df2 = new DecimalFormat("#.00");
+            
+            stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             stn.npd.PlateNo.setText("P" + String.valueOf(AmountDue) + "0");
             stn.PlateInput2.setText(Plateno);
             stn.Plateinput.delete(0, stn.Plateinput.length());
@@ -1840,7 +1842,7 @@ public class ComputeAPI {
 
     }
 
-    public float birComputation(String ParkerType, boolean firstscan, boolean isLost) {
+    public float Computation(String ParkerType, boolean firstscan, boolean isLost) {
         float AmountComputed = 0;
         int numOfDays = 1;
         DataBaseHandler dbh = new DataBaseHandler();
@@ -2289,6 +2291,6 @@ public class ComputeAPI {
         ComputeAPI ca = new ComputeAPI(null);
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 15;
-        ca.birComputation("R", true, true);
+        ca.Computation("R", true, true);
     }
 }

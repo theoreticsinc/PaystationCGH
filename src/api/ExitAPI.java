@@ -5,6 +5,11 @@
 package api;
 
 import UserInteface.HybridPanelUI;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import misc.DataBaseHandler;
@@ -24,7 +29,6 @@ public class ExitAPI implements Runnable {
 
     //initializing the logger
     static Logger log = LogManager.getLogger(ExitAPI.class.getName());
- 
 
     public ExitAPI(HybridPanelUI stui) {
         stn = stui;
@@ -33,6 +37,7 @@ public class ExitAPI implements Runnable {
 
     public boolean InitiateExit(boolean firstscan, String Override, boolean PrinterOverride) {
         if (stn.CardInput2.getText().length() >= 8) {
+            stn.AmtTendered.setText("");
             //stn.PreviousCard = stn.CardInput2.getText();//Disable Double scanning by Barcode Scanner
             /*
             try {
@@ -48,7 +53,7 @@ public class ExitAPI implements Runnable {
             } catch (Exception ex) {
                 LogManager.getLogger(ExitAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
-            */
+             */
             try {
                 short process = cmp.isValidInputController(false, firstscan, Override, PrinterOverride);//computing stuff                
                 if (process == 0) {
@@ -64,11 +69,17 @@ public class ExitAPI implements Runnable {
                     //stn.CardInput2.setText("");
 //                    SysMessage1.setText(CardInput2.getText().substring(0, CardDigits));
 //                    SysMessage2.setText("FOUND");  
-                        DataBaseHandler dbh = new DataBaseHandler();
-                        BufferedImage buf = dbh.GetImageFromDB(stn.CardInput2.getText());
-                        if (null != buf) {
-                            stn.entryCamera.setIcon(new ImageIcon(buf));
-                        }
+                    DataBaseHandler dbh = new DataBaseHandler();
+                    BufferedImage buf = dbh.GetImageFromDB(stn.CardInput2.getText());
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+                    if (null != buf) {
+                        Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
+
+                        stn.entryCamera.setIcon(new ImageIcon(img));
+                        stn.entryCamera.setText("ENTRY");
+                    }
+                    stn.AmtTendered.requestFocus();
                     return true;
                 } else if (process == 1) {
                     stn.PreviousCard = "";
@@ -156,6 +167,17 @@ public class ExitAPI implements Runnable {
         //stn.CardInput2.setText("");
 
         return false;
+    }
+
+    private Image getScaledImage(Image srcImg, int w, int h) {
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
     }
 
     public void InitiateRescan() {

@@ -149,7 +149,7 @@ public class EntranceAPI {
                 if (datamode.compareToIgnoreCase("cards") == 0) {
                     mifare.writeManualEntrance(String.valueOf(cardtimeStampIN));
                 }
-                if (pdh.saveParkerDB("192.168.1.190","admin","admin888888",tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), tpui.PlateInput2.getText(), MEMtrtype, d2, timeStampIN) == false) {
+                if (pdh.saveParkerDB(tpui.entryIPCamera,"admin","user1234",tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), tpui.PlateInput2.getText(), MEMtrtype, d2, timeStampIN) == false) {
                     LogUtility logthis = new LogUtility();
                     logthis.setLog(tpui.EN_SentinelID, "Unable to reach Server :" + Now.getTime() + " to save Ent Transaction: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
                     tpui.PrevParker = tpui.CardInput2.getText();
@@ -226,6 +226,14 @@ public class EntranceAPI {
             return true;
         //}
         //return false;
+    }
+    
+    public boolean createManualEntry(String MEMtrtype, String dateManuallyCreated, String plateManuallyCreated) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd H:mm:ss.S");
+        ParkerDataHandler pdh = new ParkerDataHandler();
+        if (pdh.saveParkerDB(tpui.entryIPCamera,"admin","user1234",tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), plateManuallyCreated.toUpperCase(), MEMtrtype, dateManuallyCreated, 0L) == false) {
+        }
+        return false;
     }
 
 }

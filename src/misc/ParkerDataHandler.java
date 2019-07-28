@@ -177,9 +177,9 @@ public class ParkerDataHandler {
             //HIKVISION IP Cameras Old Versions
             //URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + "/Streaming/channels/1/picture");
             //HIKVISION IP Cameras
-            //URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + "/onvif-http/snapshot?Profile_1");
+            URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + "/onvif-http/snapshot?Profile_1");
             //HIKVISION DVR
-            URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
+            //URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //URL url = new URL("http://192.168.100.220/onvifsnapshot/media_service/snapshot?channel=1&subtype=1");
             //URL url = new URL("http://admin:user1234@192.168.100.220/cgi-bin/snapshot.cgi?loginuse=admin&loginpas=user1234");
             
@@ -192,39 +192,59 @@ public class ParkerDataHandler {
             uc1.setRequestProperty("Authorization", basicAuth);
             uc2.setRequestProperty("Authorization", basicAuth);
  
-            is1 = (InputStream) uc1.getInputStream();
-            is2 = (InputStream) uc2.getInputStream();
+            uc1.setConnectTimeout(1000);
+            uc2.setConnectTimeout(1000);
+            try {
+                if (null != uc1) {
+                    is1 = (InputStream) uc1.getInputStream();
+                }
+            } catch (Exception ex) {
+//                ex.printStackTrace();
+            }
+            try {
+                if (null != uc2) {
+                    is2 = (InputStream) uc2.getInputStream();
+                }
+            } catch (Exception ex) {
+//                ex.printStackTrace();
+            }
             
             conn = DB.getConnection(false);
             //WITH CAMERA TO DATABASE
-            String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Timein`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NOW(), NULL, ?, ?, ?, 'ENTRY')";
+            String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
+                    + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
             if (null != is1 && null != is2) {
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is1, 1024 * 32); //Last Parameter has to be bigger than actual      
                 statement.setBinaryStream(5, is2, 1024 * 32); //Last Parameter has to be bigger than actual 
+                statement.setString(6, DateTimeIN);
             }
             if (null == is1 && null != is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Timein`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NOW(), NULL, NULL, ?, ?, 'ENTRY')";
+                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
+                    + "(NULL, ?, 'CAR' , ?, NULL, NULL, ?, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is2, 1024 * 32); //Last Parameter has to be bigger than actual 
+                statement.setString(5, DateTimeIN);
             }
             if (null != is1 && null == is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Timein`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NOW(), NULL, ?, NULL, ?, 'ENTRY')";
+                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
+                    + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is1, 1024 * 32); //Last Parameter has to be bigger than actual 
+                statement.setString(5, DateTimeIN);
             }  
             if (null == is1 && null == is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Timein`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NOW(), NULL, ?, NULL, NULL, 'ENTRY')";
+                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
+                    + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, NULL, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
+                statement.setString(4, DateTimeIN);
             }
             statement.setString(1, Card);
             statement.setString(2, Plate);
             statement.setString(3, EntryID);
+            
+            
             statement.executeUpdate();
 
             //int status2 = stmt.executeUpdate("INSERT INTO unidb.timeindb (ID, CardCode, Vehicle, Plate, Timein, Operator, PC, PIC, PIC2, Lane) "
