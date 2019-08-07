@@ -244,6 +244,8 @@ public class DataBaseHandler extends Thread {
             //**********************
             uc1 = url.openConnection();
             uc2 = url.openConnection();
+            uc1.setConnectTimeout(1000);
+            uc2.setConnectTimeout(1000);
             String userpass = username + ":" + password;
             //String userpass = "root" + ":" + "Th30r3t1cs";
             String basicAuth = "Basic " + new String(new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
@@ -333,6 +335,9 @@ public class DataBaseHandler extends Thread {
             //**********************
             uc1 = url.openConnection();
             uc2 = url.openConnection();
+            uc1.setConnectTimeout(1000);
+            uc2.setConnectTimeout(1000);
+            
             String userpass = username + ":" + password;
             //String userpass = "root" + ":" + "Th30r3t1cs";
             String basicAuth = "Basic " + new String(new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
@@ -489,8 +494,11 @@ public class DataBaseHandler extends Thread {
                 //is.close();
 
                 //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
-                img = ImageIO.read(is);
-                is.close();
+                if (null != is) {
+                    img = ImageIO.read(is);
+                    is.close();
+                }
+                
                 //fos.close();
                 //show(name, img, 7);
             }

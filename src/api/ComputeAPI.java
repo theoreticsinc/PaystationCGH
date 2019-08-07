@@ -88,6 +88,10 @@ public class ComputeAPI {
     private String printerType;
     private String datamode;
     private String exitType;
+    
+    public float AmountGross = 0;
+    public float AmountComputed = 0;
+    public float AmountDiscounted = 0;
 
     public ComputeAPI(HybridPanelUI sui) {
         stn = sui;
@@ -636,7 +640,7 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {                    
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter, AmountGross);
                     }
                 } else if (duplicateReceiptType == 2) {
                     DuplicateReceiptHeader = "            CUSTOMER COPY";
@@ -644,14 +648,14 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {                    
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter, AmountGross);
                     }
                     DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
                     if (printerType.compareToIgnoreCase("serial") == 0) {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {                    
-                        SP.printUSBReceipt(false, false, stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter);
+                        SP.printUSBReceipt(false, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter, AmountGross);
                     }
                 } 
             }
@@ -676,13 +680,19 @@ public class ComputeAPI {
 
         } else {
             //SP.printLCEPReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeOUT, AmountDue, RNos, stn.CashierName);
-            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter);
+            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, printerCutter, AmountGross);
 
         }
         String transactionNum = stn.EX_SentinelID.substring(2) + "" + RNos;
-        String vat12 = getVat(AmountDue);
-        String nonvat = getNonVat(AmountDue);
-        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, nonvat);
+        String vat12 = getVat(AmountGross);
+        String nonvat = getNonVat(AmountGross);
+        Float tendered = 0f;
+        try {
+            tendered = Float.parseFloat(stn.AmtTendered.getText());
+        } catch (Exception ex) {
+            
+        }
+        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, tendered, vat12, nonvat, String.valueOf(AmountGross), String.valueOf(AmountDue));
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef);
         }
@@ -726,22 +736,21 @@ public class ComputeAPI {
         if (AmountDue == 0) {
             return "0.00";
         }
-        DecimalFormat df2 = new DecimalFormat("#.00");
+        //DecimalFormat df2 = new DecimalFormat("#.00");
 
         //float vatSales = (float) (AmountDue * .12);
-        float vatSales = (float) (AmountDue / 1.12) * 0.12f;
-        return df2.format(vatSales);
+        float vatSales = (float) (AmountDue / 1.12) * 0.12f;        
+        //return df2.format(vatSales);
+        return vatSales + "";
     }
 
     private String getNonVat(float AmountDue) {
         if (AmountDue == 0) {
             return "0.00";
-        }
-        DecimalFormat df2 = new DecimalFormat("#.00");
-
+        }        
         //float vatSales = (float) (AmountDue * .12);
         float vatSales = (float) (AmountDue / 1.12);
-        return df2.format(vatSales);
+        return vatSales + "";
     }
 
     /**
@@ -824,7 +833,7 @@ public class ComputeAPI {
         //Sunday = 0
         int dayOut = NowStamp.getDay();
         int dayIN = ParkerStamp.getDay();
-        float AmountComputed = 0;
+        ////float AmountComputed = 0;
         float OvrnghtAmountComputed = 0;
         OvrnghtAmountComputed = checkOvernight(NowStamp, ParkerStamp);
 //        if (checkPromo(NowStamp) == true && stn.trtype.compareToIgnoreCase("M") != 0)
@@ -967,7 +976,7 @@ public class ComputeAPI {
 
     private float FlatRateRetail(float OvrnghtAmountComputed) {
         float FlatRate = (float) 50.00;
-        float AmountComputed = (float) 0.00;
+        ////float AmountComputed = (float) 0.00;
 
         SaveCollData scd = new SaveCollData();
         if (stn.PrepaidOverride == true) {
@@ -1093,7 +1102,7 @@ public class ComputeAPI {
     }
 
     private float ComputeGrace() {
-        float AmountComputed = 0;
+        ////float AmountComputed = 0;
         float FlatRate = (float) 50.00;
         if (stn.PrepaidOverride == true) {
             FlatRate = (float) 0.00;
@@ -1121,7 +1130,7 @@ public class ComputeAPI {
     //*********UNUSED by Araneta so just use ComputeWeekDay
     private float ComputeWeekEND(Date NowStamp) //returns a float to be Grand Totalled later
     {
-        float AmountComputed = 0;
+        ////float AmountComputed = 0;
         float FlatRate = (float) 50.00;
         if (stn.PrepaidOverride == true) {
             FlatRate = (float) 0.00;
@@ -1199,7 +1208,7 @@ public class ComputeAPI {
 
     private float ComputeWeekDay(Date NowStamp) //returns a float to be Grand Totalled later
     {
-        float AmountComputed = 0;
+        //float AmountComputed = 0;
         float FlatRate = (float) 50.00;
         if (stn.PrepaidOverride == true) {
             FlatRate = (float) 0.00;
@@ -1308,7 +1317,7 @@ public class ComputeAPI {
     }
 
     private float DeliveryCheck(float OvrnghtAmountComputed, int dayIN, Date NowStamp) {
-        float AmountComputed = (float) 0.00;
+        //float AmountComputed = (float) 0.00;
         float FlatRate = (float) 0.00;
         //Add the Overnight Computation to the GRANDTOTAL Computation
         AmountComputed = OvrnghtAmountComputed;
@@ -1352,7 +1361,7 @@ public class ComputeAPI {
 
     private float NewRetailChecking_WE_WD(float OvrnghtAmountComputed, int dayIN, Date NowStamp) {
         //float FlatRate = (float) 50.00;
-        float AmountComputed = (float) 0.00;
+        //float AmountComputed = (float) 0.00;
         boolean loopctr_end = false;
         //place loop here:
         NumHrs2ComputeCurrent = 0;
@@ -1408,7 +1417,7 @@ public class ComputeAPI {
 
     /*    private float OldOrdinaryRetail(float OvrnghtAmountComputed) {
         float FlatRate = (float) 50.00;
-        float AmountComputed = (float) 0.00;
+        //float AmountComputed = (float) 0.00;
 
         SaveCollData scd = new SaveCollData();
         if (stn.PrepaidOverride == true) {
@@ -1478,7 +1487,7 @@ public class ComputeAPI {
      */
     private float WeekEndRetail(float OvrnghtAmountComputed) {
         float FlatRate = (float) 50.00;
-        float AmountComputed = 0;
+        //float AmountComputed = 0;
         SaveCollData scd = new SaveCollData();
         if (stn.PrepaidOverride == true) {
             FlatRate = (float) 0.00;
@@ -1843,7 +1852,7 @@ public class ComputeAPI {
     }
 
     public float Computation(String ParkerType, boolean firstscan, boolean isLost) {
-        float AmountComputed = 0;
+        //float AmountComputed = 0;
         int numOfDays = 1;
         DataBaseHandler dbh = new DataBaseHandler();
         try {
@@ -2224,11 +2233,25 @@ public class ComputeAPI {
         log.info("Amount: " + AmountComputed);
         log.info("GracePeriod: " + GracePeriod);
         log.info("OTCutoff: " + OTCutoff);
+        
+        ParkersAPI pa = new ParkersAPI();
+        
+        boolean isDiscounted = pa.getDiscounted(ParkerType);
+        float discountPercentage = 0;
+        AmountGross = AmountComputed;
+        if (isDiscounted) {
+            discountPercentage = pa.getdiscountPercentage(ParkerType);
+            Float nonvat = Float.parseFloat(getNonVat(AmountComputed));
+            String vat = getVat(AmountComputed);
+            AmountDiscounted = nonvat - (nonvat * (discountPercentage / 100));
+            DecimalFormat df2 = new DecimalFormat("#.00");
+            AmountComputed = Float.parseFloat(df2.format(AmountDiscounted));
+        }
         return AmountComputed;
     }
 
     private int getFirstHourwidNonZeroRate(String[] HR, String[] HRplus, Boolean[] HRWaived1st, Boolean[] HRplusWaived1st) {
-        float AmountComputed = 0;
+        //float AmountComputed = 0;
         int firstHrwidNonZero = 0;
         for (int x = 1; x <= 23; x++) {
             if (HRWaived1st[x] == false) {
@@ -2258,7 +2281,7 @@ public class ComputeAPI {
     }
 
     private int getLastHourwidNonZeroRate(String[] HR, String[] HRplus, Boolean[] HRWaived1st, Boolean[] HRplusWaived1st) {
-        float AmountComputed = 0;
+        //float AmountComputed = 0;
         int lastHrwidNonZero = 0;
         for (int x = 24; x >= 1; x--) {
             if (HRWaived1st[x] == false) {

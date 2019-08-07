@@ -951,11 +951,11 @@ public class ParkersAPI {
     }
 
     public void printUSBReceipt(boolean firstRun, boolean isReprint, String SentinenlID, String Entrypoint,
-            String Plateno, String ParkerType, String TimeIN, String TimeOUT, long HoursParked, long MinutesParked,
+            String Plateno, String Cardno, String ParkerType, String TimeIN, String TimeOUT, long HoursParked, long MinutesParked,
             float AmountDue, String RNos, String CashierID, String CashierName, String settlementRef,
             String settlementName,String settlementAddr,String settlementTIN,String settlementBusStyle,
             String duplicateReceiptHeader, boolean isDiscounted, float discountPercentage,
-            boolean printerCutter) {
+            boolean printerCutter, float AmountGross) {
         try {
             USBEpsonHandler eh = new USBEpsonHandler();
             eh.closePrinter();
@@ -1010,32 +1010,39 @@ public class ParkersAPI {
                 eh.printHEADER(SentinenlID);
             }
 
-            eh.printline("            OFFICIAL RECEIPT");
+            //eh.printline("            OFFICIAL RECEIPT");
 
             eh.printline(duplicateReceiptHeader);
 
-            eh.printline("Receipt Num.:" + RNos);
+            eh.printline("Official-Receipt # " + RNos);
 
             eh.startPrinter();
             eh.Justify((byte) 0);
             eh.feedpaperup((byte) 1);
-            eh.printline("Ent ID.:" + Entrypoint);
-            eh.printline("Cashier ID:" + CashierID);
-            eh.printline("Cashier Name:" + CashierName);
+            //eh.printline("Ent ID.:" + Entrypoint);
+            //eh.printline("Cashier ID:" + CashierID);
+            //eh.printline("Cashier Name:" + CashierName);
 //            eh.printline("Location     :" + SentinenlID);
-            eh.printline("Plate Number :" + Plateno);
+
+            eh.printline("CardCode  : " + Cardno);
+            eh.printline("Plate#    : " + Plateno);
 //String SentinenlID, String Entrypoint, String Plateno, String ParkerType, String TimeIN, String TimeOUT, 
 //long HoursParked, long MinutesParked, float AmountDue, String RNos, String CashierName, boolean OvernightOverride) {
             String ptype = checkPTypeFromDB(ParkerType);
-            eh.printline("Parker Type  : " + ptype);
-            eh.printline("TIME IN      :" + TimeIN);
-            eh.printline("TIME OUT     :" + TimeOUT);
-            eh.printline("Duration     : " + HoursParked + " Hrs " + MinutesParked + " Mins");
+            eh.printline("Vehicle   : " + ptype);
+            eh.printline("Time-in   : " + TimeIN);
+            eh.printline("Time-out  : " + TimeOUT);
+            eh.printline("Time      : " + HoursParked + " Hrs " + MinutesParked + " Mins");
 
             eh.printline("---------------------------------");
+            eh.printline("COMPUTATION");
             if (nonvat.compareToIgnoreCase("enabled") == 0) {
-                eh.printline("Amount Paid:  " + getAmountDue(AmountDue));
+                    eh.printline("Total Payment : P " + getAmountDue(AmountDue));
             } else {
+                float lessDiscount = Float.parseFloat(getVatSales(AmountGross)) * 0.2f;
+                    if (AmountDue <= 0) {
+                        lessDiscount = 0;
+                    }
                 if (isDiscounted) {
                     //Selling Price: 1000
                     //Vat 12%
@@ -1048,26 +1055,27 @@ public class ParkersAPI {
                      * VAT Exempt = 30 / 1.12 = 26.7857 Senior Citizen Discount
                      * = 26.7857 * 0.20 = 5.3571
                      */
-                    float grossB4Discount = AmountDue / ((100 - discountPercentage) / 100);
+                    //float grossB4Discount = AmountDue / ((100 - discountPercentage) / 100);
+                    float grossB4Discount = AmountGross;
                     if (AmountDue <= 0) {
                         grossB4Discount = 0;
                     }
-                    eh.printline("Gross Sales                :  P" + getAmountDue(grossB4Discount));
-                    float lessDiscount = grossB4Discount - AmountDue;
-                    if (AmountDue <= 0) {
-                        lessDiscount = 0;
-                    }
+                    eh.printline("Gross Sales                :  P" + getAmountDue(AmountGross));
+                    
                     eh.printline("Less " + ptype + " DSC " + discountPercentage + "% : -P" + getAmountDue(lessDiscount));
                 } else {
-                    eh.printline("Gross Sales                :  P" + getAmountDue(AmountDue));
+                    eh.printline("Total Payment   : P " + getAmountDue(AmountGross));
+                    eh.printline("Amount Tendered : P" + getAmountDue(AmountGross));
                 }
-                eh.printline("VATable Sales              :  P" + getVatSales(AmountDue));
-                eh.printline("VAT Amount (12%)           :  P" + getVat(AmountDue));
-                eh.printline("VAT Exempt Sales           :  P0.00");
+                    eh.printline("VAT-SALE        :  P" + getVatSales(AmountGross));
+                    eh.printline("VAT-12%         :  P" + getVat(AmountGross));
+                    eh.printline("VAT-EXEMPT%     :  P0.00");
+                    eh.printline("Discount        :  " + getAmountDue(lessDiscount));
+                
 //                eh.printline("Zero-Rated Sales           :  P0.00");
             }
             //eh.selectEMstyle(true);
-            eh.printline("TOTAL AMOUNT               :  P" + getAmountDue(AmountDue));
+                eh.printline("Amount Due            :  P" + getAmountDue(AmountDue));
             //eh.startPrinter();
             //eh.selectEMstyle(false);
             //eh.startPrinter();
@@ -1080,17 +1088,17 @@ public class ParkersAPI {
                 else
                     eh.printline("Customer Name:    " + settlementName);
                 if (null == settlementAddr || settlementAddr.compareToIgnoreCase("") == 0)
-                    eh.printline("Addr:_______________________________");
+                    eh.printline("Address:_______________________________");
                 else
-                    eh.printline("Addr:     " + settlementAddr);
+                    eh.printline("Address:     " + settlementAddr);
                 if (null == settlementTIN || settlementTIN.compareToIgnoreCase("") == 0)
-                    eh.printline("TIN :_______________________________");
+                    eh.printline("TIN-# :_______________________________");
                 else
-                    eh.printline("TIN :   " + settlementTIN);
+                    eh.printline("TIN-# :   " + settlementTIN);
                 if (null == settlementBusStyle || settlementBusStyle.compareToIgnoreCase("") == 0)
-                    eh.printline("Business Style :____________________");
+                    eh.printline("Business Type :____________________");
                 else
-                    eh.printline("Business Style :   " + settlementBusStyle);
+                    eh.printline("Business Type :   " + settlementBusStyle);
                 if (isDiscounted) {
                     eh.printline("SC/PWD/OSCA ID No.:  " + settlementRef);
                     eh.printline("NAME      :____________________\n");
@@ -1259,6 +1267,7 @@ public class ParkersAPI {
                         rs.getString("ExitID"),
                         rs.getString("EntranceID"),
                         rs.getString("PlateNumber"),
+                        rs.getString("CardNumber"),
                         rs.getString("ParkerType"),
                         rs.getString("DateTimeIN"),
                         rs.getString("DateTimeOUT"),
@@ -1273,7 +1282,8 @@ public class ParkersAPI {
                         rs.getString("SettlementAddr"),
                         rs.getString("SettlementTIN"),
                         rs.getString("SettlementBusStyle"),
-                        "           ###  REPRINT  ###", false, 0f, true);
+                        "           ###  REPRINT  ###", false, 0f, true,
+                        rs.getFloat("AmountGross"));
             }
 
             dbh.manualClose();
@@ -1298,6 +1308,7 @@ public class ParkersAPI {
                         rs.getString("ExitID"),
                         rs.getString("EntranceID"),
                         rs.getString("PlateNumber"),
+                        rs.getString("CardNumber"),
                         rs.getString("ParkerType"),
                         rs.getString("DateTimeIN"),
                         rs.getString("DateTimeOUT"),
@@ -1312,7 +1323,8 @@ public class ParkersAPI {
                         rs.getString("SettlementAddr"),
                         rs.getString("SettlementTIN"),
                         rs.getString("SettlementBusStyle"),
-                        "", false, 0f, true);
+                        "", false, 0f, true,
+                        rs.getFloat("AmountGross"));
             }
 
             dbh.manualClose();

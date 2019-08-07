@@ -123,8 +123,19 @@ public class USBEpsonHandler {
             String BIRHeaderEnabled = xr.getElementValue("C://JTerminals/initH.xml", "BIRheader");
             this.setRed();
             this.Justify((byte) 0);
-            //this.feedpaperup((byte)1);
             
+            this.printline("   CHINESE GENERAL HOSPITAL");
+            this.printline("       AND MEDICAL CENTER");
+            this.printline("286 BLUMENTRITT STA. CRUZ MANILA");
+            this.printline("PERMIT:0813-031-162959-000");
+            this.printline("      TIN# 000-328-853-000");
+            this.printline("SW-ACCR : 042-006539714-000504");
+            this.printline("       MS# : 130325653");
+            this.printline("       Terminal : MPOS-B");
+            this.printline("---------------------------------");
+            
+            //this.feedpaperup((byte)1);
+            /*
             if(headerline1PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(headerline1);
             }
@@ -155,6 +166,7 @@ public class USBEpsonHandler {
             if(headerline10PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(headerline10);
             }
+            */
             
             this.setBlack();
             
@@ -198,15 +210,35 @@ public class USBEpsonHandler {
             String FooterEnabled = xr.getElementValue("C://JTerminals/initH.xml", "footer");
             String BIRFooterEnabled = xr.getElementValue("C://JTerminals/initH.xml", "BIRfooter");
             
-            if (FooterEnabled.compareToIgnoreCase("enabled") == 0) {
-                this.printline("POS Provider:");
-                this.printline("Applied Modern Theoretics Inc.");
-                this.printline("5F Builders Center Bldg.");
-                this.printline("Salcedo Street Legaspi Village");
-                this.printline("Makati Philippines");
-                this.startPrinter();
+//            if (FooterEnabled.compareToIgnoreCase("enabled") == 0) {
+//                this.printline("POS Provider:");
+//                this.printline("Applied Modern Theoretics Inc.");
+//                this.printline("5F Builders Center Bldg.");
+//                this.printline("Salcedo Street Legaspi Village");
+//                this.printline("Makati Philippines");
+//                this.startPrinter();
+//            }
+                       
+            this.setBlack();
+            this.Justify((byte) 1);
+            if (isOfficial) {
+                if (BIRFooterEnabled.compareToIgnoreCase("enabled") == 0) {
+                this.printline("      This is an Official Receipt");
+                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
+                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
+//                this.printline("     THIS DOCUMENT IS NOT VALID");
+//                this.printline("       FOR CLAIM OF INPUT TAX");
+                //this.startPrinter();
+                }
+            } else {
+                if (BIRFooterEnabled.compareToIgnoreCase("enabled") == 0) {
+                    this.printline("THIS DOCUMENT SHALL BE VALID FOR FIVE(5)");
+                    this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
+                    this.printline("     THIS DOCUMENT IS NOT VALID");
+                    this.printline("       FOR CLAIM OF INPUT TAX");
+                    //this.startPrinter();
+                }
             }
-            
             this.setRed();            
             if(footerline1PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(footerline1);
@@ -237,25 +269,6 @@ public class USBEpsonHandler {
             }
             if(footerline10PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(footerline10);
-            }
-            this.setBlack();
-            this.Justify((byte) 1);
-            if (isOfficial) {
-                if (BIRFooterEnabled.compareToIgnoreCase("enabled") == 0) {
-                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
-                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
-//                this.printline("     THIS DOCUMENT IS NOT VALID");
-//                this.printline("       FOR CLAIM OF INPUT TAX");
-                //this.startPrinter();
-                }
-            } else {
-                if (BIRFooterEnabled.compareToIgnoreCase("enabled") == 0) {
-                    this.printline("THIS DOCUMENT SHALL BE VALID FOR FIVE(5)");
-                    this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
-                    this.printline("     THIS DOCUMENT IS NOT VALID");
-                    this.printline("       FOR CLAIM OF INPUT TAX");
-                    //this.startPrinter();
-                }
             }
             this.Justify((byte) 0);
             this.startPrinter();

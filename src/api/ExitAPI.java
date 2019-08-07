@@ -37,7 +37,7 @@ public class ExitAPI implements Runnable {
 
     public boolean InitiateExit(boolean firstscan, String Override, boolean PrinterOverride) {
         if (stn.CardInput2.getText().length() >= 8) {
-            stn.AmtTendered.setText("");
+            //stn.AmtTendered.setText("");
             //stn.PreviousCard = stn.CardInput2.getText();//Disable Double scanning by Barcode Scanner
             /*
             try {

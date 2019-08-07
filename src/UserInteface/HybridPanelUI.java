@@ -545,17 +545,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         XFunc4 = new javax.swing.JLabel();
         XFunc2 = new javax.swing.JLabel();
         spacer = new javax.swing.JLabel();
-        fullScreenCamera = new javax.swing.JLabel();
-        ManualEntryPanel = new javax.swing.JPanel();
-        closeButton1 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        manualEntryTime = new com.github.lgooddatepicker.components.TimePicker();
-        manualEntryDate = new datechooser.beans.DateChooserCombo();
-        Create = new javax.swing.JButton();
-        manualEntryPlate = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         SearchPanel = new javax.swing.JPanel();
         SearchDisplayPanel = new javax.swing.JPanel();
         closeButton = new javax.swing.JButton();
@@ -566,6 +555,17 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SearchTimeFrom = new com.github.lgooddatepicker.components.TimePicker();
         SearchDateFrom = new datechooser.beans.DateChooserCombo();
         jButton1 = new javax.swing.JButton();
+        ManualEntryPanel = new javax.swing.JPanel();
+        closeButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        manualEntryTime = new com.github.lgooddatepicker.components.TimePicker();
+        manualEntryDate = new datechooser.beans.DateChooserCombo();
+        Create = new javax.swing.JButton();
+        manualEntryPlate = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        fullScreenCamera = new javax.swing.JLabel();
         PasswordPanel = new javax.swing.JPanel();
         PWORDlbl = new javax.swing.JLabel();
         PWORDInput2 = new javax.swing.JLabel();
@@ -1276,101 +1276,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         spacer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         spacer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/logo.png"))); // NOI18N
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setBackground(new java.awt.Color(255, 255, 255));
-        setForeground(java.awt.Color.white);
-        addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                formFocusLost(evt);
-            }
-        });
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                formKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                formKeyReleased(evt);
-            }
-        });
-        getContentPane().setLayout(null);
-
-        fullScreenCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        fullScreenCamera.setFocusable(false);
-        fullScreenCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        fullScreenCamera.setForeground(new java.awt.Color(255, 255, 0));
-        fullScreenCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        fullScreenCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        fullScreenCamera.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fullScreenCameraMouseClicked(evt);
-            }
-        });
-        getContentPane().add(fullScreenCamera);
-        fullScreenCamera.setBounds(0, 0, 71, 30);
-
-        ManualEntryPanel.setBackground(new java.awt.Color(255, 255, 255));
-        ManualEntryPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        ManualEntryPanel.setLayout(null);
-
-        closeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/close window.png"))); // NOI18N
-        closeButton1.setOpaque(false);
-        closeButton1.setPreferredSize(new java.awt.Dimension(50, 50));
-        closeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                closeButton1MouseClicked(evt);
-            }
-        });
-        ManualEntryPanel.add(closeButton1);
-        closeButton1.setBounds(0, 0, 60, 50);
-
-        jLabel5.setText("Plate Number");
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 153, 153));
-        ManualEntryPanel.add(jLabel5);
-        jLabel5.setBounds(80, 0, 130, 20);
-
-        manualEntryTime.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        ManualEntryPanel.add(manualEntryTime);
-        manualEntryTime.setBounds(220, 80, 130, 30);
-
-        manualEntryDate.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-        manualEntryDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
-        ManualEntryPanel.add(manualEntryDate);
-        manualEntryDate.setBounds(80, 80, 130, 30);
-
-        Create.setText("Submit");
-        Create.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        Create.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CreateMouseClicked(evt);
-            }
-        });
-        ManualEntryPanel.add(Create);
-        Create.setBounds(360, 70, 120, 50);
-        ManualEntryPanel.add(manualEntryPlate);
-        manualEntryPlate.setBounds(80, 20, 130, 30);
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Entry Time");
-        ManualEntryPanel.add(jLabel6);
-        jLabel6.setBounds(220, 60, 140, 20);
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("Entry Date");
-        ManualEntryPanel.add(jLabel8);
-        jLabel8.setBounds(80, 60, 140, 20);
-
-        jLabel7.setBackground(new java.awt.Color(0, 153, 255));
-        jLabel7.setForeground(new java.awt.Color(0, 153, 255));
-        jLabel7.setOpaque(true);
-        ManualEntryPanel.add(jLabel7);
-        jLabel7.setBounds(10, 60, 490, 70);
-
-        getContentPane().add(ManualEntryPanel);
-        ManualEntryPanel.setBounds(470, 310, 510, 140);
-
         SearchPanel.setBackground(new java.awt.Color(255, 255, 255));
         SearchPanel.setLayout(null);
 
@@ -1434,8 +1339,97 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SearchPanel.add(jButton1);
         jButton1.setBounds(660, 10, 120, 50);
 
-        getContentPane().add(SearchPanel);
-        SearchPanel.setBounds(320, 110, 1090, 570);
+        ManualEntryPanel.setBackground(new java.awt.Color(255, 255, 255));
+        ManualEntryPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        ManualEntryPanel.setLayout(null);
+
+        closeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/close window.png"))); // NOI18N
+        closeButton1.setOpaque(false);
+        closeButton1.setPreferredSize(new java.awt.Dimension(50, 50));
+        closeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeButton1MouseClicked(evt);
+            }
+        });
+        ManualEntryPanel.add(closeButton1);
+        closeButton1.setBounds(0, 0, 60, 50);
+
+        jLabel5.setText("Plate Number");
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 153, 153));
+        ManualEntryPanel.add(jLabel5);
+        jLabel5.setBounds(80, 0, 130, 20);
+
+        manualEntryTime.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ManualEntryPanel.add(manualEntryTime);
+        manualEntryTime.setBounds(220, 80, 130, 30);
+
+        manualEntryDate.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+        manualEntryDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
+        ManualEntryPanel.add(manualEntryDate);
+        manualEntryDate.setBounds(80, 80, 130, 30);
+
+        Create.setText("Submit");
+        Create.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Create.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CreateMouseClicked(evt);
+            }
+        });
+        ManualEntryPanel.add(Create);
+        Create.setBounds(360, 70, 120, 50);
+        ManualEntryPanel.add(manualEntryPlate);
+        manualEntryPlate.setBounds(80, 20, 130, 30);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Entry Time");
+        ManualEntryPanel.add(jLabel6);
+        jLabel6.setBounds(220, 60, 140, 20);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Entry Date");
+        ManualEntryPanel.add(jLabel8);
+        jLabel8.setBounds(80, 60, 140, 20);
+
+        jLabel7.setBackground(new java.awt.Color(0, 153, 255));
+        jLabel7.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel7.setOpaque(true);
+        ManualEntryPanel.add(jLabel7);
+        jLabel7.setBounds(10, 60, 490, 70);
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setForeground(java.awt.Color.white);
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                formFocusLost(evt);
+            }
+        });
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+        });
+        getContentPane().setLayout(null);
+
+        fullScreenCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        fullScreenCamera.setFocusable(false);
+        fullScreenCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        fullScreenCamera.setForeground(new java.awt.Color(255, 255, 0));
+        fullScreenCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fullScreenCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fullScreenCamera.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fullScreenCameraMouseClicked(evt);
+            }
+        });
+        getContentPane().add(fullScreenCamera);
+        fullScreenCamera.setBounds(0, 0, 71, 30);
 
         PasswordPanel.setFocusable(false);
         PasswordPanel.setOpaque(false);
@@ -1517,9 +1511,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         LogUsercode1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         LogoutPanelX.add(LogUsercode1);
 
+        LogoutLbl1.setText("Password:");
         LogoutLbl1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LogoutLbl1.setForeground(new java.awt.Color(255, 255, 255));
-        LogoutLbl1.setText("Password:");
         LogoutPanelX.add(LogoutLbl1);
 
         LogPassword1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1859,10 +1853,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainPanel.add(amntlbl1);
         amntlbl1.setBounds(0, 0, 200, 50);
 
-        amntlbl.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        amntlbl.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         amntlbl.setFocusable(false);
+        amntlbl.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        amntlbl.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl.setRequestFocusEnabled(false);
         amntlbl.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(amntlbl);
@@ -1900,20 +1894,20 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainPanel.add(amntlbl2);
         amntlbl2.setBounds(0, 110, 200, 60);
 
-        amntlbl3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        amntlbl3.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         amntlbl3.setText("CHANGE:");
         amntlbl3.setFocusable(false);
+        amntlbl3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        amntlbl3.setForeground(new java.awt.Color(255, 255, 204));
         amntlbl3.setRequestFocusEnabled(false);
         amntlbl3.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(amntlbl3);
         amntlbl3.setBounds(340, 110, 80, 60);
 
+        ChangeDisplay.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        ChangeDisplay.setFocusable(false);
         ChangeDisplay.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         ChangeDisplay.setForeground(new java.awt.Color(255, 255, 204));
-        ChangeDisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        ChangeDisplay.setFocusable(false);
         ChangeDisplay.setRequestFocusEnabled(false);
         ChangeDisplay.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(ChangeDisplay);
@@ -4818,6 +4812,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void LoginButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButton1MouseClicked
         if (this.isLogoutValidfromDB() == true) {
             //currentmode = "logout";
+            
         }
         //StartLogOut();
     }//GEN-LAST:event_LoginButton1MouseClicked
@@ -5651,7 +5646,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     private void showHelp() {
         clearLeftMIDMsgPanel();
-        SysMessage1.setText("F1 : Show HELP");
+        SysMessage1.setText("F1 : Show HELP / Show Fullscreen");
         SysMessage2.setText("");
         SysMessage3.setText("F3 : Entrance Mode");
         SysMessage4.setText("");
@@ -7808,6 +7803,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //FUNCTION KEYS
             case 112: //F1
                 showHelp();
+                exitCamPressed = true;
                 break;
             case 113: //F2
                 if (AmtTendered.isEnabled() == false) {
