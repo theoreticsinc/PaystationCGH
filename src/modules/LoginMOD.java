@@ -1449,6 +1449,7 @@ public class LoginMOD extends javax.swing.JPanel {
 
     }
 
+    //NEW COLLTRAIN
     //Dynamic Parker Types for X Read
     public void epsonPrintLogoutReceiptFromDB(String Exitpoint, boolean currentcoll) {
         try {
