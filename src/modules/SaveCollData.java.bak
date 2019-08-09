@@ -103,43 +103,43 @@ public class SaveCollData {
 
     }
     
-     public void UpdateImptAmountDB(String fieldName, String logcode, Double data) {
+     public void UpdateImptAmountDB(String fieldName, String logcode, Float data) {
         try {
-            double oldAmount = dbh.getImptAmount(fieldName, logcode);
-            double newAmount = oldAmount + data;
+            float oldAmount = dbh.getImptAmount(fieldName, logcode);
+            float newAmount = oldAmount + data;
             dbh.setImptAmount(fieldName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
     }   
             
-    public void UpdatePtypeAmountDB(String Ftype, String logcode, double data) {
+    public void UpdatePtypeAmountDB(String Ftype, String logcode, Float data) {
         try {
             String ptypeName = dbh.getPtypeName(Ftype);
-            double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
-            double newAmount = oldAmount + data;
+            float oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            float newAmount = oldAmount + data;
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
     }
     
-    public void UpdateVOIDPtypeAmountDB(String Ftype, String logcode, double data) {
+    public void UpdateVOIDPtypeAmountDB(String Ftype, String logcode, Float data) {
         try {
             String ptypeName = Ftype;
-            double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
-            double newAmount = oldAmount + data;
+            float oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            float newAmount = oldAmount + data;
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
     }
 
-    public void SubtractPtypeAmountDB(String Ftype, String logcode, double data) {
+    public void SubtractPtypeAmountDB(String Ftype, String logcode, Float data) {
         try {
             String ptypeName = dbh.getPtypeName(Ftype);
-            double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
-            double newAmount = oldAmount - data;
+            float oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            float newAmount = oldAmount - data;
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -245,7 +245,7 @@ public class SaveCollData {
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
     }
 
-    public void UpdateReceiptAmount(double AmountRCPT) throws IOException {
+    public void UpdateReceiptAmount(float AmountRCPT) throws IOException {
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "scrand.jrt");
         if (foundfile == true) {
@@ -291,7 +291,7 @@ public class SaveCollData {
         return curr;
     }
 
-    public void UpdateGRANDTOTAL(double AmountRCPT) throws IOException {
+    public void UpdateGRANDTOTAL(float AmountRCPT) throws IOException {
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
         if (foundfile == true) {
@@ -344,14 +344,14 @@ public class SaveCollData {
                 oldcount = 1;
             }
             newReceipt = String.valueOf(oldcount);
-            int stoploop = 8 - newReceipt.length();
+            int stoploop = 12 - newReceipt.length();
             int i = 0;
             do {
                 newReceipt = "0" + newReceipt;
                 i++;
             } while (i != stoploop);
         } else {
-            newReceipt = "00000000";  //twelve digits
+            newReceipt = "000000000000";  //twelve digits
         }
         return newReceipt;
     }
@@ -433,11 +433,12 @@ public class SaveCollData {
     }
     
     
-    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale, String vatExempt, String discounts) {
+    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale) {
         try {
             String endingReceiptNos = getReceiptNos();
             String endingGrandTotal = getGRANDTOTAL();
             //String transaction = dbh.getTransactionNos();
+            dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, lastTransaction, logcode, totalAmount, vatSale, vat12Sale);
         } catch (IOException ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());

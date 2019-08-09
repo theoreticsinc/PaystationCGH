@@ -154,7 +154,7 @@ public class RawFileHandler {
             try {
                 inFile.close();
             } catch (Exception ex) {
-                //log.error(ex.getMessage());
+                log.error(ex.getMessage());
             }
         }
         return inputLine;
@@ -404,7 +404,7 @@ public class RawFileHandler {
             try {
                 inStream.close();
             } catch (Exception ex) {
-                //log.error(ex.getMessage());
+                log.error(ex.getMessage());
             }
         }
 

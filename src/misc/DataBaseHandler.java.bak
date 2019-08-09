@@ -244,6 +244,8 @@ public class DataBaseHandler extends Thread {
             //**********************
             uc1 = url.openConnection();
             uc2 = url.openConnection();
+            uc1.setConnectTimeout(1000);
+            uc2.setConnectTimeout(1000);
             String userpass = username + ":" + password;
             //String userpass = "root" + ":" + "Th30r3t1cs";
             String basicAuth = "Basic " + new String(new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
@@ -333,6 +335,9 @@ public class DataBaseHandler extends Thread {
             //**********************
             uc1 = url.openConnection();
             uc2 = url.openConnection();
+            uc1.setConnectTimeout(1000);
+            uc2.setConnectTimeout(1000);
+            
             String userpass = username + ":" + password;
             //String userpass = "root" + ":" + "Th30r3t1cs";
             String basicAuth = "Basic " + new String(new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
@@ -490,10 +495,11 @@ public class DataBaseHandler extends Thread {
 
                 //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
                 try {
-                    img = ImageIO.read(is);
-                    is.close();
-                } catch (Exception ex) {
-                    
+                	if (null != is) {
+                    	img = ImageIO.read(is);
+                    	is.close();
+                    }
+            	} catch (Exception ex) {
                 }
                 
                 //fos.close();
@@ -1890,41 +1896,6 @@ public class DataBaseHandler extends Thread {
             return null;
         }
     }
-    
-    public String[] findReceiptsByRNos(String plate2check) {
-        String data[] = null;
-        try {
-            connection = getConnection(false);
-            String SQL = "";
-            if (plate2check.compareToIgnoreCase("*") == 0) {
-                //SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
-                SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
-            } else {
-                SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
-            }
-            ResultSet rs = selectDatabyFields(SQL);
-
-            List<String> dataList2Show = new ArrayList<String>();
-            int rowcount = 0;
-            if (rs.last()) {
-                rowcount = rs.getRow();
-                rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
-            }
-            while (rs.next()) {
-                dataList2Show.add(rs.getString("TRno"));
-                //name = rs.getString("DateTimeOUT");
-            }
-
-            String[] d = new String[rowcount];
-            dataList2Show.toArray(d);
-            data = d;
-            connection.close();
-            return data;
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            return null;
-        }
-    }
 
     public String[] findReceiptsByCategory(int categ, String data2Check) {
         String data[] = null;
@@ -2039,8 +2010,6 @@ public class DataBaseHandler extends Thread {
         } else {
             SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.PlateNumber = '" + plate2check + "' AND x.DateTimeOUT = '" + date2check + "'";
         }
-            SQL = "SELECT * FROM unidb.incomereport WHERE TRno = '" + date2check + "'";
-        
         try {
             rs = selectDatabyFields(SQL);
             return rs;
@@ -2078,7 +2047,7 @@ public class DataBaseHandler extends Thread {
                 receiptNos = "000000000001";
             }
             String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, zCount, tellerCode, logINID) "
-                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', " + logID + ")";
+                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, 0, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', " + logID + ")";
             st.execute(SQL);
             st.close();
             connection.close();
@@ -2090,12 +2059,12 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale, String vatExempt, String discounts) {
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale) {
         try {
             connection = getConnection(false);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', datetimeOut = CURRENT_TIMESTAMP, todaysale =" + totalAmount + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
+            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', datetimeOut = CURRENT_TIMESTAMP, todaysale =" + totalAmount + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + " WHERE logINID = '" + loginID + "'");
 
             st.close();
             connection.close();
@@ -2335,7 +2304,7 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getConnection(false);
             st = (Statement) connection.createStatement();
-            st.execute("INSERT INTO colltrain.main (logINID, userCode, userName, SentinelID, loginStamp) VALUES ('" + logID + "', '" + userCode + "', '" + logname + "', '" + SentinelID + "', CURRENT_TIMESTAMP)");
+            st.execute("INSERT INTO colltrain.main (logINID, userCode, userName, SentinelID, loginStamp) VALUES ('+" + logID + "', '" + userCode + "', '" + logname + "', '" + SentinelID + "', CURRENT_TIMESTAMP)");
 
             st.close();
             connection.close();
@@ -2511,14 +2480,14 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public double getPtypeAmount(String parkerName, String logCode) throws SQLException {
-        double data = 0;
+    public Float getPtypeAmount(String parkerName, String logCode) throws SQLException {
+        float data = 0;
         try {
             connection = getConnection(false);
             ResultSet rs = selectDatabyFields("SELECT " + parkerName.toLowerCase().trim() + "Amount FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             while (rs.next()) {
-                double count = rs.getDouble(parkerName.toLowerCase().trim() + "Amount");
+                float count = rs.getFloat(parkerName.toLowerCase().trim() + "Amount");
                 data = count;
             }
             st.close();
@@ -2562,7 +2531,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean setImptAmount(String fieldName, String logCode, double newAmount) throws SQLException {
+    public boolean setImptAmount(String fieldName, String logCode, float newAmount) throws SQLException {
         try {
             connection = getConnection(false);
             st = (Statement) connection.createStatement();
@@ -2578,7 +2547,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean setPtypeAmount(String parkerName, String logCode, double newAmount) throws SQLException {
+    public boolean setPtypeAmount(String parkerName, String logCode, float newAmount) throws SQLException {
         try {
             connection = getConnection(false);
             st = (Statement) connection.createStatement();
@@ -2924,7 +2893,6 @@ public class DataBaseHandler extends Thread {
     public int getSlotAvail(String type) {
         int avail = 0;
         try {
-            /*
             connection = getConnection(false);
             ResultSet rs = selectDatabyFields("SELECT * FROM slotsavailable.main WHERE type = '" + type + "'");
 
@@ -2935,7 +2903,7 @@ public class DataBaseHandler extends Thread {
             }
             st.close();
             connection.close();
-*/
+
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }

@@ -142,7 +142,7 @@ public class DateConversionHandler {
             Date d = new Date(unixTime * 1000);
             d.setHours(d.getHours() + 12);
             d.setMinutes(d.getMinutes());
-//            log.info("unixDate:" + d.toString());
+            log.info("unixDate:" + d.toString());
         
         return d;
     }
@@ -163,7 +163,7 @@ public class DateConversionHandler {
             Date d = new Date(unixTime * 1000);
             d.setHours(d.getHours() - 8);
             d.setMinutes(d.getMinutes());
-//            log.info("unixDate:" + d.toString());
+            log.info("unixDate:" + d.toString());
         
         return d;
     }
@@ -173,7 +173,7 @@ public class DateConversionHandler {
             Date d = new Date(unixTime * 1000);
             d.setHours(d.getHours() - 8);
             d.setMinutes(d.getMinutes());
-//            log.info("unixDate:" + d.toString());
+            log.info("unixDate:" + d.toString());
         
         return d;
     }
@@ -183,7 +183,7 @@ public class DateConversionHandler {
             Date d = new Date(unixTime * 1000);
             d.setHours(d.getHours());
             d.setMinutes(d.getMinutes());
-//            log.info("unixDate:" + d.toString());
+            log.info("unixDate:" + d.toString());
         
         return d;
     }

@@ -79,7 +79,7 @@ public class ExitAPI implements Runnable {
                         stn.entryCamera.setIcon(new ImageIcon(img));
                         stn.entryCamera.setText("ENTRY");
                     }
-                    //stn.AmtTendered.requestFocus();
+                    stn.AmtTendered.requestFocus();
                     return true;
                 } else if (process == 1) {
                     stn.PreviousCard = "";

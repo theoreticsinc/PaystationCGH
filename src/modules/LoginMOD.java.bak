@@ -1494,10 +1494,6 @@ public class LoginMOD extends javax.swing.JPanel {
             int refundCnt = Integer.parseInt(RefundCount);
             String ExtendedCount = getImptCountFromDB("extendedCount");
             String OvernightCount = getImptCountFromDB("overnightCount");
-            String discountCount = getImptCountFromDB("discountCount");
-            String vatExemptCount = getImptCountFromDB("vatExemptCount");
-            String vat12Count = getImptCountFromDB("vat12Count");
-            String vatsaleCount = getImptCountFromDB("vatsaleCount");
 
             //String FixRetail = readComFiles("R1");
             //String SuccRetail = readComFiles("R2");
@@ -1512,11 +1508,6 @@ public class LoginMOD extends javax.swing.JPanel {
             float refundAmt = Float.parseFloat(RefundAmount);
             String OvernightAmount = getImptAmountFromDB("overnightAmount");
             String ExtendedAmount = getImptAmountFromDB("extendedAmount");
-            String discountAmount = getImptAmountFromDB("discountAmount");
-            
-            String vatExemptAmount = getImptAmountFromDB("vatExemptAmount");
-            String vat12Amount = getImptAmountFromDB("vat12Amount");
-            String vatsaleAmount = getImptAmountFromDB("vatsaleAmount");
 
             String ReceiptServed = getImptAmountFromDB("totalAmount");
             float receiptAmt = Float.parseFloat(ReceiptServed);
@@ -1537,16 +1528,15 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.closePrinter();
             eh.openPrinter();
             eh.initializePrinter();
-            //eh.Justify((byte) 1);
-            //eh.setRed();
+            eh.Justify((byte) 1);
+            eh.setRed();
 
-            //if (currentcoll == false) {
-            //    eh.printline("--- X READING ---");
-            //    eh.printline("--Log Out Collection--");
-            //} else {
+            if (currentcoll == false) {
+                eh.printline("--- X READING ---");
+                eh.printline("--Log Out Collection--");
+            } else {
                 //eh.printline("--Current Collection--");
-            //}
-            eh.printHEADER(Exitpoint);
+            }
             eh.startPrinter();
             eh.feedpaperup((byte) 1);
             eh.Justify((byte) 0);
@@ -1590,12 +1580,6 @@ public class LoginMOD extends javax.swing.JPanel {
             //eh.printline("Extended Amount    : " + ExtendedAmount);
             eh.printline("Overnight Count    :  " + OvernightCount);
             eh.printline("Overnight Amount   :  " + getAmountDue(Float.parseFloat(OvernightAmount)));
-            eh.printline("Discount Count     :  " + discountCount);
-            eh.printline("Discount Amount    :  " + getAmountDue(Float.parseFloat(discountAmount)));
-            
-            eh.printline("VAT Sale Amount    :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
-            eh.printline("VAT 12% Amount     :  " + getAmountDue(Float.parseFloat(vat12Amount)));
-            eh.printline("VAT Exempt Amount  :  " + getAmountDue(Float.parseFloat(vatExemptAmount)));
 
             eh.printline("");
 
@@ -1605,7 +1589,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.feedpaperup((byte) 3);
             //eh.fullcut();
             //eh.closePrinter();
-/*
+
             //ResultSet rs1 = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
             ResultSet rs = dbh.getTodaysZReadbyloginID(login_id);
             //dbh.getTodaysTotalCollectionBydateColl();
@@ -1634,7 +1618,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline("Ending OR No.     : " + Exitpoint + receiptNos);
             eh.printline("Beginning Balance : " + getAmountDue(Float.parseFloat(beginGrandTotal)));
             eh.printline("Ending Balance    : " + getAmountDue(Float.parseFloat(grandTotal)));
-*/
+
             eh.startPrinter();
             eh.feedpaperup((byte) 8);
             eh.fullcut();
@@ -2266,9 +2250,9 @@ public class LoginMOD extends javax.swing.JPanel {
         USBEpsonHandler eh = new USBEpsonHandler();
         eh.closePrinter();
         eh.openPrinter();
-        //eh.initializePrinter();
-        //eh.Justify((byte) 0);
-        //eh.setRed();
+        eh.initializePrinter();
+        eh.Justify((byte) 0);
+        eh.setRed();
         eh.printHEADER(EX_SentinelID);
         eh.closeReceiptFile(EX_SentinelID);
     }
