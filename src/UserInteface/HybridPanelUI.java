@@ -587,6 +587,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel = new javax.swing.JPanel();
         MasterCardLbl = new javax.swing.JLabel();
         MasterCardInput2 = new javax.swing.JLabel();
+        reprintButton = new javax.swing.JButton();
         BGPanel = new javax.swing.JPanel();
         NorthPanel = new javax.swing.JPanel();
         ProductName = new javax.swing.JLabel();
@@ -1547,22 +1548,25 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel.setOpaque(false);
         MasterCardPanel.setLayout(new java.awt.GridLayout(1, 5, 1, 0));
 
-        MasterCardLbl.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        MasterCardLbl.setForeground(new java.awt.Color(255, 255, 51));
         MasterCardLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MasterCardLbl.setText("MASTERCARD:"); // NOI18N
         MasterCardLbl.setFocusable(false);
+        MasterCardLbl.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        MasterCardLbl.setForeground(new java.awt.Color(255, 255, 51));
         MasterCardLbl.setRequestFocusEnabled(false);
         MasterCardLbl.setVerifyInputWhenFocusTarget(false);
         MasterCardPanel.add(MasterCardLbl);
 
+        MasterCardInput2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MasterCardInput2.setBackground(new java.awt.Color(255, 255, 204));
+        MasterCardInput2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         MasterCardInput2.setFont(new java.awt.Font("Arial Narrow", 1, 24)); // NOI18N
         MasterCardInput2.setForeground(new java.awt.Color(51, 25, 25));
-        MasterCardInput2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        MasterCardInput2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         MasterCardInput2.setOpaque(true);
         MasterCardPanel.add(MasterCardInput2);
+
+        reprintButton.setText("Reprint X Read");
+        MasterCardPanel.add(reprintButton);
 
         getContentPane().add(MasterCardPanel);
         MasterCardPanel.setBounds(480, 350, 310, 60);
@@ -7329,6 +7333,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JButton refundBtn;
     private javax.swing.JButton refundOut;
     private javax.swing.JButton reprintBtn;
+    private javax.swing.JButton reprintButton;
     private javax.swing.JLabel reprintLbl1;
     private javax.swing.JLabel reprintLbl2;
     private javax.swing.JButton reprintOut;
