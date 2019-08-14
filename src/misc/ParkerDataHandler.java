@@ -182,7 +182,7 @@ public class ParkerDataHandler {
             //URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //URL url = new URL("http://192.168.100.220/onvifsnapshot/media_service/snapshot?channel=1&subtype=1");
             //URL url = new URL("http://admin:user1234@192.168.100.220/cgi-bin/snapshot.cgi?loginuse=admin&loginpas=user1234");
-            
+
             //**********************
             uc1 = url.openConnection();
             uc2 = url.openConnection();
@@ -191,7 +191,7 @@ public class ParkerDataHandler {
             String basicAuth = "Basic " + new String(new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
             uc1.setRequestProperty("Authorization", basicAuth);
             uc2.setRequestProperty("Authorization", basicAuth);
- 
+
             uc1.setConnectTimeout(1000);
             uc2.setConnectTimeout(1000);
             try {
@@ -208,12 +208,12 @@ public class ParkerDataHandler {
             } catch (Exception ex) {
 //                ex.printStackTrace();
             }
-            
+
             conn = DB.getConnection(false);
             //WITH CAMERA TO DATABASE
             String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
                     + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
-                statement = conn.prepareStatement(SQL);
+            statement = conn.prepareStatement(SQL);
             if (null != is1 && null != is2) {
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is1, 1024 * 32); //Last Parameter has to be bigger than actual      
@@ -222,29 +222,28 @@ public class ParkerDataHandler {
             }
             if (null == is1 && null != is2) {
                 SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NULL, NULL, ?, ?, 'ENTRY', ?)";
+                        + "(NULL, ?, 'CAR' , ?, NULL, NULL, ?, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is2, 1024 * 32); //Last Parameter has to be bigger than actual 
                 statement.setString(5, DateTimeIN);
             }
             if (null != is1 && null == is2) {
                 SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, ?, 'ENTRY', ?)";
+                        + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
                 statement.setBinaryStream(4, is1, 1024 * 32); //Last Parameter has to be bigger than actual 
                 statement.setString(5, DateTimeIN);
-            }  
+            }
             if (null == is1 && null == is2) {
                 SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, NULL, 'ENTRY', ?)";
+                        + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, NULL, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
                 statement.setString(4, DateTimeIN);
             }
             statement.setString(1, Card);
             statement.setString(2, Plate);
             statement.setString(3, EntryID);
-            
-            
+
             statement.executeUpdate();
 
             //int status2 = stmt.executeUpdate("INSERT INTO unidb.timeindb (ID, CardCode, Vehicle, Plate, Timein, Operator, PC, PIC, PIC2, Lane) "
@@ -256,7 +255,7 @@ public class ParkerDataHandler {
             } else {
                 DB.Slotsminus1("car");
             }
-            
+
             return true;
         } catch (FileNotFoundException e) {
             //System.out.println("FileNotFoundException: - " + e);
@@ -293,11 +292,14 @@ public class ParkerDataHandler {
             } else {
                 DateTimeIN = "'" + DateTimeIN + "'";
             }
+            if (changeDue.compareToIgnoreCase("") == 0) {
+                changeDue = "0";
+            }
             //String SQL = "insert into carpark.exit_trans "
             //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             //INSERT INTO `incomereport` (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) VALUES (NULL, '2-38932', 'ABC23456', 'ABC123', 'cindy', 'POS-2', '2019-07-18 06:29:00', '2019-07-18 12:43:00', '2019-07-18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
             String SQL = "INSERT INTO unidb.incomereport (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) "
-                    + "VALUES (NULL, '" + ReceiptNo + "', '" + Card + "', '" + Plate + "', '" + CashierID + "', 'POS-2', " + DateTimeIN + ", CURRENT_TIMESTAMP, CURRENT_DATE, '" + AmountGross + "', '" + VAT12 + "', '" + VATSALE + "', '" + VATEXEMPT + "', 'REGULAR', '" + tenderFloat + "', '0', '" + AmountGross + "', '0', '0', 'Regular', '-', "+discount+", '-', '" + AmountPaid + "', '0', NULL, NULL, '0', NULL, '0', '0', NULL, '0', NULL, NULL, '0', NULL)";
+                    + "VALUES (NULL, '" + ReceiptNo + "', '" + Card + "', '" + Plate + "', '" + CashierID + "', 'POS-2', " + DateTimeIN + ", CURRENT_TIMESTAMP, CURRENT_DATE, '" + AmountGross + "', '" + VAT12 + "', '" + VATSALE + "', '" + VATEXEMPT + "', 'REGULAR', '" + tenderFloat + "', '" + changeDue + "', '" + AmountGross + "', '0', '0', 'Regular', '-', " + discount + ", '-', '" + AmountPaid + "', '0', NULL, NULL, '0', NULL, '0', '0', NULL, '0', NULL, NULL, '0', NULL)";
 
             //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {

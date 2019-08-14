@@ -2633,6 +2633,26 @@ public class DataBaseHandler extends Thread {
         return rs;
     }
     
+    public ResultSet getCGHIncomeSummaryCollbydateColl(String teller, String dateColl) {
+        ResultSet rs = null;
+        try {
+            connection = getConnection(false);
+            String sql = "SELECT * FROM unidb.incomereport WHERE Operator = '"+teller+"' AND BusnessDate = DATE('" + dateColl + "')";
+            rs = selectDatabyFields(sql);
+            // iterate through the java resultset
+            //while (rs.next()) {
+            //    String r = rs.getString("retailCount");
+            //data = r;
+            //}
+
+            //connection.close();
+            return rs;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return rs;
+    }
+    
     public ResultSet getZReadbylogINID(String logINID) {
         ResultSet rs = null;
         try {

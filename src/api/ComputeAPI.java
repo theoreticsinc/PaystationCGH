@@ -616,9 +616,10 @@ public class ComputeAPI {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
             discount = getDiscountFromVat(AmountGross, discountPercentage);
             vat12 = "0.00";
-            vatsale = "0.00";
-            vatexempt = getNonVat(AmountGross);
-            AmountDue = (Float.parseFloat(vatexempt) - Float.parseFloat(discount));
+            vatsale = getNonVat(AmountGross);
+            Double vatexemptF = AmountGross - (AmountGross / 1.12);
+            vatexempt = vatexemptF + "";
+            AmountDue = (Float.parseFloat(vatsale) - Float.parseFloat(discount));
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             updateOneTransFiles("discount", Float.parseFloat(discount));

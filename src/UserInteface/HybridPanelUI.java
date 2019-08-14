@@ -1566,6 +1566,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel.add(MasterCardInput2);
 
         reprintButton.setText("Reprint X Read");
+        reprintButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                reprintButtonMousePressed(evt);
+            }
+        });
         MasterCardPanel.add(reprintButton);
 
         getContentPane().add(MasterCardPanel);
@@ -3938,7 +3943,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SecretFuncPad.setOpaque(false);
         SecretFuncPad.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 6, 6));
 
-        XFunc9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprint.png"))); // NOI18N
+        XFunc9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprintX.png"))); // NOI18N
         XFunc9.setText("Reprint XRead");
         XFunc9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -3947,7 +3952,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         });
         SecretFuncPad.add(XFunc9);
 
-        XFunc10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprint.png"))); // NOI18N
+        XFunc10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprintZ.png"))); // NOI18N
         XFunc10.setText("Reprint Z");
         XFunc10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -5140,6 +5145,12 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         manualEntryPlate.requestFocus();
         manualEntryTime.setTimeToNow();
     }//GEN-LAST:event_XFunc12MouseClicked
+
+    private void reprintButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintButtonMousePressed
+        MasterCardPanel.setVisible(false);
+        MainFuncPad.setVisible(false);
+        SecretFuncPad.setVisible(true);
+    }//GEN-LAST:event_reprintButtonMousePressed
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();

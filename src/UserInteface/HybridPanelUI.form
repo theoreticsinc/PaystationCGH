@@ -1359,6 +1359,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Reprint X Read"/>
           </Properties>
+          <Events>
+            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="reprintButtonMousePressed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -5808,7 +5811,7 @@
                 <Component class="javax.swing.JLabel" name="XFunc9">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/hybrid/resources/reprint.png"/>
+                      <Image iconType="3" name="/hybrid/resources/reprintX.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Reprint XRead"/>
                   </Properties>
@@ -5819,7 +5822,7 @@
                 <Component class="javax.swing.JLabel" name="XFunc10">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/hybrid/resources/reprint.png"/>
+                      <Image iconType="3" name="/hybrid/resources/reprintZ.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Reprint Z"/>
                   </Properties>

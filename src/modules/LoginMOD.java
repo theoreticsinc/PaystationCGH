@@ -670,6 +670,7 @@ public class LoginMOD extends javax.swing.JPanel {
 //            }
 
             ResultSet rs = dbh.getSummaryCollbydateColl(dateColl);
+            
             int i = 1;
 //            Set<String> keys = parkerTypeCount.keySet();
             String CName = null;
@@ -682,10 +683,16 @@ public class LoginMOD extends javax.swing.JPanel {
                 if (null == CName) {
                     break;
                 }
+                ResultSet rs2 = dbh.getCGHIncomeSummaryCollbydateColl(CName, dateColl);
+                while (rs2.next()) {
+                    
+                }
 //                String RegularParkers = rs.getString("regularCount");//regularCount
                 printHEADER(rs.getString("SentinelID"));
                 String LoginDate = rs.getString("loginStamp");
                 String LogoutDate = rs.getString("logoutStamp");
+                Date BusinessDate = rs.getDate("logoutStamp");
+                
                 Date LogIN = null;
                 Date LogOUT = null;
                 try {
@@ -711,9 +718,13 @@ public class LoginMOD extends javax.swing.JPanel {
                     eh.Justify((byte) 1);
                     eh.setRed();
 
-                    eh.printline("  R E P R I N T");
-                    eh.printline("--- X READING ---");
-                    eh.printline("--Log Out Collection--");
+                    eh.printline("---------------------------------------");
+                    eh.printline("        CASHIER LOG-OUT REPORT     ");
+                    eh.printline("");
+    
+                    //eh.printline("  R E P R I N T");
+                    //eh.printline("--- X READING ---");
+                    //eh.printline("--Log Out Collection--");
 
                     eh.startPrinter();
                     eh.feedpaperup((byte) 1);
@@ -748,17 +759,38 @@ public class LoginMOD extends javax.swing.JPanel {
 //                    eh.printline(LogoutDate);
 //                    eh.printline(LogoutTime);
                     eh.feedpaperup((byte) 1);
-                    eh.printline("Terminal ID : " + Exitpoint);
-                    eh.printline("Cashier Code: " + CCode);
-                    eh.printline("Cashier Name: " + CName);
-                    eh.printline("Log In  Date: " + DateILogNow);
-                    eh.printline("Log In  Time: " + TimeILogNow);
-                    eh.printline("Loose Change: " + loosechange);
-                    eh.printline("Log out Date: " + DateOLogNow);
-                    eh.printline("Log out Time: " + TimeOLogNow);
+                    //eh.printline("Terminal ID : " + Exitpoint);
+                    eh.printline("Business Date : " + sdf.format(BusinessDate));
+                    eh.printline("Teller        : " + CName);
+                    eh.printline("Log In        : " + DateILogNow + " " + TimeILogNow);
+                    eh.printline("Log Out       : " + DateOLogNow + " " + TimeOLogNow);
+                    eh.printline("Reprint Count : 0");
+                    
+                    eh.printline("---------------------------------------");
+                    String rdataCount = rs.getString("regularCount");
+                    String rdataAmount = rs.getString("regularAmount");
+                    DecimalFormat df2 = new DecimalFormat("#.00");
+        
+                    eh.printline("Regular-Par   : " + rdataCount + " P " + df2.format(rdataAmount));
+                    eh.printline("Lost Card     : " + 0 + " P " + df2.format("0"));
+                    eh.printline("Overnight     : " + 0 + " P " + df2.format("0"));
+                    eh.printline("Discount      : " + rdataCount + " P " + df2.format(rdataAmount));
+                    
+                    eh.printline("---------------------------------------");
+                    //      COUNT
+//                    eh.printline("Cashier Name: " + CName);
+//                    eh.printline("Cashier Code: " + CCode);
+//                    eh.printline("Cashier Name: " + CName);
+//                    eh.printline("Log In  Date: " + DateILogNow);
+//                    eh.printline("Log In  Time: " + TimeILogNow);
+//                    eh.printline("Loose Change: " + loosechange);
+//                    eh.printline("Log out Date: " + DateOLogNow);
+//                    eh.printline("Log out Time: " + TimeOLogNow);
+                    /*
                     eh.printline("");
                     eh.printline("                    Count     Amount");
                     //delay(1000);
+                    
                     while (itr0.hasNext()) {
                         String entry = (String) itr0.next();
 //                        System.out.println(entry);
@@ -776,7 +808,7 @@ public class LoginMOD extends javax.swing.JPanel {
 //                        System.out.println(" Amount: " + parkerTypeAmount.get(entry));
                         String out = dbh.formatSpaces(entry + " Parkers") + ": " + dataCount + "    " + parkerTypeAmount.get(entry);
                         eh.printline(out);
-                    }
+                    } */
                     eh.startPrinter();
 
                     String CarServed = rs.getString("carServed");
@@ -788,33 +820,33 @@ public class LoginMOD extends javax.swing.JPanel {
                     //******************************
                     //eh.printline("Extended Count     : " + ExtendedCount);
                     //eh.printline("Extended Amount    : " + ExtendedAmount);
-                    eh.printline("Overnight Count    :  " + OvernightCount);
-                    eh.printline("Overnight Amount   :  " + getAmountDue(Float.parseFloat(OvernightAmount)));
-
-                    eh.printline("");
-
-                    eh.printline("Total Cars Served  :  " + CarServed);
-                    eh.printline("Total Collection   :  " + getAmountDue(Float.parseFloat(ReceiptServed)));
+//                    eh.printline("Overnight Count    :  " + OvernightCount);
+//                    eh.printline("Overnight Amount   :  " + getAmountDue(Float.parseFloat(OvernightAmount)));
+//
+//                    eh.printline("");
+//
+//                    eh.printline("Total Cars Served  :  " + CarServed);
+//                    eh.printline("Total Collection   :  " + getAmountDue(Float.parseFloat(ReceiptServed)));
 //                    eh.startPrinter();
 //                    eh.feedpaperup((byte) 3);
                     //**********************
                     //ResultSet rs1 = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
-                    ResultSet rs1 = dbh.getZReadbylogINID(logINID);
-                    //dbh.getTodaysTotalCollectionBydateColl();
-                    String beginOR = "";
-                    String beginTrans = "";
-                    String beginGrandTotal = "";
-                    String receiptNos = "";
-                    String grandTotal = "";
-                    int beginORnum = 0;
-                    while (rs1.next()) {
-                        beginOR = rs1.getString("beginOR");
-                        beginTrans = rs1.getString("beginTrans");
-                        receiptNos = rs1.getString("endOR");
-                        grandTotal = rs1.getString("newGrand");
-                        beginGrandTotal = rs1.getString("oldGrand");
-                        //***********PRINT*******
-                    }
+//                    ResultSet rs1 = dbh.getZReadbylogINID(logINID);
+//                    //dbh.getTodaysTotalCollectionBydateColl();
+//                    String beginOR = "";
+//                    String beginTrans = "";
+//                    String beginGrandTotal = "";
+//                    String receiptNos = "";
+//                    String grandTotal = "";
+//                    int beginORnum = 0;
+//                    while (rs1.next()) {
+//                        beginOR = rs1.getString("beginOR");
+//                        beginTrans = rs1.getString("beginTrans");
+//                        receiptNos = rs1.getString("endOR");
+//                        grandTotal = rs1.getString("newGrand");
+//                        beginGrandTotal = rs1.getString("oldGrand");
+//                        //***********PRINT*******
+//                    }
 //                    beginORnum = Integer.parseInt(beginOR);
 //                    beginOR = formatNos(String.valueOf(beginORnum));
 //                    Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
@@ -824,10 +856,10 @@ public class LoginMOD extends javax.swing.JPanel {
 //
 //                    String lastTransaction = dbh.getLastTransaction(Exitpoint);
 //
-                    eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);
-                    eh.printline("Ending OR No.     : " + Exitpoint + receiptNos);
-                    eh.printline("Beginning Balance : " + getAmountDue(Float.parseFloat(beginGrandTotal)));
-                    eh.printline("Ending Balance    : " + getAmountDue(Float.parseFloat(grandTotal)));
+//                    eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);
+//                    eh.printline("Ending OR No.     : " + Exitpoint + receiptNos);
+//                    eh.printline("Beginning Balance : " + getAmountDue(Float.parseFloat(beginGrandTotal)));
+//                    eh.printline("Ending Balance    : " + getAmountDue(Float.parseFloat(grandTotal)));
 
                     eh.startPrinter();
                     eh.feedpaperup((byte) 8);
