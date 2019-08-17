@@ -70,7 +70,9 @@ import modules.SystemStatus;
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
     public String entryIPCamera = "192.168.100.220";
+    //public String entryIPCamera = "192.168.1.64";
     public String exitIPCamera = "192.168.100.219";    
+    //public String exitIPCamera = "192.168.1.64";    
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -151,6 +153,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String payuponentry;
     public boolean slotscompute = false;
     public Date busyStamp = new Date();
+    public Date SavedStamp = new Date();
     private String[] computeEntry, computeExit;
     private short numofentrances, numofexits;
 
@@ -1928,7 +1931,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ChangeDisplay.setRequestFocusEnabled(false);
         ChangeDisplay.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(ChangeDisplay);
-        ChangeDisplay.setBounds(430, 110, 100, 60);
+        ChangeDisplay.setBounds(430, 110, 90, 60);
 
         newMidPanel.add(MainPanel);
 
@@ -4154,7 +4157,7 @@ private void FB4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4174,7 +4177,7 @@ private void FB3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4205,7 +4208,7 @@ private void FB6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4237,7 +4240,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4253,7 +4256,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4643,7 +4646,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4658,7 +4661,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4673,7 +4676,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4696,7 +4699,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, "", PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, "", PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -5041,7 +5044,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         int code = evt.getKeyCode();
         switch (code) {
             case 10:
+                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+                    PrevPlate = Plateinput.toString();
                     goEnter();
+                }
                 break;
             case 27:
                 break;
@@ -5109,19 +5115,27 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void exitCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseClicked
-        exitCamPressed = true;
+        if (exitCamPressed) {
+            exitCamPressed = false;
+        } else {
+            exitCamPressed = true;
+        }
     }//GEN-LAST:event_exitCameraMouseClicked
 
     private void exitCameraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseExited
-        exitCamPressed = false;
+        
     }//GEN-LAST:event_exitCameraMouseExited
 
     private void fullScreenCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fullScreenCameraMouseClicked
-        exitCamPressed = false;
+        if (exitCamPressed) {
+            exitCamPressed = false;
+        } else {
+            exitCamPressed = true;
+        }
     }//GEN-LAST:event_fullScreenCameraMouseClicked
 
     private void exitCameraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMousePressed
-        exitCamPressed = true;
+        //exitCamPressed = true;
     }//GEN-LAST:event_exitCameraMousePressed
 
     private void closeButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButton1MouseClicked
@@ -6421,7 +6435,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(false, "", PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), false, "", PrinterEnabled) == true) {
             firstscan = true;
         }
     }
@@ -6814,7 +6828,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                         } else {
                                             PrinterEnabled = false;
                                         }
-                                        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                                        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                                             firstscan = true;
                                         }
                                     }
@@ -7479,7 +7493,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 } else {
                     PrinterEnabled = false;
                 }
-                if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
 //                              this.ThrDigitalClock.sleep(3000);
 //                              this.ThrNetworkClock.sleep(5000);
 //                              this.ThrUpdaterClock.sleep(6000);
@@ -7574,16 +7588,17 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //eh.closePrinter();
 
 //            if (PrinterEnabled == true) {
-if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
-                    PrevPlate = Plateinput.toString();
+        //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+            //PrevPlate = Plateinput.toString();
             if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0) {
                 //********This prevents from scanning the card again.
-                //PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
+                PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
                 //This is for Paystation Only 
                 //if (this.Plateinput.length() >= 6) {
                 //    this.PlateInput2.setText(Plateinput.toString());
                 SysMessage8.setText("[Enter] Pressed:");
-                if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                firstscan = false;
+                if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                     this.repaint();
                     this.validate();
                     //                           if(ThrDisplayPole.isInterrupted()==false)
@@ -7637,7 +7652,7 @@ if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString
 //            }
             //eh.closePrinter();
             //ea.ValidPartII();
-}
+//}
             this.processLeftPanelMsgs(ea.SysMsg);
             this.repaint();
             this.requestFocus();

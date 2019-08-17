@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.util.Date;
 import javax.swing.ImageIcon;
 import misc.DataBaseHandler;
 import org.apache.log4j.LogManager;
@@ -35,7 +36,7 @@ public class ExitAPI implements Runnable {
         cmp = new ComputeAPI(stn);
     }
 
-    public boolean InitiateExit(boolean firstscan, String Override, boolean PrinterOverride) {
+    public boolean InitiateExit(Date NowStamp, boolean firstscan, String Override, boolean PrinterOverride) {
         if (stn.CardInput2.getText().length() >= 8) {
             //stn.AmtTendered.setText("");
             //stn.PreviousCard = stn.CardInput2.getText();//Disable Double scanning by Barcode Scanner
@@ -55,7 +56,7 @@ public class ExitAPI implements Runnable {
             }
              */
             try {
-                short process = cmp.isValidInputController(false, firstscan, Override, PrinterOverride);//computing stuff                
+                short process = cmp.isValidInputController(NowStamp, false, firstscan, Override, PrinterOverride);//computing stuff                
                 if (process == 0) {
                     stn.firstscan = true;
                     //stn.PreviousCard = stn.CardInput2.getText();

@@ -275,8 +275,8 @@ public class DataBaseHandler extends Thread {
             statement = connection.prepareStatement("insert into unidb.timeindb(CardCode, Plate, PIC2, PIC) " + "values(?,?,?,?)");
             statement.setString(1, "HFJ93230");
             statement.setString(2, "ABCDEFG");
-            statement.setBinaryStream(3, is1, 1024 * 32); //Last Parameter has to be bigger than actual 
-            statement.setBinaryStream(4, is2, 1024 * 32); //Last Parameter has to be bigger than actual 
+            statement.setBinaryStream(3, is1, 1024 * 96); //Last Parameter has to be bigger than actual 
+            statement.setBinaryStream(4, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
             statement.executeUpdate();
         } catch (FileNotFoundException e) {
 //            System.out.println("FileNotFoundException: - " + e);
@@ -2618,6 +2618,26 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getConnection(false);
             String sql = "SELECT * FROM colltrain.main WHERE logoutStamp = '" + dateColl + "'";
+            rs = selectDatabyFields(sql);
+            // iterate through the java resultset
+            //while (rs.next()) {
+            //    String r = rs.getString("retailCount");
+            //data = r;
+            //}
+
+            //connection.close();
+            return rs;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return rs;
+    }
+    
+    public ResultSet getSummaryCollbyLoginID(String LoginID) {
+        ResultSet rs = null;
+        try {
+            connection = getConnection(false);
+            String sql = "SELECT * FROM colltrain.main WHERE logINID = '" + LoginID + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
             //while (rs.next()) {
