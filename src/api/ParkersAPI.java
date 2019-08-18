@@ -1059,7 +1059,7 @@ public class ParkersAPI {
             eh.printline("Time-in       : " + TimeIN);
             eh.printline("Time-Out      : " + TimeOUT);
             eh.printline("Time          : " + HoursParked + " Hrs " + MinutesParked + " Mins");
-            eh.printline("---------------------------------");
+            eh.printline("---------------------------------------");
             eh.printline("COMPUTATION");
 
             if (nonvat.compareToIgnoreCase("enabled") == 0) {
@@ -1114,7 +1114,7 @@ public class ParkersAPI {
             //eh.startPrinter();
             //eh.Justify((byte) 0);
             if (settlement.compareToIgnoreCase("enabled") == 0) {
-                eh.printline("---------------------------------");
+                eh.printline("---------------------------------------");
                 eh.printline("***** CUSTOMER INFO *****");
                 if (null == settlementName || settlementName.compareToIgnoreCase("") == 0)
                     eh.printline("Customer Name : _____________________");
@@ -1312,7 +1312,7 @@ public class ParkersAPI {
                         rs.getString("TimeOut"),
                         0L,
                         0L,
-                        rs.getFloat("Caah"),
+                        rs.getFloat("Cash"),
                         rs.getFloat("Total"),
                         0,
                         0,
@@ -1356,7 +1356,7 @@ public class ParkersAPI {
                         rs.getString("DateTimeOUT"),
                         rs.getLong("HoursParked"),
                         rs.getLong("MinutesParked"),
-                        -rs.getFloat("Caah"),
+                        -rs.getFloat("Cash"),
                         -rs.getFloat("Amount"),
                         0,
                         0,
@@ -2020,7 +2020,7 @@ public class ParkersAPI {
         boolean status2;
         try {
             //boolean status2 = stmt.execute("DELETE FROM crdplt.main WHERE CONVERT(`main`.`"+Cardno+"` USING utf8) = '000010' LIMIT 1;");
-            conn = DB.getConnection(false);
+            conn = DB.getConnection(true);
             stmt = conn.createStatement();
             //status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");
 

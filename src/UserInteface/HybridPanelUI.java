@@ -69,10 +69,10 @@ import modules.SystemStatus;
 
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
-    public String entryIPCamera = "192.168.100.220";
-    //public String entryIPCamera = "192.168.1.64";
-    public String exitIPCamera = "192.168.100.219";    
-    //public String exitIPCamera = "192.168.1.64";    
+    //public String entryIPCamera = "192.168.100.220";
+    public String entryIPCamera = "192.168.1.64";
+    //public String exitIPCamera = "192.168.100.219";    
+    public String exitIPCamera = "192.168.1.64";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;

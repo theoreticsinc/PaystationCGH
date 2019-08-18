@@ -209,7 +209,7 @@ public class ParkerDataHandler {
 //                ex.printStackTrace();
             }
 
-            conn = DB.getConnection(false);
+            conn = DB.getConnection(true);
             //WITH CAMERA TO DATABASE
             String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
                     + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
@@ -295,23 +295,25 @@ public class ParkerDataHandler {
             if (changeDue.compareToIgnoreCase("") == 0) {
                 changeDue = "0";
             }
-            //String SQL = "insert into carpark.exit_trans "
-            //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
+            String SQLA = "insert into carpark.exit_trans "
+                    + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + AmountPaid + "', '" + AmountGross + "', '"+ discount + "', '" + VAT12 + "', '" + VATSALE + "', '" + VATEXEMPT + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             //INSERT INTO `incomereport` (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) VALUES (NULL, '2-38932', 'ABC23456', 'ABC123', 'cindy', 'POS-2', '2019-07-18 06:29:00', '2019-07-18 12:43:00', '2019-07-18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
             String SQL = "INSERT INTO unidb.incomereport (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) "
                     + "VALUES (NULL, '" + ReceiptNo + "', '" + Card + "', '" + Plate + "', '" + CashierID + "', 'POS-2', " + DateTimeIN + ", '" + DateTimeOUT + "', CURRENT_DATE, '" + AmountGross + "', '" + VAT12 + "', '" + VATSALE + "', '" + VATEXEMPT + "', 'REGULAR', '" + tenderFloat + "', '" + changeDue + "', '" + AmountGross + "', '0', '0', 'Regular', '-', " + discount + ", '-', '" + AmountPaid + "', '0', NULL, NULL, '0', NULL, '0', '0', NULL, '0', NULL, NULL, '0', NULL)";
 
             //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(false);
+                conn = DB.getConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
+                int status3 = stmt.executeUpdate(SQLA);
                 return true;
             } catch (Exception ex) {
                 conn = DB.getConnection(false);
                 stmt = conn.createStatement();
                 log.info("Print Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);
+                int status3 = stmt.executeUpdate(SQLA);
                 return true;
             }
 
@@ -349,7 +351,7 @@ public class ParkerDataHandler {
             String SQL = "insert into carpark.void_trans "
                     + "values(null, 1, LPAD('" + VOIDrefNumber + "',12,0), '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(false);
+                conn = DB.getConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
@@ -374,7 +376,7 @@ public class ParkerDataHandler {
             String SQL = "UPDATE carpark.exit_trans "
                     + "SET void = 1, voidRefID = LPAD('" + VOIDrefNumber + "',12,0) WHERE ReceiptNumber = '" + ReceiptNo + "';";
             try {
-                conn = DB.getConnection(false);
+                conn = DB.getConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
