@@ -33,6 +33,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 
@@ -69,8 +70,10 @@ import modules.SystemStatus;
 
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
-    public String entryIPCamera = "192.168.100.220";
-    public String exitIPCamera = "192.168.100.219";    
+    //public String entryIPCamera = "192.168.100.220";
+    public String entryIPCamera = "192.168.1.64";
+    //public String exitIPCamera = "192.168.100.219";    
+    public String exitIPCamera = "192.168.1.64";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -151,6 +154,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String payuponentry;
     public boolean slotscompute = false;
     public Date busyStamp = new Date();
+    public Date SavedStamp = new Date();
     private String[] computeEntry, computeExit;
     private short numofentrances, numofexits;
 
@@ -730,7 +734,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         reprintLbl1 = new javax.swing.JLabel();
         reprintPlate = new javax.swing.JTextField();
         reprintLbl2 = new javax.swing.JLabel();
-        reprintBtn = new javax.swing.JButton();
+        reprintBtnX = new javax.swing.JButton();
         reprintOut = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
@@ -1640,6 +1644,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel.add(MasterCardInput2);
 
         reprintButton.setText("Reprint X Read");
+        
         MasterCardPanel.add(reprintButton);
 
         getContentPane().add(MasterCardPanel);
@@ -1997,7 +2002,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ChangeDisplay.setRequestFocusEnabled(false);
         ChangeDisplay.setVerifyInputWhenFocusTarget(false);
         MainPanel.add(ChangeDisplay);
-        ChangeDisplay.setBounds(430, 110, 100, 60);
+        ChangeDisplay.setBounds(430, 110, 90, 60);
 
         newMidPanel.add(MainPanel);
 
@@ -2588,11 +2593,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ReprintPanel.setOpaque(false);
         ReprintPanel.setLayout(null);
 
-        reprintLbl1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        reprintLbl1.setForeground(new java.awt.Color(204, 204, 204));
         reprintLbl1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         reprintLbl1.setText("REPRINT");
         reprintLbl1.setFocusable(false);
+        reprintLbl1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        reprintLbl1.setForeground(new java.awt.Color(204, 204, 204));
         reprintLbl1.setRequestFocusEnabled(false);
         reprintLbl1.setVerifyInputWhenFocusTarget(false);
         ReprintPanel.add(reprintLbl1);
@@ -2606,33 +2611,23 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ReprintPanel.add(reprintPlate);
         reprintPlate.setBounds(129, 25, 190, 50);
 
-        reprintLbl2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        reprintLbl2.setForeground(new java.awt.Color(204, 204, 204));
         reprintLbl2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         reprintLbl2.setText("Plate No.:");
         reprintLbl2.setFocusable(false);
+        reprintLbl2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        reprintLbl2.setForeground(new java.awt.Color(204, 204, 204));
         reprintLbl2.setRequestFocusEnabled(false);
         reprintLbl2.setVerifyInputWhenFocusTarget(false);
         ReprintPanel.add(reprintLbl2);
         reprintLbl2.setBounds(0, 30, 120, 40);
 
-        reprintBtn.setText("Search");
-        reprintBtn.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        reprintBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                reprintBtnMousePressed(evt);
-            }
-        });
-        ReprintPanel.add(reprintBtn);
-        reprintBtn.setBounds(330, 23, 130, 50);
+        reprintBtnX.setText("Search");
+        reprintBtnX.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        ReprintPanel.add(reprintBtnX);
+        reprintBtnX.setBounds(330, 23, 130, 50);
 
         reprintOut.setText("Print");
         reprintOut.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        reprintOut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                reprintOutMousePressed(evt);
-            }
-        });
         ReprintPanel.add(reprintOut);
         reprintOut.setBounds(330, 83, 130, 80);
 
@@ -2849,12 +2844,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         KeyLabel16.setVerifyInputWhenFocusTarget(false);
         LettersPad.add(KeyLabel16);
 
-        KeyLabel1.setFont(KeyLabel1.getFont().deriveFont(KeyLabel1.getFont().getStyle() | java.awt.Font.BOLD, KeyLabel1.getFont().getSize()+14));
-        KeyLabel1.setForeground(new java.awt.Color(153, 153, 255));
         KeyLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         KeyLabel1.setLabelFor(A);
         KeyLabel1.setText("A"); // NOI18N
         KeyLabel1.setFocusable(false);
+        KeyLabel1.setFont(KeyLabel1.getFont().deriveFont(KeyLabel1.getFont().getStyle() | java.awt.Font.BOLD, KeyLabel1.getFont().getSize()+14));
+        KeyLabel1.setForeground(new java.awt.Color(153, 153, 255));
         KeyLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         KeyLabel1.setRequestFocusEnabled(false);
         KeyLabel1.setVerifyInputWhenFocusTarget(false);
@@ -4012,7 +4007,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SecretFuncPad.setOpaque(false);
         SecretFuncPad.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 6, 6));
 
-        XFunc9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprint.png"))); // NOI18N
+        XFunc9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprintX.png"))); // NOI18N
         XFunc9.setText("Reprint XRead");
         XFunc9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -4021,7 +4016,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         });
         SecretFuncPad.add(XFunc9);
 
-        XFunc10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprint.png"))); // NOI18N
+        XFunc10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/reprintZ.png"))); // NOI18N
         XFunc10.setText("Reprint Z");
         XFunc10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -4223,7 +4218,7 @@ private void FB4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4243,7 +4238,7 @@ private void FB3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4274,7 +4269,7 @@ private void FB6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_F
     } else {
         PrinterEnabled = false;
     }
-    if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
         firstscan = true;
 
     }
@@ -4306,7 +4301,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4322,7 +4317,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4712,7 +4707,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4743,7 +4738,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4766,7 +4761,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(firstscan, "", PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), firstscan, "", PrinterEnabled) == true) {
             firstscan = true;
 
         }
@@ -4861,6 +4856,27 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     }//GEN-LAST:event_printCollectionBtnMouseClicked
 
+    private void reprintBtnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintBtnMousePressed
+        ParkersAPI pa = new ParkersAPI();
+//        pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] dates = pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
+
+            public int getSize() {
+                return dates.length;
+            }
+
+            public String getElementAt(int i) {
+                return dates[i];
+            }
+        });
+    }//GEN-LAST:event_reprintBtnMousePressed
+
+    private void reprintOutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintOutMousePressed
+        ParkersAPI pa = new ParkersAPI();
+        pa.reprintOut(firstRun, reprintPlate.getText().toUpperCase(), jList1.getSelectedValue());
+    }//GEN-LAST:event_reprintOutMousePressed
+
     private void LoginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButtonMouseClicked
         StartLogInX();
     }//GEN-LAST:event_LoginButtonMouseClicked
@@ -4882,28 +4898,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
 
     }//GEN-LAST:event_XFunc8MousePressed
-
-    private void reprintBtnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintBtnMousePressed
-        ParkersAPI pa = new ParkersAPI();
-//        pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] dates = pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
-            //String[] dates = pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
-
-            public int getSize() {
-                return dates.length;
-            }
-
-            public String getElementAt(int i) {
-                return dates[i];
-            }
-        });
-    }//GEN-LAST:event_reprintBtnMousePressed
-
-    private void reprintOutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintOutMousePressed
-        ParkersAPI pa = new ParkersAPI();
-        pa.reprintOut(firstRun, reprintPlate.getText().toUpperCase(), jList1.getSelectedValue());
-    }//GEN-LAST:event_reprintOutMousePressed
 
     private void LoginButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButton1MouseClicked
         if (this.isLogoutValidfromDB() == true) {
@@ -5112,7 +5106,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         int code = evt.getKeyCode();
         switch (code) {
             case 10:
+                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+                    PrevPlate = Plateinput.toString();
                     goEnter();
+                }
                 break;
             case 27:
                 break;
@@ -5180,19 +5177,27 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void exitCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseClicked
-        exitCamPressed = true;
+        if (exitCamPressed) {
+            exitCamPressed = false;
+        } else {
+            exitCamPressed = true;
+        }
     }//GEN-LAST:event_exitCameraMouseClicked
 
     private void exitCameraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseExited
-        exitCamPressed = false;
+        
     }//GEN-LAST:event_exitCameraMouseExited
 
     private void fullScreenCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fullScreenCameraMouseClicked
-        exitCamPressed = false;
+        if (exitCamPressed) {
+            exitCamPressed = false;
+        } else {
+            exitCamPressed = true;
+        }
     }//GEN-LAST:event_fullScreenCameraMouseClicked
 
     private void exitCameraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMousePressed
-        exitCamPressed = true;
+        //exitCamPressed = true;
     }//GEN-LAST:event_exitCameraMousePressed
 
     private void closeButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButton1MouseClicked
@@ -5224,7 +5229,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void Create1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Create1MouseClicked
         CardInput2.setText("012345678");
         ExitAPI ea = new ExitAPI(this);
-        if (ea.InitiateExit(true, "R", true) == true) {
+        Date now = new Date();
+        if (ea.InitiateExit(now, true, "R", true) == true) {
             firstscan = true;
         }
         ea.ValidPartII();
@@ -6500,7 +6506,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else {
             PrinterEnabled = false;
         }
-        if (ea.InitiateExit(false, "", PrinterEnabled) == true) {
+        if (ea.InitiateExit(new Date(), false, "", PrinterEnabled) == true) {
             firstscan = true;
         }
     }
@@ -6893,7 +6899,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                         } else {
                                             PrinterEnabled = false;
                                         }
-                                        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                                        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                                             firstscan = true;
                                         }
                                     }
@@ -7432,7 +7438,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel printZReadingBtn;
     private javax.swing.JButton refundBtn;
     private javax.swing.JButton refundOut;
-    private javax.swing.JButton reprintBtn;
+    private javax.swing.JButton reprintBtnX;
     private javax.swing.JButton reprintButton;
     private javax.swing.JLabel reprintLbl1;
     private javax.swing.JLabel reprintLbl2;
@@ -7568,7 +7574,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 } else {
                     PrinterEnabled = false;
                 }
-                if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
 //                              this.ThrDigitalClock.sleep(3000);
 //                              this.ThrNetworkClock.sleep(5000);
 //                              this.ThrUpdaterClock.sleep(6000);
@@ -7663,16 +7669,17 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //eh.closePrinter();
 
 //            if (PrinterEnabled == true) {
-if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
-                    PrevPlate = Plateinput.toString();
+        //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+            //PrevPlate = Plateinput.toString();
             if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0) {
                 //********This prevents from scanning the card again.
-                //PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
+                PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
                 //This is for Paystation Only 
                 //if (this.Plateinput.length() >= 6) {
                 //    this.PlateInput2.setText(Plateinput.toString());
                 SysMessage8.setText("[Enter] Pressed:");
-                if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+                firstscan = false;
+                if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                     this.repaint();
                     this.validate();
                     //                           if(ThrDisplayPole.isInterrupted()==false)
@@ -7726,7 +7733,7 @@ if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString
 //            }
             //eh.closePrinter();
             //ea.ValidPartII();
-}
+//}
             this.processLeftPanelMsgs(ea.SysMsg);
             this.repaint();
             this.requestFocus();

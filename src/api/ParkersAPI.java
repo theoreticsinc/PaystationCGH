@@ -978,7 +978,7 @@ public class ParkersAPI {
 
     public void printUSBReceipt(boolean firstRun, boolean isReprint, String SentinenlID, String Entrypoint,
             String Plateno, String Cardno, String ParkerType, String TimeIN, String TimeOUT, long HoursParked, long MinutesParked,
-            double AmountDue, double AmountGross, String vat12, String vatsale, String vatexempt, String RNos, String CashierID, String CashierName, String settlementRef,
+            double AmountDue, double AmountGross, double vat12, double vatsale, double vatexempt, String RNos, String CashierID, String CashierName, String settlementRef,
             String settlementName,String settlementAddr,String settlementTIN,String settlementBusStyle,
             String duplicateReceiptHeader, boolean isDiscounted, float discountPercentage, double tenderFloat, String changeDue, String discountFloat,
             boolean printerCutter) {
@@ -1059,7 +1059,7 @@ public class ParkersAPI {
             eh.printline("Time-in       : " + TimeIN);
             eh.printline("Time-Out      : " + TimeOUT);
             eh.printline("Time          : " + HoursParked + " Hrs " + MinutesParked + " Mins");
-            eh.printline("---------------------------------");
+            eh.printline("---------------------------------------");
             eh.printline("COMPUTATION");
 
             if (nonvat.compareToIgnoreCase("enabled") == 0) {
@@ -1099,9 +1099,9 @@ public class ParkersAPI {
                     eh.printline("Total Payment   : P " + displayAmount2Decimals(AmountGross));
                     eh.printline("Amount Tendered : P " + displayAmount2Decimals(tenderFloat));
                     eh.printline("Change          : P " + changeDue);
-                    eh.printline("VAT-SALE        : P " + displayAmount2Decimals(Float.parseFloat(vatsale)));
-                    eh.printline("VAT-12%         : P " + displayAmount2Decimals(Float.parseFloat(vat12)));
-                    eh.printline("VAT-EXEMP       : P " + displayAmount2Decimals(Float.parseFloat(vatexempt)));
+                    eh.printline("VAT-SALE        : P " + displayAmount2Decimals(vatsale));
+                    eh.printline("VAT-12%         : P " + displayAmount2Decimals(vat12));
+                    eh.printline("VAT-EXEMP       : P " + displayAmount2Decimals(vatexempt));
                     eh.printline("Discount        : P " + displayAmount2Decimals(Float.parseFloat(discountFloat)));
                     eh.printline("Amount Due      : P " + displayAmount2Decimals(AmountDue));
                     
@@ -1114,7 +1114,7 @@ public class ParkersAPI {
             //eh.startPrinter();
             //eh.Justify((byte) 0);
             if (settlement.compareToIgnoreCase("enabled") == 0) {
-                eh.printline("---------------------------------");
+                eh.printline("---------------------------------------");
                 eh.printline("***** CUSTOMER INFO *****");
                 if (null == settlementName || settlementName.compareToIgnoreCase("") == 0)
                     eh.printline("Customer Name : _____________________");
@@ -1312,11 +1312,11 @@ public class ParkersAPI {
                         rs.getString("TimeOut"),
                         0L,
                         0L,
-                        rs.getFloat("Caah"),
+                        rs.getFloat("Cash"),
                         rs.getFloat("Total"),
-                        "",
-                        "",
-                        "",
+                        0,
+                        0,
+                        0,
                         rs.getString("TRno"),
                         rs.getString("Operator"),
                         rs.getString("Operator"),
@@ -1356,11 +1356,11 @@ public class ParkersAPI {
                         rs.getString("DateTimeOUT"),
                         rs.getLong("HoursParked"),
                         rs.getLong("MinutesParked"),
-                        -rs.getFloat("Caah"),
+                        -rs.getFloat("Cash"),
                         -rs.getFloat("Amount"),
-                        "",
-                        "",
-                        "",
+                        0,
+                        0,
+                        0,
                         rs.getString("ReceiptNumber"),
                         rs.getString("CashierName"),
                         rs.getString("username"),
@@ -2020,7 +2020,7 @@ public class ParkersAPI {
         boolean status2;
         try {
             //boolean status2 = stmt.execute("DELETE FROM crdplt.main WHERE CONVERT(`main`.`"+Cardno+"` USING utf8) = '000010' LIMIT 1;");
-            conn = DB.getConnection(false);
+            conn = DB.getConnection(true);
             stmt = conn.createStatement();
             //status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");
 
