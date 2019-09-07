@@ -159,6 +159,10 @@ public class ComputeAPI {
             }
         } catch (Exception ex) {
             log.error(ex.getMessage());
+            if (stn.LostOverride) {
+                retval = 0;
+                sets = true;
+            }
             retval = 10;
         }
         //---start of DB checking
@@ -241,14 +245,23 @@ public class ComputeAPI {
                 Plateno = mifare.getPlateID();  //Always Blank
                 ParkerType = mifare.getTrID();
             } else {
-                // Get From Database
-                SP.startDataSplit();
-                Entrypoint = SP.getSysID();
-                Cardno = SP.getCardID();
-                Plateno = SP.getPlateID();
-                ParkerType = SP.getTRID();
-                isLost = SP.getIsLost();
-                AmountPaid = Float.parseFloat(SP.getAmountPaid());
+                if (stn.LostOverride) {
+                    Entrypoint = "EN01";
+                    Cardno = "12345678";
+                    Plateno = stn.LostCardEntryPlate.getText().trim().toUpperCase();
+                    ParkerType = "R";
+                    isLost = true;
+                    AmountPaid = 0;
+                } else {
+                    // Get From Database
+                    SP.startDataSplit();
+                    Entrypoint = SP.getSysID();
+                    Cardno = SP.getCardID();
+                    Plateno = SP.getPlateID();
+                    ParkerType = SP.getTRID();
+                    isLost = SP.getIsLost();
+                    AmountPaid = Float.parseFloat(SP.getAmountPaid());
+                }                
 
             }
             if (null == Plateno) {
@@ -280,10 +293,19 @@ public class ComputeAPI {
                 dateTimeINstamp = SP.getDateTimeINStamp();
                 dateTimePaidstamp = SP.getDateTimePaidStamp();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yy HH:mm");
                 Date dtStamp = null;
                 try {
-                    dtStamp = sdf.parse(datetimeIN);
+                    if (stn.LostOverride) {
+                        String dateManuallyCreated = stn.lostEntryDate.getText() + " " + stn.lostEntryTime.getTime();
+                        dtStamp = sdf2.parse(dateManuallyCreated);
+                        datetimeIN = sdf1.format(dtStamp);
+                        dateTimeINstamp = dch.convertEverArduinoDate2UnixTime(dtStamp) + "";
+                        sets = true;
+                    } else {                
+                        dtStamp = sdf1.parse(datetimeIN);
+                    }
                 } catch (Exception ex) {
                     log.error(ex.getMessage());
                 }
@@ -293,7 +315,7 @@ public class ComputeAPI {
                 if (firstscan == false) {
 
                     try {
-                        dtStamp = sdf.parse(datetimePaid);
+                        dtStamp = sdf1.parse(datetimePaid);
                     } catch (Exception ex) {
                         log.error(ex.getMessage());
                     }
@@ -440,7 +462,7 @@ public class ComputeAPI {
             }
             PrksMsg[3] = SP.checkPTypeFromDB(ParkerType);   //in case trtype was overriden
             //Write to MifareCard Here
-            if (mifare != null) {
+            if (mifare != null && stn.LostOverride == false) {
                 mifare.startWaiting4CardPresent();
                 //String entdata = mifare.readDecoded16BytesbyBlockNum((byte) 0x04);
                 //mifare.write16Chars2Block((byte) 0x04, "P1E1##" + datetimeIN);
@@ -627,7 +649,11 @@ public class ComputeAPI {
             updateOneTransFiles("vat12", Float.parseFloat(vat12));
             updateOneTransFiles("vatsale", Float.parseFloat(vatsale));   
         if (sets == true) {
-            ParkerType = stn.trtype;
+            //ParkerType = stn.trtype;
+            ParkerType = pa.checkPTypeFromDB(stn.trtype).toUpperCase();
+            if (stn.LostOverride) {
+                ParkerType = "LOST";
+            }
             DateConversionHandler dch = new DateConversionHandler();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd HH:mm:ss.S");
             String d = datetimeIN;

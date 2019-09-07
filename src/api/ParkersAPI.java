@@ -1099,8 +1099,8 @@ public class ParkersAPI {
                     eh.printline("Total Payment   : P " + displayAmount2Decimals(AmountGross));
                     eh.printline("Amount Tendered : P " + displayAmount2Decimals(tenderFloat));
                     eh.printline("Change          : P " + changeDue);
-                    eh.printline("VAT-SALE        : P " + vatsale);
-                    eh.printline("VAT-12%         : P " + vat12);
+                    eh.printline("VAT-SALE        : P " + displayAmount2Decimals(Float.parseFloat(vatsale)));
+                    eh.printline("VAT-12%         : P " + displayAmount2Decimals(Float.parseFloat(vat12)));
                     eh.printline("VAT-EXEMP       : P " + displayAmount2Decimals(Float.parseFloat(vatexempt)));
                     eh.printline("Discount        : P " + displayAmount2Decimals(Float.parseFloat(discountFloat)));
                     eh.printline("Amount Due      : P " + displayAmount2Decimals(AmountDue));

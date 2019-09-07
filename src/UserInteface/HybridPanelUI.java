@@ -242,6 +242,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             SecretFuncPad.setVisible(false);
             SearchPanel.setVisible(false);
             ManualEntryPanel.setVisible(false);
+            LostCardEntryPanel.setVisible(false);
 
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             log.info("User Interface Loading... Done");
@@ -547,6 +548,16 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         XFunc2 = new javax.swing.JLabel();
         spacer = new javax.swing.JLabel();
         fullScreenCamera = new javax.swing.JLabel();
+        LostCardEntryPanel = new javax.swing.JPanel();
+        closeButton2 = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        lostEntryTime = new com.github.lgooddatepicker.components.TimePicker();
+        lostEntryDate = new datechooser.beans.DateChooserCombo();
+        Create1 = new javax.swing.JButton();
+        LostCardEntryPlate = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
         ManualEntryPanel = new javax.swing.JPanel();
         closeButton1 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
@@ -1309,6 +1320,69 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         });
         getContentPane().add(fullScreenCamera);
         fullScreenCamera.setBounds(0, 0, 71, 30);
+
+        LostCardEntryPanel.setBackground(new java.awt.Color(255, 255, 255));
+        LostCardEntryPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        LostCardEntryPanel.setLayout(null);
+
+        closeButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/close window.png"))); // NOI18N
+        closeButton2.setOpaque(false);
+        closeButton2.setPreferredSize(new java.awt.Dimension(50, 50));
+        closeButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeButton2MouseClicked(evt);
+            }
+        });
+        LostCardEntryPanel.add(closeButton2);
+        closeButton2.setBounds(0, 0, 60, 50);
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(204, 0, 0));
+        jLabel9.setText("Plate Number");
+        LostCardEntryPanel.add(jLabel9);
+        jLabel9.setBounds(80, 0, 130, 20);
+
+        lostEntryTime.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        LostCardEntryPanel.add(lostEntryTime);
+        lostEntryTime.setBounds(220, 80, 130, 30);
+
+        lostEntryDate.setFieldFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+        lostEntryDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
+        LostCardEntryPanel.add(lostEntryDate);
+        lostEntryDate.setBounds(80, 80, 130, 30);
+
+        Create1.setText("Submit");
+        Create1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Create1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Create1MouseClicked(evt);
+            }
+        });
+        LostCardEntryPanel.add(Create1);
+        Create1.setBounds(360, 70, 120, 50);
+        LostCardEntryPanel.add(LostCardEntryPlate);
+        LostCardEntryPlate.setBounds(80, 20, 130, 30);
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Entry Time");
+        LostCardEntryPanel.add(jLabel10);
+        jLabel10.setBounds(220, 60, 140, 20);
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("Entry Date");
+        LostCardEntryPanel.add(jLabel11);
+        jLabel11.setBounds(80, 60, 140, 20);
+
+        jLabel12.setBackground(new java.awt.Color(204, 0, 0));
+        jLabel12.setForeground(new java.awt.Color(255, 51, 51));
+        jLabel12.setOpaque(true);
+        LostCardEntryPanel.add(jLabel12);
+        jLabel12.setBounds(10, 60, 490, 70);
+
+        getContentPane().add(LostCardEntryPanel);
+        LostCardEntryPanel.setBounds(470, 310, 510, 140);
 
         ManualEntryPanel.setBackground(new java.awt.Color(255, 255, 255));
         ManualEntryPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -4646,17 +4720,18 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     private void XFunc1Pressed() {
         this.resetAllOverrides();
-        LostFunction();
-        ExitAPI ea = new ExitAPI(this);
-        if (printer.compareToIgnoreCase("enabled") == 0) {
-            PrinterEnabled = true;
-        } else {
-            PrinterEnabled = false;
-        }
-        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
-            firstscan = true;
-
-        }
+//        LostFunction();
+//        ExitAPI ea = new ExitAPI(this);
+//        if (printer.compareToIgnoreCase("enabled") == 0) {
+//            PrinterEnabled = true;
+//        } else {
+//            PrinterEnabled = false;
+//        }
+            LostOverride = true;
+          LostCardEntryPanel.setVisible(true);
+//        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
+//            firstscan = true;
+//        }
     }
 
     private void XFunc2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc2MousePressed
@@ -4710,7 +4785,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_PWDoscaIDKeyPressed
 
     private void goLostBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goLostBtnMouseClicked
-        DateConversionHandler dch = new DateConversionHandler();
+        /*DateConversionHandler dch = new DateConversionHandler();
         DataBaseHandler dbh = new DataBaseHandler();
 
         lostTimeIN.setFont(new java.awt.Font("Tahoma", 1, 22));
@@ -4749,7 +4824,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         }
         lostEnabled = false;
         LostPanel.setVisible(lostEnabled);
-
+        */
+        LostCardEntryPanel.setVisible(true);
         this.repaint();
         this.requestFocus();
         this.validate();
@@ -5120,7 +5196,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_exitCameraMousePressed
 
     private void closeButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButton1MouseClicked
-        // TODO add your handling code here:
+        ManualEntryPanel.setVisible(false);
     }//GEN-LAST:event_closeButton1MouseClicked
 
     private void CreateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CreateMouseClicked
@@ -5140,6 +5216,20 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         manualEntryPlate.requestFocus();
         manualEntryTime.setTimeToNow();
     }//GEN-LAST:event_XFunc12MouseClicked
+
+    private void closeButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButton2MouseClicked
+        LostCardEntryPanel.setVisible(false);
+    }//GEN-LAST:event_closeButton2MouseClicked
+
+    private void Create1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Create1MouseClicked
+        CardInput2.setText("012345678");
+        ExitAPI ea = new ExitAPI(this);
+        if (ea.InitiateExit(true, "R", true) == true) {
+            firstscan = true;
+        }
+        ea.ValidPartII();
+        LostCardEntryPanel.setVisible(false);
+    }//GEN-LAST:event_Create1MouseClicked
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
@@ -7021,6 +7111,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel CouponNolbl;
     private javax.swing.JPanel CouponPanel;
     private javax.swing.JButton Create;
+    private javax.swing.JButton Create1;
     private javax.swing.JLabel D;
     private javax.swing.JLabel DASH;
     private javax.swing.JLabel DateLabel;
@@ -7093,6 +7184,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel LogoutLbl1;
     private javax.swing.JLabel LogoutLbl2;
     private javax.swing.JPanel LogoutPanelX;
+    private javax.swing.JPanel LostCardEntryPanel;
+    public javax.swing.JTextField LostCardEntryPlate;
     private javax.swing.JPanel LostPanel;
     public javax.swing.JPanel LowerLeftPanel;
     public javax.swing.JPanel LowerLeftPanelX;
@@ -7264,6 +7357,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel cashColLbl;
     private javax.swing.JButton closeButton;
     private javax.swing.JButton closeButton1;
+    private javax.swing.JButton closeButton2;
     private javax.swing.JLabel datedisplay;
     private javax.swing.JLabel daydisplay;
     public javax.swing.JLabel entryCamera;
@@ -7284,6 +7378,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel inputPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -7291,6 +7388,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -7299,6 +7397,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel keypadPanel;
     private javax.swing.JLabel logcancelbutton;
     private datechooser.beans.DateChooserCombo lostDateIN;
+    public datechooser.beans.DateChooserCombo lostEntryDate;
+    public com.github.lgooddatepicker.components.TimePicker lostEntryTime;
     private javax.swing.JLabel lostLbl;
     private javax.swing.JLabel lostLbl1;
     private javax.swing.JLabel lostLbl2;

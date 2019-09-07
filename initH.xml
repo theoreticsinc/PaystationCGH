@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialization>
+    <HNterminal_id type="HybridN">EN01</HNterminal_id>
+    <HXterminal_id type="HybridX">EX01</HXterminal_id>
+    <area_id>P1</area_id>
+    <slots_id>AVSLOTS01</slots_id>
+    <slots_port>COM7</slots_port>
+    <login_id>1176600010001151412</login_id>
+    <server_ip>127.0.0.1</server_ip>
+    <roundoff2>true</roundoff2>
+    <journal>enabled</journal>
+    <joggers>enabled</joggers>
+    <datamode>db</datamode><!--cards or db -->
+    <exitType>unmanned</exitType><!--manned or unmanned -->
+    <printerType>usb</printerType><!--usb or serial -->
+    <printerName>EPSON TM-U220 ReceiptE4</printerName><!--EPSON TM-U220 ReceiptE4 or EPSON TM-T82 Receipt -->1
+    <printer port="COM12">enabled</printer>
+    <printerCutter>true</printerCutter><!--usb or serial -->
+    <settlement>enabled</settlement>
+<sentinel>
+    <official>enabled</official>
+    <header>enabled</header>
+    <BIRheader>enabled</BIRheader>
+    <footer>enabled</footer>
+    <BIRfooter>enabled</BIRfooter>
+    <payuponentry>disabled</payuponentry>
+    <headerline1 print="enabled">CHINESE GENERAL HOSPITAL AND MEDICAL CTR</headerline1>
+    <headerline2 print="enabled">286 BLUMENTRITT ST. STA. CRUZ MANILA</headerline2>
+    <headerline3 print="enabled">VAT REG TIN: 000-328-853-00000</headerline3>
+    <headerline4 print="enabled">Multi Speciality Clinic</headerline4>
+    <headerline5 print="enabled">S/N : EXT01-XXXXXXXX</headerline5>
+    <headerline6 print="disabled">MIN# : 780123559</headerline6>
+    <headerline7 print="disabled"></headerline7>
+    <headerline8 print="disabled"></headerline8>
+    <headerline9 print="disabled"></headerline9>
+    <headerline10 print="disabled"></headerline10>
+    <receiptno>000123</receiptno>
+    <footerline1 print="enabled">       THANK YOU. FOR PARKING</footerline1>
+    <footerline2 print="enabled">           DRIVE SAFELY !!!</footerline2>
+    <footerline3 print="disabled"></footerline3>
+    <footerline4 print="disabled"></footerline4>
+    <footerline5 print="disabled"></footerline5>
+    <footerline6 print="disabled"></footerline6>
+    <footerline7 print="disabled"></footerline7>
+    <footerline8 print="disabled"></footerline8>
+    <footerline9 print="disabled"></footerline9>
+    <footerline10 print="disabled"></footerline10>
+    <message1>Thank you for coming</message1>
+    <message2>please come again</message2>
+    <feederlines>8</feederlines>
+    <serialno>EXT01-XXXXXXXXX</serialno>
+    <resetCount>0</resetCount>
+</sentinel>
+<slots>
+	<slotscompute>active</slotscompute>
+	<slotsmode>SERVER</slotsmode>
+	<entry n1="EN02SERV.SER">1</entry>
+	<exit x1="EX02SERV.SER" x2="EX03SERV.SER" x3="EX04SERV.SER">3</exit>
+	<reset time="7:30:00 AM">enabled</reset>
+</slots>
+<validation>
+    <key>V 5.1.1.1a</key>              
+</validation>
+</initialization>
