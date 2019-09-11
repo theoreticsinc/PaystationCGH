@@ -70,10 +70,10 @@ import modules.SystemStatus;
 
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
-    //public String entryIPCamera = "192.168.100.220";
-    public String entryIPCamera = "192.168.1.64";
-    //public String exitIPCamera = "192.168.100.219";    
-    public String exitIPCamera = "192.168.1.64";
+    public String entryIPCamera = "192.168.100.220";
+    //public String entryIPCamera = "192.168.1.64";
+    public String exitIPCamera = "192.168.100.219";    
+    //public String exitIPCamera = "192.168.1.64";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -602,7 +602,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel = new javax.swing.JPanel();
         MasterCardLbl = new javax.swing.JLabel();
         MasterCardInput2 = new javax.swing.JLabel();
-        reprintButton = new javax.swing.JButton();
         BGPanel = new javax.swing.JPanel();
         NorthPanel = new javax.swing.JPanel();
         ProductName = new javax.swing.JLabel();
@@ -1643,10 +1642,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardInput2.setOpaque(true);
         MasterCardPanel.add(MasterCardInput2);
 
-        reprintButton.setText("Reprint X Read");
-        
-        MasterCardPanel.add(reprintButton);
-
         getContentPane().add(MasterCardPanel);
         MasterCardPanel.setBounds(480, 350, 310, 60);
 
@@ -1656,10 +1651,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         NorthPanel.setOpaque(false);
         NorthPanel.setLayout(new java.awt.BorderLayout());
 
-        ProductName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/small SilverLogo.png"))); // NOI18N
-        ProductName.setText("PARKING AREA SENTINEL SYSTEM");
         ProductName.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
         ProductName.setForeground(new java.awt.Color(255, 255, 255));
+        ProductName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/small SilverLogo.png"))); // NOI18N
+        ProductName.setText("PARKING AREA SENTINEL SYSTEM");
         NorthPanel.add(ProductName, java.awt.BorderLayout.WEST);
         ProductName.getAccessibleContext().setAccessibleName("PARKING AREA SENTINEL SYSTEM\nTheoretics Inc");
 
@@ -1704,10 +1699,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ServerStatus.setText("checking..."); // NOI18N
         Status.add(ServerStatus);
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("THEORETICS INC.");
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("THEORETICS INC.");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         Status.add(jLabel1);
@@ -2392,12 +2387,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.setOpaque(false);
         SettPanel.setLayout(null);
 
-        PWDoscaID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         PWDoscaID.setBackground(new java.awt.Color(51, 51, 255));
-        PWDoscaID.setCaretColor(new java.awt.Color(255, 255, 0));
-        PWDoscaID.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         PWDoscaID.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         PWDoscaID.setForeground(new java.awt.Color(255, 255, 51));
+        PWDoscaID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        PWDoscaID.setCaretColor(new java.awt.Color(255, 255, 0));
+        PWDoscaID.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         PWDoscaID.setNextFocusableComponent(oscaName);
         PWDoscaID.setOpaque(false);
         PWDoscaID.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2408,12 +2403,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(PWDoscaID);
         PWDoscaID.setBounds(200, 0, 170, 40);
 
-        oscaName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         oscaName.setBackground(new java.awt.Color(51, 51, 255));
-        oscaName.setCaretColor(new java.awt.Color(255, 255, 0));
-        oscaName.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaName.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         oscaName.setForeground(new java.awt.Color(255, 255, 51));
+        oscaName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaName.setCaretColor(new java.awt.Color(255, 255, 0));
+        oscaName.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaName.setNextFocusableComponent(oscaAddr);
         oscaName.setOpaque(false);
         oscaName.addActionListener(new java.awt.event.ActionListener() {
@@ -2429,12 +2424,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaName);
         oscaName.setBounds(80, 60, 170, 40);
 
-        oscaAddr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         oscaAddr.setBackground(new java.awt.Color(51, 51, 255));
-        oscaAddr.setCaretColor(new java.awt.Color(255, 255, 0));
-        oscaAddr.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaAddr.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         oscaAddr.setForeground(new java.awt.Color(255, 255, 51));
+        oscaAddr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaAddr.setCaretColor(new java.awt.Color(255, 255, 0));
+        oscaAddr.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaAddr.setNextFocusableComponent(oscaTIN);
         oscaAddr.setOpaque(false);
         oscaAddr.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2445,12 +2440,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaAddr);
         oscaAddr.setBounds(80, 120, 170, 40);
 
-        oscaTIN.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         oscaTIN.setBackground(new java.awt.Color(51, 51, 255));
-        oscaTIN.setCaretColor(new java.awt.Color(255, 255, 0));
-        oscaTIN.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaTIN.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         oscaTIN.setForeground(new java.awt.Color(255, 255, 51));
+        oscaTIN.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaTIN.setCaretColor(new java.awt.Color(255, 255, 0));
+        oscaTIN.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaTIN.setNextFocusableComponent(oscaBusStyle);
         oscaTIN.setOpaque(false);
         oscaTIN.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2461,12 +2456,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.add(oscaTIN);
         oscaTIN.setBounds(310, 60, 170, 40);
 
-        oscaBusStyle.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         oscaBusStyle.setBackground(new java.awt.Color(51, 51, 255));
-        oscaBusStyle.setCaretColor(new java.awt.Color(255, 255, 0));
-        oscaBusStyle.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaBusStyle.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         oscaBusStyle.setForeground(new java.awt.Color(255, 255, 51));
+        oscaBusStyle.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        oscaBusStyle.setCaretColor(new java.awt.Color(255, 255, 0));
+        oscaBusStyle.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaBusStyle.setNextFocusableComponent(PWDoscaID);
         oscaBusStyle.setOpaque(false);
         oscaBusStyle.addActionListener(new java.awt.event.ActionListener() {
@@ -4875,6 +4870,18 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void reprintOutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintOutMousePressed
         ParkersAPI pa = new ParkersAPI();
         pa.reprintOut(firstRun, reprintPlate.getText().toUpperCase(), jList1.getSelectedValue());
+        String[] blank = {""};
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] dates = pa.retrieveReceipt(reprintPlate.getText().toUpperCase());
+
+            public int getSize() {
+                return dates.length;
+            }
+
+            public String getElementAt(int i) {
+                return dates[i];
+            }
+        });
     }//GEN-LAST:event_reprintOutMousePressed
 
     private void LoginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButtonMouseClicked
@@ -5227,7 +5234,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_closeButton2MouseClicked
 
     private void Create1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Create1MouseClicked
-        CardInput2.setText("012345678");
+//        CardInput2.setText("012345678");
         ExitAPI ea = new ExitAPI(this);
         Date now = new Date();
         if (ea.InitiateExit(now, true, "R", true) == true) {
@@ -7439,7 +7446,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JButton refundBtn;
     private javax.swing.JButton refundOut;
     private javax.swing.JButton reprintBtnX;
-    private javax.swing.JButton reprintButton;
     private javax.swing.JLabel reprintLbl1;
     private javax.swing.JLabel reprintLbl2;
     private javax.swing.JButton reprintOut;

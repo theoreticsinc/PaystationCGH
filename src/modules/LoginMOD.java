@@ -530,7 +530,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 terminalnum = "Terminal N0:   " + terminalnum;
 //                datetimeOut = "Date:          " + datetimeOut;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale = "Today's Sales        : " + todaysale_dbl;
+                String todaysale = "Today's Sales       : " + todaysale_dbl;
                 String vatablesale = "VAT Sales           : " + vatablesale_dbl;
                 String vat12 = "12% VAT Sales       : " + vat12_dbl;
                 beginOR = "Beginning OR       :" + Exitpoint + beginOR;

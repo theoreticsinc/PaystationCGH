@@ -598,6 +598,8 @@ public class ComputeAPI {
     }
 
     public void ValidPartII() {
+        stn.Cardinput.delete(0, stn.Cardinput.length());
+        stn.CardInput2.setText("PROCESSING...");        
         ParkersAPI SP = new ParkersAPI();
         ParkerDataHandler PDH = new ParkerDataHandler();
         SystemStatus ss = new SystemStatus();
@@ -644,22 +646,27 @@ public class ComputeAPI {
         if (isDiscounted) {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
             discount = getDiscountFromVat(AmountGross, discountPercentage);
-            vat12 = 0;
-            vatsale = getNonVat(AmountGross);
-            Double vatexemptF = AmountGross - (AmountGross / 1.12);
+            //vat12 = 0;
+            //vatsale = getNonVat(AmountGross);
+            //Double vatexemptF = AmountGross - (AmountGross / 1.12);
+            //vatexempt = vatexemptF;
+            vat12 = getVat(AmountGross);
+            vatsale = 0;
+            Double vatexemptF = getNonVat(AmountGross);
             vatexempt = vatexemptF;
-            AmountDue = (vatsale - Float.parseFloat(discount));
+            AmountDue = (vatexemptF - Float.parseFloat(discount));
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             updateOneTransFiles("discount", Float.parseFloat(discount));
-            updateOneTransFiles("vatExempt", vatexempt);            
+            updateOneTransFiles("vatExempt", vatexempt);
+                       
         }
             updateOneTransFiles("vat12", vat12);
             updateOneTransFiles("vatsale", vatsale);   
             updateOneTransFiles("gross", AmountGross);   
         if (sets == true) {
             //ParkerType = stn.trtype;
-            ParkerType = pa.checkPTypeFromDB(stn.trtype).toUpperCase();
+            //ParkerType = pa.checkPTypeFromDB(stn.trtype).toUpperCase();
             if (stn.LostOverride) {
                 ParkerType = "LOST";
             }
@@ -701,6 +708,7 @@ public class ComputeAPI {
             } catch (Exception ex) {
             }
             if (PrinterEnabled) {
+                stn.CardInput2.setText("PRINTING...");        
                 Double tenderFloat = null;
                 try {
                     if (stn.AmtTendered.getText().trim().compareToIgnoreCase("") != 0) {
@@ -795,8 +803,16 @@ public class ComputeAPI {
             } catch (Exception x) {
 
             }
-
-        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
+            String SaveParkerType = pa.checkPTypeFromDB(ParkerType).toUpperCase();
+            if (SaveParkerType.contains("SENIOR")) {
+                SaveParkerType = "SENIOR";
+            }
+            if (isDiscounted) {
+                vatsale = vatexempt;
+                vatexempt = vat12;                
+                vat12 = 0;
+            }
+        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, SaveParkerType, datetimeIN, datetimeOUT, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
         }

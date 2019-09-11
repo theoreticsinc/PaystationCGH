@@ -1055,6 +1055,11 @@ public class ParkersAPI {
 //String SentinenlID, String Entrypoint, String Plateno, String ParkerType, String TimeIN, String TimeOUT, 
 //long HoursParked, long MinutesParked, float AmountDue, String RNos, String CashierName, boolean OvernightOverride) {
             //String ptype = checkPTypeFromDB(ParkerType);
+            if (ParkerType.compareToIgnoreCase("NQ") == 0) {
+                ParkerType = "SENIOR";
+            } else {
+                ParkerType = checkPTypeFromDB(ParkerType);
+            } 
             eh.printline("Vehicle       : " + ParkerType);
             eh.printline("Time-in       : " + TimeIN);
             eh.printline("Time-Out      : " + TimeOUT);
