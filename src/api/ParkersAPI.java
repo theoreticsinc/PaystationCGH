@@ -1101,6 +1101,9 @@ public class ParkersAPI {
                 } else {
                     change = AmountDue - tenderFloat;
                 }
+                if (changeDue.compareTo("") == 0) {
+                    changeDue = "0.00";
+                }
                     eh.printline("Total Payment   : P " + displayAmount2Decimals(AmountGross));
                     eh.printline("Amount Tendered : P " + displayAmount2Decimals(tenderFloat));
                     eh.printline("Change          : P " + changeDue);

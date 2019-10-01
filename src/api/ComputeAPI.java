@@ -569,9 +569,9 @@ public class ComputeAPI {
                 discountPercentage = SP.getdiscountPercentage(ParkerType);
                 discount = getDiscountFromVat(AmountDue, discountPercentage);
                 vat12 = 0;
-                vatsale = 0;
-                vatexempt = getNonVat(AmountDue);
-                AmountDue = (vatexempt - Float.parseFloat(discount));
+                vatsale = getNonVat(AmountDue);
+                vatexempt = getVat(AmountDue);
+                AmountDue = (vatsale - Float.parseFloat(discount));
                 DecimalFormat df2 = new DecimalFormat("#.00");
                 stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             }
@@ -650,11 +650,11 @@ public class ComputeAPI {
             //vatsale = getNonVat(AmountGross);
             //Double vatexemptF = AmountGross - (AmountGross / 1.12);
             //vatexempt = vatexemptF;
-            vat12 = getVat(AmountGross);
-            vatsale = 0;
-            Double vatexemptF = getNonVat(AmountGross);
+            vat12 = 0;
+            vatsale = getNonVat(AmountGross);
+            Double vatexemptF = getVat(AmountGross);
             vatexempt = vatexemptF;
-            AmountDue = (vatexemptF - Float.parseFloat(discount));
+            AmountDue = (vatsale - Float.parseFloat(discount));
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             updateOneTransFiles("discount", Float.parseFloat(discount));
@@ -807,11 +807,7 @@ public class ComputeAPI {
             if (SaveParkerType.contains("SENIOR")) {
                 SaveParkerType = "SENIOR";
             }
-            if (isDiscounted) {
-                vatsale = vatexempt;
-                vatexempt = vat12;                
-                vat12 = 0;
-            }
+            
         boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, SaveParkerType, datetimeIN, datetimeOUT, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());

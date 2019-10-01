@@ -107,7 +107,7 @@ public class ExitAPI implements Runnable {
                     return false;
                 } else if (process == 5) {
                     stn.firstscan = true;
-                    stn.PreviousCard = stn.CardInput2.getText();
+                    stn.PreviousCard = stn.Cardinput.toString();
                     stn.processRightPanelMsgs(cmp.PrksMsg);
                     stn.clearLeftMIDMsgPanel();
                     stn.processRightPanelMsgs(cmp.PrksMsg);
