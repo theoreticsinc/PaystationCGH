@@ -1042,7 +1042,7 @@ public class ParkersAPI {
 
             eh.printline("Official-Receipt # " + RNos);
 
-            eh.startPrinter();
+//            eh.startPrinter();
             eh.Justify((byte) 0);
             eh.feedpaperup((byte) 1);
             eh.printline("CardCode      : " + Cardno);
@@ -1151,7 +1151,7 @@ public class ParkersAPI {
                     eh.printline("Settlement Ref :  " + settlementRef);
                 }
                 */
-                eh.startPrinter();
+//                eh.startPrinter();
             }
             eh.Justify((byte) 1);
             eh.selectEMstyle(true);
@@ -1227,7 +1227,7 @@ public class ParkersAPI {
 
             eh.printline("Receipt Num.:" + RNos);
 
-            eh.startPrinter();
+//            eh.startPrinter();
             eh.Justify((byte) 0);
             eh.feedpaperup((byte) 1);
             eh.printline("Ent ID.:" + Entrypoint);
@@ -1276,13 +1276,13 @@ public class ParkersAPI {
                 } else if (settlementRef.trim().compareToIgnoreCase("") != 0) {
                     eh.printline("" + settlementRef);
                 }
-                eh.startPrinter();
+//                eh.startPrinter();
             }
             eh.Justify((byte) 1);
             eh.selectEMstyle(true);
             eh.printline(message1);
             eh.printline(message2);
-            eh.startPrinter();
+//            eh.startPrinter();
 
             eh.printFOOTER(SentinenlID, false);
 

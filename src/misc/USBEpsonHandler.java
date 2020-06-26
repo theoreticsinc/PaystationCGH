@@ -261,7 +261,7 @@ public class USBEpsonHandler {
             }
 */            
             this.Justify((byte) 0);
-            this.startPrinter();
+//            this.startPrinter();
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
