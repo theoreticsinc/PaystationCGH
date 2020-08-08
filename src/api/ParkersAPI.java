@@ -2028,12 +2028,12 @@ public class ParkersAPI {
         boolean status2;
         try {
             //boolean status2 = stmt.execute("DELETE FROM crdplt.main WHERE CONVERT(`main`.`"+Cardno+"` USING utf8) = '000010' LIMIT 1;");
-            conn = DB.getConnection(true);
+            conn = DB.getServerConnection(true);
             stmt = conn.createStatement();
             //status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");
 
         } catch (Exception ex) {
-            conn = DB.getConnection(false);
+            conn = DB.getServerConnection(false);
             stmt = conn.createStatement();
             //status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");
             //boolean status2 = stmt.execute("DELETE FROM crdplt.main WHERE CONVERT(`main`.`"+Cardno+"` USING utf8) = '000010' LIMIT 1;");
@@ -2123,7 +2123,7 @@ public class ParkersAPI {
 
     public void openDB(boolean mainDB) throws Exception {
         DataBaseHandler DB = new DataBaseHandler();
-        conn = DB.getConnection(mainDB);
+        conn = DB.getServerConnection(mainDB);
         stmt = conn.createStatement();
 
     }

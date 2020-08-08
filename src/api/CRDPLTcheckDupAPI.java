@@ -29,7 +29,7 @@ public class CRDPLTcheckDupAPI {
     public boolean isCRDDuplicate(String card2check) throws IOException {
         try {
             DataBaseHandler DB = new DataBaseHandler();
-            conn = DB.getConnection(true);
+            conn = DB.getServerConnection(true);
             stmt = conn.createStatement();
             //RawFileHandler rfh = new RawFileHandler();
             //boolean found = rfh.FindFileFolder("/SYSTEMS/", card2check + ".crd");
@@ -176,7 +176,7 @@ public class CRDPLTcheckDupAPI {
     public void openDB(boolean mainDB) {
         try {
             DataBaseHandler DBH = new DataBaseHandler();
-            conn = DBH.getConnection(mainDB);
+            conn = DBH.getServerConnection(mainDB);
             stmt = conn.createStatement();
         } catch (Exception ex) {
             log.error(ex.getMessage());

@@ -209,7 +209,7 @@ public class ParkerDataHandler {
 //                ex.printStackTrace();
             }
 
-            conn = DB.getConnection(true);
+            conn = DB.getServerConnection(true);
             //WITH CAMERA TO DATABASE
             String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
                     + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
@@ -303,15 +303,15 @@ public class ParkerDataHandler {
 
             //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 //int status3 = stmt.executeUpdate(SQLA);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
-                log.info("Print Error in : " + SQL);
+                log.info("saveEXParkerTrans2DB Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);
                 //int status3 = stmt.executeUpdate(SQLA);
                 return true;
@@ -351,14 +351,14 @@ public class ParkerDataHandler {
             String SQL = "insert into carpark.void_trans "
                     + "values(null, 1, LPAD('" + VOIDrefNumber + "',12,0), '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
-                log.info("Print Error in : " + SQL);
+                log.info("saveEXParkerTrans2DB Print Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
             }
@@ -376,12 +376,12 @@ public class ParkerDataHandler {
             String SQL = "UPDATE carpark.exit_trans "
                     + "SET void = 1, voidRefID = LPAD('" + VOIDrefNumber + "',12,0) WHERE ReceiptNumber = '" + ReceiptNo + "';";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
                 log.info("Print Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);

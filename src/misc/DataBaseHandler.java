@@ -43,6 +43,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -78,10 +79,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-    //private String USERNAME = "base";
-    //private String PASSWORD = "theoreticsinc";
-    private String USERNAME = "root";
-    private String PASSWORD = "sa";
+    private String USERNAME = "base";
+    private String PASSWORD = "theoreticsinc";
+//    private String USERNAME = "root";
+//    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -271,7 +272,7 @@ public class DataBaseHandler extends Thread {
 // }
             is1 = (InputStream) uc1.getInputStream();
             is2 = (InputStream) uc2.getInputStream();
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             statement = connection.prepareStatement("insert into unidb.timeindb(CardCode, Plate, PIC2, PIC) " + "values(?,?,?,?)");
             statement.setString(1, "HFJ93230");
             statement.setString(2, "ABCDEFG");
@@ -394,7 +395,7 @@ public class DataBaseHandler extends Thread {
             inputStream = new FileInputStream(fileimage);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             InputStream is = null;
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             statement = connection.prepareStatement("insert into unidb.timeindb(CardCode, Plate, PIC) " + "values(?,?,?)");
             statement.setString(1, "HFJ93230");
             statement.setString(2, "ABCDEFG");
@@ -419,7 +420,7 @@ public class DataBaseHandler extends Thread {
 
     public void ShowImageFromDB() {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -467,7 +468,7 @@ public class DataBaseHandler extends Thread {
     public BufferedImage GetImageFromDB(String CardCode) {
         BufferedImage img = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE CardCode = '" + CardCode + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -522,7 +523,7 @@ public class DataBaseHandler extends Thread {
     public int GetImageCountFromDB_byDate(String BeginDate, String EndDate) {
         
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT COUNT(CardCode) AS Count FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -543,7 +544,7 @@ public class DataBaseHandler extends Thread {
     public BufferedImage[] GetImageFromDB_byDate(String BeginDate, String EndDate) {
         BufferedImage[] img = new BufferedImage[10];
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -642,7 +643,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public void getActiveRatesParameter() throws SQLException {
-        connection = getConnection(true);
+        connection = getLocalConnection(true);
         ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam.types WHERE ACTIVE=1");
         String typeName = "";
         // iterate through the java resultset
@@ -655,7 +656,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public void getEntranceCard() throws SQLException {
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT * FROM carpark.entrance");
 
         // iterate through the java resultset
@@ -676,7 +677,7 @@ public class DataBaseHandler extends Thread {
         String username = "";
         try {
 
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM pos_users.main WHERE usercode='" + loginCode + "' AND password = MD5('" + password + "')");
 
             // iterate through the java resultset
@@ -698,7 +699,7 @@ public class DataBaseHandler extends Thread {
         boolean found = false;
         try {
 
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT password FROM pos_users.main WHERE usercode='" + loginCode + "' AND password = MD5('" + password + "')");
 
             // iterate through the java resultset
@@ -736,7 +737,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean findEntranceCard(String cardNumber) throws SQLException {
         boolean found = false;
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
@@ -751,7 +752,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean findExitCard(String cardNumber) throws SQLException {
         boolean found = false;
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
@@ -766,7 +767,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean eraseEntryCard(String cardNumber) throws SQLException {
         boolean found = false;
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         st = (Statement) connection.createStatement();
         st.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
         st.close();
@@ -777,7 +778,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean eraseExitCard(String cardNumber) throws SQLException {
         boolean found = false;
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         st = (Statement) connection.createStatement();
         st.execute("DELETE FROM extcrd.main WHERE CardNumber = '" + cardNumber + "'");
         st.close();
@@ -796,7 +797,7 @@ public class DataBaseHandler extends Thread {
         }
         String data[] = new String[newArraySize];
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -872,7 +873,7 @@ public class DataBaseHandler extends Thread {
         }
         String data[] = new String[newArraySize];
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -945,7 +946,7 @@ public class DataBaseHandler extends Thread {
 
         Boolean data = false;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT OTCutoff1stWaived FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -967,7 +968,7 @@ public class DataBaseHandler extends Thread {
 
         Boolean data = false;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT FractionThereOf FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -991,7 +992,7 @@ public class DataBaseHandler extends Thread {
         }
         Boolean data[] = new Boolean[newArraySize];
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1067,7 +1068,7 @@ public class DataBaseHandler extends Thread {
         }
         Boolean data[] = new Boolean[newArraySize];
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1139,7 +1140,7 @@ public class DataBaseHandler extends Thread {
     public int getGracePeriod(String trtype) {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT GracePeriod FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1163,7 +1164,7 @@ public class DataBaseHandler extends Thread {
     public String getLostPrice(String trtype) {
         String data = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT LostPrice FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1187,7 +1188,7 @@ public class DataBaseHandler extends Thread {
     public int getEveryNthHour(String trtype) {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT EveryNthHour FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1211,7 +1212,7 @@ public class DataBaseHandler extends Thread {
     public String getOTPrice(String ParkerType) {
         String data = "+0";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT OTPrice FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + ParkerType + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1235,7 +1236,7 @@ public class DataBaseHandler extends Thread {
     public String getNthHourRate(String ParkerType) {
         String data = "+0";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT NthHourRate FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + ParkerType + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1259,7 +1260,7 @@ public class DataBaseHandler extends Thread {
     public int getOTCutoff(String trtype) {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT OTCutoff FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1283,7 +1284,7 @@ public class DataBaseHandler extends Thread {
     public String getSucceedingRate(String trtype) {
         String data = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT SucceedingRate FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1307,7 +1308,7 @@ public class DataBaseHandler extends Thread {
     public int getTreatNextDayAsNewDay(String trtype) {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT TreatNextDayAsNewDay FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1330,7 +1331,7 @@ public class DataBaseHandler extends Thread {
 
     public String getEntCard(String cardNumber) throws SQLException {
         String data = "";
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT * FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
@@ -1360,7 +1361,7 @@ public class DataBaseHandler extends Thread {
 
     public String getExitCard(String cardNumber) throws SQLException {
         String data = "";
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT * FROM extcrd.main WHERE CardNumber = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
@@ -1394,7 +1395,7 @@ public class DataBaseHandler extends Thread {
 
     public String getEntDatefromCard(String cardNumber) throws SQLException {
         String dateIN = "";
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
 
         while (rs.next()) {
@@ -1408,7 +1409,7 @@ public class DataBaseHandler extends Thread {
 
     public String getEntDatefromExitCardDB(String cardNumber) throws SQLException {
         String dateIN = "";
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT datetimeIN FROM extcrd.main WHERE CardNumber = '" + cardNumber + "'");
 
         while (rs.next()) {
@@ -1422,7 +1423,7 @@ public class DataBaseHandler extends Thread {
 
     public String getExtDatefromCard(String cardNumber) throws SQLException {
         String dateIN = "";
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
 
         while (rs.next()) {
@@ -1436,7 +1437,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean copyCRDPLTfromServer(String tableNameServer, String tableNameLocal) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             backupConnection = getBACKUPConnection();
             String lTime = "2018-1-1 00:00:00";
             ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = 'crdplt'", connection);
@@ -1482,7 +1483,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public void saveCRDPLTEntry() throws SQLException {
-        connection = getConnection(true);
+        connection = getServerConnection(true);
         ResultSet rs = selectDatabyFields("INSERT * FROM carpark.entrance");
 
         // iterate through the java resultset
@@ -1501,7 +1502,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean copyExitTransfromLocal(String tableNameLocal, String tableNameServer) {
         try {
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             backupConnection = getBACKUPConnection();
             String lTime = "2018-1-1 00:00:00";
             ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = 'exit_trans'", connection);
@@ -1545,7 +1546,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean copyZReadfromLocal(String tableNameLocal, String tableNameServer) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             backupConnection = getBACKUPConnection();
             String lTime = "2018-1-1 00:00:00";
             ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = 'zread'", connection);
@@ -1589,7 +1590,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean copyColltrainfromLocal(String tableNameLocal, String tableNameServer) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             backupConnection = getBACKUPConnection();
             String lTime = "2018-1-1 00:00:00";
             ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = 'colltrain'", connection);
@@ -1652,14 +1653,46 @@ public class DataBaseHandler extends Thread {
         return false;
     }
 
-    public Connection getConnection(boolean mainorder)
+    public Connection getLocalConnection(boolean mainorder)
             throws SQLException {
         try {
             Class.forName(DRIVER_CLASS_NAME);
         } catch (ClassNotFoundException ex) {
             log.error(ex.getMessage());
         }
-        DriverManager.setLoginTimeout(3);
+        DriverManager.setLoginTimeout(3000);
+        //Connection connection=null;
+        if (mainorder == true) {
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            } catch (Exception ex) {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            }
+        } else {
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            } catch (Exception ex) {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            }
+        }
+    }
+    
+    public Connection getServerConnection(boolean mainorder)
+            throws SQLException {
+        try {
+            Class.forName(DRIVER_CLASS_NAME);
+        } catch (ClassNotFoundException ex) {
+            log.error(ex.getMessage());
+        }
+        DriverManager.setLoginTimeout(30000);
         //Connection connection=null;
         if (mainorder == true) {
             try {
@@ -1720,6 +1753,140 @@ public class DataBaseHandler extends Thread {
             }
         }
     }
+    
+    public void copyTransToServerfromLocal(String srcdb, String srctbl, String destdb, String desttbl, String dateTimeOutName) throws SQLException {
+        connection = getLocalConnection(true);
+        String insertSQL, lastDT = "";
+        String lTime = "2018-1-1 00:00:00";
+        ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = '" + srcdb + "." + srctbl + "'", connection);
+        while (res.next()) {
+            lTime = res.getString("lastTime");
+        }
+        ResultSet rs = selectDatabyFields("SELECT * FROM " + srcdb + "." + srctbl + " where " + dateTimeOutName + " > '" + lTime + "' AND " + dateTimeOutName + " <> '0000-00-00 00:00:00' ORDER BY " + dateTimeOutName + " ASC");
+
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columnNumber = rsmd.getColumnCount();
+        while (rs.next()) {
+            int x = 1;
+            Connection serverConnection = null;
+            try {
+                serverConnection = getBACKUPConnection();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
+            if (null != serverConnection) {
+//            boolean res = remoteST.execute(insertSQL);
+                insertSQL = "INSERT INTO " + destdb + "." + desttbl + " ";
+                /*
+                insertSQL = insertSQL + "(";
+                while (x <= columnNumber) {
+                    insertSQL = insertSQL + rsmd.getColumnName(x);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + ", ";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + ") ";
+                */
+                insertSQL = insertSQL + "VALUES (";
+                x = 1;
+                while (x <= columnNumber) {
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + "?, ";
+                    } else {
+                        insertSQL = insertSQL + "?)";
+                    }
+                    x++;
+                }
+//                System.out.println("INSERT SQL: " + insertSQL);
+                PreparedStatement remotePST = (PreparedStatement) serverConnection.prepareStatement(insertSQL);
+                x = 1;
+                while (x <= columnNumber) {
+                    int dataType = rsmd.getColumnType(x);
+                    if (dataType == 12) {
+                        String cardNumber = rs.getString(rsmd.getColumnName(x));
+                        remotePST.setString(x, rs.getString(rsmd.getColumnName(x)));
+                        System.out.print(cardNumber + " ");
+                    } else if (dataType == -5) {
+                        long cardNo = rs.getLong(rsmd.getColumnName(x));
+                        remotePST.setLong(x, rs.getLong(rsmd.getColumnName(x)));
+                        System.out.print(cardNo + " ");
+                    } else if (dataType == -6) {
+                        int cardNo = rs.getInt(rsmd.getColumnName(x));
+                        remotePST.setInt(x, rs.getInt(rsmd.getColumnName(x)));
+                        System.out.print(cardNo + " ");
+                    } else if (dataType == 4) {
+                        int cardNo = rs.getInt(rsmd.getColumnName(x));
+                        remotePST.setInt(x, rs.getInt(rsmd.getColumnName(x)));
+                        System.out.print(cardNo + " ");
+                    } else if (dataType == 93) {
+                        Timestamp dt = rs.getTimestamp(rsmd.getColumnName(x));
+                        remotePST.setTimestamp(x, rs.getTimestamp(rsmd.getColumnName(x)));
+                        System.out.print(dt + " ");
+                    } else if (dataType == 91) {
+                        Date dt = rs.getDate(rsmd.getColumnName(x));
+                        remotePST.setDate(x, rs.getDate(rsmd.getColumnName(x)));
+                        System.out.print(dt + " ");
+                    } else if (dataType == -7) {
+                        boolean isLost = rs.getBoolean(rsmd.getColumnName(x));
+                        remotePST.setBoolean(x, rs.getBoolean(rsmd.getColumnName(x)));
+                        System.out.print(isLost + " ");
+                    } else if (dataType == 8) {
+                        double amount = rs.getDouble(rsmd.getColumnName(x));
+                        remotePST.setDouble(x, rs.getDouble(rsmd.getColumnName(x)));
+                        System.out.print(amount + " ");
+                    } else if (dataType == 7) {
+                        float amount = rs.getFloat(rsmd.getColumnName(x));
+                        remotePST.setFloat(x, rs.getFloat(rsmd.getColumnName(x)));
+                        System.out.print(amount + " ");
+                    } else if (dataType == -4) {
+                        remotePST.setBlob(x, rs.getBlob(rsmd.getColumnName(x)));
+//                    InputStream is = rs.getBinaryStream(rsmd.getColumnName(x));
+//                    try {
+//                        if (null != is) {
+//                            img[x] = ImageIO.read(is);
+//                            show(x + "", img[x], x);
+//                        }
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(DataBaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+                    } else {
+                        System.out.print(" dataType:[" + dataType + "] = ");
+                    }
+
+                    x++;
+                }
+                try {
+                    remotePST.executeUpdate();
+                    //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+//                    System.out.println("\n" + rs.getString("cardNumber") + " Copied Successfully");
+                } catch (Exception ex) {
+                    try {
+
+                        //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+//                        System.out.println("\n" + rs.getString("cardNumber") + " Overwritten Successfully");
+                    } catch (Exception ex2) {
+
+                        ex2.printStackTrace();
+                    }
+                }
+                lastDT = rs.getString(dateTimeOutName);
+                System.out.println("");
+                remotePST.close();
+//                serverConnection.close();
+                connection = getLocalConnection(true);
+                st = (Statement) connection.createStatement();
+                st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
+                st.close();
+            }
+        }
+
+        rs.close();
+        st.close();
+
+        connection.close();
+    }
 
     public String getTimeIN() {
         return dateTimeIN;
@@ -1742,7 +1909,7 @@ public class DataBaseHandler extends Thread {
             if (CardNumber.length() > 8) {
                 CardNumber = CardNumber.substring(0, 8);
             }
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             st = (Statement) connection.createStatement();
             String isLoststr;
             if (isLost) {
@@ -1767,7 +1934,7 @@ public class DataBaseHandler extends Thread {
             long DateINStamp = dch.convertJavaDate2UnixTime4Card(DateIN);
             long DatePaidStamp = dch.convertJavaDate2UnixTime4Card(DatePaid);
             long NextDueStamp = dch.convertJavaDate2UnixTime4Card(NextDue);
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             st = (Statement) connection.createStatement();
             st.execute("INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, amountPaid) VALUES ('P1', 'EN01', '" + CardNumber + "', '" + PlateCheck + "', '" + trtype + "', false, '" + DateIN + "', '" + DateINStamp + "', '" + DatePaid + "', '" + DatePaidStamp + "', '" + NextDue + "', '" + NextDueStamp + "', " + amountPaid + ")");
             st.close();
@@ -1781,7 +1948,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean getCarServed(String loginID) {
         try {
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("SELECT carServed FROM colltrain.main WHERE logINID = '" + loginID + "'");
@@ -1797,7 +1964,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setCarServed(String loginID, String carServed) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET carServed = '" + carServed + "' WHERE logINID = '" + loginID + "'");
@@ -1813,7 +1980,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setCarServed(String trtype, String loginID, String carServed, String totalAmount, String extendedCount, String extendedAmount, String overnightCount, String overnightAmount) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET carServed = '" + carServed + "', totalAmount = '" + totalAmount + "', extendedCount = '" + extendedCount + "', extendedAmount = '" + extendedAmount + "', overnightCount = '" + overnightCount + "', overnightAmount = '" + overnightAmount + "' WHERE logINID = '" + loginID + "'");
@@ -1830,7 +1997,7 @@ public class DataBaseHandler extends Thread {
     public String[] findXReadings(String date2check) {
         String data[] = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String SQL = "";
             SQL = "SELECT * FROM colltrain.main WHERE DATE(logoutStamp) = '"+date2check+"' ORDER BY logoutStamp  DESC";            
             ResultSet rs = selectDatabyFields(SQL);
@@ -1860,7 +2027,7 @@ public class DataBaseHandler extends Thread {
     public String[] findReceipts(String plate2check) {
         String data[] = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String SQL = "";
             if (plate2check.compareToIgnoreCase("*") == 0) {
                 SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
@@ -1894,7 +2061,7 @@ public class DataBaseHandler extends Thread {
     public String[] findReceiptsByRNos(String plate2check) {
         String data[] = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String SQL = "";
             if (plate2check.compareToIgnoreCase("*") == 0) {
                 //SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
@@ -1929,7 +2096,7 @@ public class DataBaseHandler extends Thread {
     public String[] findReceiptsByCategory(int categ, String data2Check) {
         String data[] = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String SQL = "";
             if (data2Check.compareToIgnoreCase("*") == 0) {
                 SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
@@ -2053,7 +2220,7 @@ public class DataBaseHandler extends Thread {
     public String getRandomCard() {
         String card2Exit = "";
         try {
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             ResultSet rs = selectDatabyFields("SELECT cardNumber FROM crdplt.main");
 
             if (rs.next()) {
@@ -2072,7 +2239,7 @@ public class DataBaseHandler extends Thread {
     public boolean saveZReadLogIn(String logID, String Exitpoint, String receiptNos, String grandTotal, String lastTransaction, String logcode) {
         try {
             DateConversionHandler dch = new DateConversionHandler();
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
             if (receiptNos.compareToIgnoreCase("000000000000") == 0) {
                 receiptNos = "000000000001";
@@ -2092,7 +2259,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale, String vatExempt, String discounts) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', datetimeOut = CURRENT_TIMESTAMP, todaysale =" + totalAmount + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
@@ -2109,7 +2276,7 @@ public class DataBaseHandler extends Thread {
     public String getLastTransaction(String EX_SentinelID) {
         String transactionID = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT LPAD(MAX(transactionID),16,0) AS transactionID FROM logs.audit WHERE sentinelID = '" + EX_SentinelID + "'");
 
             while (rs.next()) {
@@ -2127,7 +2294,7 @@ public class DataBaseHandler extends Thread {
 
     public void updateZReadLastDate(String sentinel) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE zread.lastdate SET sentinelID = '" + sentinel + "', date = CURRENT_TIMESTAMP WHERE sentinelID = '" + sentinel + "'");
@@ -2143,7 +2310,7 @@ public class DataBaseHandler extends Thread {
         java.util.Date zreadLastDate = null;
 
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT date FROM zread.lastdate WHERE sentinelID = '" + sentinel + "'");
 
             if (rs.next()) {
@@ -2163,7 +2330,7 @@ public class DataBaseHandler extends Thread {
         boolean zreadActive = false;
 
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
             ResultSet rs = selectDatabyFields("SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate");
 
@@ -2333,7 +2500,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean saveLogin(String logID, String userCode, String logname, String SentinelID) throws SQLException {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
             st.execute("INSERT INTO colltrain.main (logINID, userCode, userName, SentinelID, loginStamp) VALUES ('" + logID + "', '" + userCode + "', '" + logname + "', '" + SentinelID + "', CURRENT_TIMESTAMP)");
 
@@ -2349,7 +2516,7 @@ public class DataBaseHandler extends Thread {
     public String getPtypeName(String ptype) {
         String name = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT ptypename FROM parkertypes.main WHERE parkertype = '" + ptype + "'");
 
             while (rs.next()) {
@@ -2368,7 +2535,7 @@ public class DataBaseHandler extends Thread {
     public int getDupReceipt(String ptype) {
         int dup = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT numOfReceipts FROM parkertypes.main WHERE parkertype = '" + ptype + "'");
 
             while (rs.next()) {
@@ -2387,7 +2554,7 @@ public class DataBaseHandler extends Thread {
     public int getDiscounted(String ptype) {
         int dup = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT Discounted FROM parkertypes.main WHERE parkertype = '" + ptype + "'");
 
             while (rs.next()) {
@@ -2406,7 +2573,7 @@ public class DataBaseHandler extends Thread {
     public float getdiscountPercentage(String ptype) {
         float dsc = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT DiscountPercentage FROM parkertypes.main WHERE parkertype = '" + ptype + "'");
 
             while (rs.next()) {
@@ -2425,7 +2592,7 @@ public class DataBaseHandler extends Thread {
     public String getPtypecount(String parkerName, String logCode) throws SQLException {
         String data = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT " + parkerName.toLowerCase().trim() + "Count FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -2443,7 +2610,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean updateRecord(String fieldName, String value, String logCode) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + fieldName + " = '" + value + "' WHERE logINID = '" + logCode + "'");
@@ -2459,7 +2626,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean updateTimeRecord(String fieldName, String value, String logCode) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + fieldName + " = " + value + " WHERE logINID = '" + logCode + "'");
@@ -2476,7 +2643,7 @@ public class DataBaseHandler extends Thread {
     public String getImptCount(String fieldName, String logCode) throws SQLException {
         String data = "";
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT " + fieldName + " FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -2495,7 +2662,7 @@ public class DataBaseHandler extends Thread {
     public Float getImptAmount(String fieldName, String logCode) throws SQLException {
         float data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT " + fieldName + " FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -2514,7 +2681,7 @@ public class DataBaseHandler extends Thread {
     public double getPtypeAmount(String parkerName, String logCode) throws SQLException {
         double data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT " + parkerName.toLowerCase().trim() + "Amount FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -2532,7 +2699,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setImptCount(String fieldName, String logCode, int newCount) throws SQLException {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + fieldName + " = '" + newCount + "' WHERE logINID = '" + logCode + "'");
@@ -2548,7 +2715,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setPtypecount(String parkerName, String logCode, int newCount) throws SQLException {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + parkerName.toLowerCase().trim() + "Count = '" + newCount + "' WHERE logINID = '" + logCode + "'");
@@ -2564,7 +2731,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setImptAmount(String fieldName, String logCode, double newAmount) throws SQLException {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + fieldName + " = '" + newAmount + "' WHERE logINID = '" + logCode + "'");
@@ -2580,7 +2747,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean setPtypeAmount(String parkerName, String logCode, double newAmount) throws SQLException {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE colltrain.main SET " + parkerName.toLowerCase().trim() + "Amount = '" + newAmount + "' WHERE logINID = '" + logCode + "'");
@@ -2597,7 +2764,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getSummaryCollbyLogCode(String logCode) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             rs = selectDatabyFields("SELECT * FROM colltrain.main WHERE logINID = '" + logCode + "'");
             // iterate through the java resultset
             //while (rs.next()) {
@@ -2616,7 +2783,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getSummaryCollbydateColl(String dateColl) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT * FROM colltrain.main WHERE logoutStamp = '" + dateColl + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
@@ -2636,7 +2803,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getSummaryCollbyLoginID(String LoginID) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT * FROM colltrain.main WHERE logINID = '" + LoginID + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
@@ -2656,7 +2823,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getCGHIncomeSummaryCollbydateColl(String teller, String dateColl) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             String sql = "SELECT * FROM unidb.incomereport WHERE Operator = '"+teller+"' AND BusnessDate = DATE('" + dateColl + "')";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
@@ -2676,7 +2843,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getZReadbylogINID(String logINID) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, DATE(datetimeOut) AS datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, "
                     + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, "
@@ -2703,7 +2870,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getZReadbydateColl(String dateColl) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, "
                     + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, "
@@ -2730,7 +2897,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getTodaysZReadbydateColl(Float totalCollected, Double Sale12Vat, Double vatSale) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, CURRENT_TIMESTAMP, CAST(SUM(todaysale) + " + totalCollected + " AS decimal(20,2)) AS TODAYSALE, "
                     + "CAST(SUM(vatablesale) + " + vatSale + " AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) + " + Sale12Vat + " AS decimal(20,2)) AS VAT12, "
@@ -2755,7 +2922,7 @@ public class DataBaseHandler extends Thread {
     public ResultSet getTodaysZReadbyloginID(String loginID) {
         ResultSet rs = null;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT * "
                     + "FROM zread.main where logINID = " + loginID;
@@ -2790,7 +2957,7 @@ public class DataBaseHandler extends Thread {
             Iterator itr0 = ptypesByKey.iterator();
             Iterator itr1 = ptypesByKey.iterator();
             
-                connection = getConnection(true);
+                connection = getLocalConnection(true);
                 String sql = "SELECT logoutStamp,"
                         + "SUM(carServed) AS carServed, SUM(totalAmount) AS totalAmount, ";
                         
@@ -2846,7 +3013,7 @@ public class DataBaseHandler extends Thread {
             Iterator itr0 = ptypesByKey.iterator();
             Iterator itr1 = ptypesByKey.iterator();
             
-                connection = getConnection(true);
+                connection = getLocalConnection(true);
                 String sql = "SELECT logoutStamp,"
                         + "SUM(carServed) AS carServed, SUM(totalAmount) AS totalAmount, ";
                         
@@ -2880,7 +3047,7 @@ public class DataBaseHandler extends Thread {
     public int getLoginSeries() throws SQLException {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(logNum,'Th30r3t1cs') AS logNum FROM logs.main WHERE pkID = 1");
             // iterate through the java resultset
             while (rs.next()) {
@@ -2899,7 +3066,7 @@ public class DataBaseHandler extends Thread {
     public int setLoginSeries(int logNumber) throws SQLException {
         int data = 0;
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE logs.main SET logNum = DES_ENCRYPT('"+logNumber+"','Th30r3t1cs') WHERE pkID = 1");            
@@ -2914,7 +3081,7 @@ public class DataBaseHandler extends Thread {
     
     public boolean saveLog(String activityCode, String activityOwner) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
             st.execute("INSERT INTO logs.audit (sentinelID, activityCode, activityOwner, activityDate) VALUES ('"+ EX_SentinelID + "', '" + activityCode + "', '" + activityOwner + "', CURRENT_TIMESTAMP)");
 
@@ -2929,7 +3096,7 @@ public class DataBaseHandler extends Thread {
     
     public boolean saveLog(String activityCode, String activityOwner, String activityDetails) {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
             st.execute("INSERT INTO logs.audit (sentinelID, activityCode, activityOwner, activityDate, activityDetails) "
                     + "VALUES ('"+ EX_SentinelID + "', '" + activityCode + "', '" + activityOwner + "', CURRENT_TIMESTAMP, '" + activityDetails + "')");
@@ -2945,7 +3112,7 @@ public class DataBaseHandler extends Thread {
 
     public void manualOpen() {
         try {
-            connection = getConnection(true);
+            connection = getLocalConnection(true);
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -2985,10 +3152,10 @@ public class DataBaseHandler extends Thread {
     public boolean Slotsminus1(String type) {
         try {
             int temp = 0;
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             st = (Statement) connection.createStatement();
 
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM slotsavailable.main WHERE type = '" + type + "'");
             if (rs.next()) {
                 temp = rs.getInt("available");
@@ -3009,10 +3176,10 @@ public class DataBaseHandler extends Thread {
     public boolean Slotsplus1(String type) {
         try {
             int temp = 0;
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             st = (Statement) connection.createStatement();
 
-            connection = getConnection(true);
+            connection = getServerConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM slotsavailable.main WHERE type = '" + type + "'");
             if (rs.next()) {
                 temp = rs.getInt("available");

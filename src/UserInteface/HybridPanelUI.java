@@ -6716,6 +6716,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //                        DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
 //                        DBH.copyColltrainfromLocal("colltrain.main", "colltrain.main");
 //                        DBH.copyZReadfromLocal("zread.main", "zread.main");
+                        DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
+                        DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
+                        DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
+                        DBH.copyTransToServerfromLocal("unidb", "incomereport", "unidb", "incomereport", "TimeOut");
                     }
                     Thread.sleep(10000);
                 }
