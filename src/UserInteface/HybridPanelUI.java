@@ -5815,13 +5815,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 //lm.printLogoutReceiptFromDB(EX_SentinelID, false);
                 lm.printHEADER(EX_SentinelID);
                 lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
+                
                 //---------------------------
-                lm.saveLogintoFile(logStamp, "", "", "");
-                SysMessage1.setText("LOGOUT Successful");
-                SysMessage3.setText("LOGCODE Found");
-                SysMessage4.setText("-Please Login again-");
-                Loginput.delete(0, Loginput.length());
-
+                
                 LogUsercode1.setText("");
                 LogPassword1.setText("");
                 LogUsercode2.setText("");
@@ -5833,16 +5829,19 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 CashierName = "";
                 //String logID, String Exitpoint, String lastTransaction, String logcode                
                 String lastTransaction = dbh.getLastTransaction(EX_SentinelID);
+                Float grossCollected = dbh.getImptAmount("grossAmount", loginID);
                 Float totalCollected = dbh.getImptAmount("totalAmount", loginID);
-                Float discountCollected = dbh.getImptAmount("discountAmount", loginID);
+                Float discountCollected = dbh.getImptAmount("pwdDiscountAmount", loginID) + dbh.getImptAmount("seniorDiscountAmount", loginID) +dbh.getImptAmount("localseniorDiscountAmount", loginID);
                 Float vatsaleAmount = dbh.getImptAmount("vatsaleAmount", loginID);
                 Float vat12Amount = dbh.getImptAmount("vat12Amount", loginID);
-                Float vatExemptAmount = dbh.getImptAmount("vatExemptAmount", loginID);                
+                Float vatExemptedSalesAmount = dbh.getImptAmount("vatExemptedSalesAmount", loginID);                
+                //Float voidsCollected = dbh.getImptAmount("voidsAmount", loginID);
+                Float voidsCollected = 0f;
                 
                 //Double Sale12Vat = (double) totalCollected * 0.12;
                 //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
                 //Double vatSale = totalCollected - Sale12Vat;
-                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptAmount), String.valueOf(discountCollected));
+                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(grossCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptedSalesAmount), String.valueOf(discountCollected), String.valueOf(voidsCollected));
                 scd.ResetCarServed();
                 scd.ResetExitCarServed();
                 scd.ResetEntryTicketsServed();
@@ -5853,7 +5852,17 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 ExitTickets.setText(scd.getExitTicketsServed());
                 LoginMOD la = new LoginMOD();
                 la.CheckValidCashierStamp(this);
-                this.StartLogInX();
+                
+                SysMessage1.setText("LOGOUT Successful");
+                SysMessage3.setText("LOGCODE Found");
+                SysMessage4.setText("-Please Login again-");
+                Loginput.delete(0, Loginput.length());
+                
+                this.StartLogInX();                
+                lm.eraseLoginDB();
+                
+                LoginLbl.setText("LOGIN");
+                LoginLbl.setForeground(new java.awt.Color(255, 255, 0));
                 return true;
             } else {//reset codeinputbox
                 LogUsercode1.setText("");

@@ -2236,7 +2236,7 @@ public class DataBaseHandler extends Thread {
         return card2Exit;
     }
 
-    public boolean saveZReadLogIn(String logID, String Exitpoint, String receiptNos, String grandTotal, String lastTransaction, String logcode) {
+    public boolean saveZReadLogIn(String logID, String Exitpoint, String receiptNos, String grandTotal, String grandGrossTotal, String lastTransaction, String logcode) {
         try {
             DateConversionHandler dch = new DateConversionHandler();
             connection = getLocalConnection(true);
@@ -2257,12 +2257,28 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale, String vatExempt, String discounts) {
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voids) {
         try {
             connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', datetimeOut = CURRENT_TIMESTAMP, todaysale =" + totalAmount + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
+            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExemptedSales =" + vatExemptedSales + " WHERE logINID = '" + loginID + "'");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String beginningReceiptNos, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voids) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE zread.main SET beginOR = '" + beginningReceiptNos + "', endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExemptedSales =" + vatExemptedSales + " WHERE logINID = '" + loginID + "'");
 
             st.close();
             connection.close();
@@ -2394,7 +2410,228 @@ public class DataBaseHandler extends Thread {
 
         return newString;
     }
+    
+    public String getGrandTotal(double AmountRCPT) {
+        String data = AmountRCPT + "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grandTotal, 'Th30r3t1cs') AS grandTotal FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Double count = rs.getDouble("grandTotal");
+                
+                    count = count + AmountRCPT;
+                    data = count + "";
+                
+            }
+            st.close();
+            connection.close();
+        }
+        catch (Exception ex) {
+            log.error("getGrandTotal Error: " + ex.getMessage());
+        }
+       
+        return data;
+    }
+    
+    public String getGrossTotal(double AmountRCPT) {
+        String data = AmountRCPT + "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grossTotal, 'Th30r3t1cs') AS grossTotal FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Double count = rs.getDouble("grossTotal");                
+                    count = count + AmountRCPT;
+                    data = count + "";
+            }
+            st.close();
+            connection.close();
+        }
+        catch (Exception ex) {
+            log.error("grossTotal Error: " + ex.getMessage());
+        }
+       
+        return data;
+    }
 
+    public String getNewReceiptNos() {
+        String data = "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Integer count = rs.getInt("receiptNos");
+                if (count == 0) {
+                    data = formatNos("1");
+                } else {
+                    count++;
+                    data = formatNos(count + "");
+                }
+            }
+            st.close();
+            connection.close();
+        }
+        catch (Exception ex) {
+            log.error("getNewReceiptNos Error: " + ex.getMessage());
+        }       
+        return data;
+    }
+
+    public String getCurrentReceiptNos() {
+        String data = "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Integer count = rs.getInt("receiptNos");
+                if (count == 0) {
+                    data = formatNos("0");
+                } else {
+                    data = formatNos(count + "");
+                }
+            }
+            st.close();
+            connection.close();
+        }
+        catch (Exception ex) {
+            log.error("getCurrentReceiptNos Error: " + ex.getMessage());
+        }       
+        return data;
+    }
+
+    public boolean updateCarparkMaster(String fieldName, String value) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE carpark.master SET " + fieldName + " = DES_ENCRYPT('" + value + "','Th30r3t1cs')");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
+    }
+
+    public String getLogID() {
+        String found = null;
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT logID FROM carpark.gin ORDER BY cashierID");
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("logID");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return found;
+    }
+
+    
+    public String getLoginDate() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT loginDate FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("loginDate");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
+    public String getCashierID() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT * FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("cashierID");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
+    public String getCashierName() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT cashierName FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("cashierName");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
+    public void truncateCashierLoginID() {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("TRUNCATE carpark.gin");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public boolean wasReceiptGenerated(String logID, String endingReceiptNos) {
+        try {
+            Integer bOR = 0;
+            Integer eRN = Integer.parseInt(endingReceiptNos);
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT beginOR FROM zread.main WHERE logINID = '" + logID + "'");
+
+            if (rs.next()) {
+                bOR = rs.getInt("beginOR");
+            }
+            st.close();
+            connection.close();
+            if (eRN >= bOR) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+        return false;
+    }
+    
     class prewait extends Thread {
 
         Thread Tc1;
@@ -2845,12 +3082,14 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getLocalConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
-            String sql = "SELECT terminalnum, DATE(datetimeOut) AS datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, "
-                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, "
+            String sql = "SELECT terminalnum, DATE(datetimeOut) AS datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, CAST(SUM(todaysGross) AS decimal(20,2)) AS TODAYSGROSS, "
+                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExemptedSales) AS decimal(20,2)) AS vatExemptedSales, "
+                    + "CAST(SUM(discounts) AS decimal(20,2)) AS DISCOUNTS, CAST(SUM(voids) AS decimal(20,2)) AS VOIDS, "
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, "
                     + "LPAD(MIN(beginTrans),20,0) AS beginTrans, LPAD(MAX(endTrans),20,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  "
-                    + "MIN(zCount) AS startZCount, MAX(zCount) AS endZCount FROM zread.main "
+                    + "CAST(MIN(oldGrossTotal) AS decimal(11,2)) AS oldGrossTotal, CAST(MAX(newGrossTotal) AS decimal(11,2)) AS newGrossTotal,  "
+                    + "zCount, MAX(zCount) AS endZCount FROM zread.main "
                     + "where logINID = '" + logINID + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
