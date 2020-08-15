@@ -56,6 +56,12 @@ public class LoginMOD extends javax.swing.JPanel {
         return false;
     }
 
+    public boolean saveLogintoDB(Date logStamp, String logID, String logcode, String logname) {
+        DataBaseHandler dbh = new DataBaseHandler();
+        dbh.setCashierLoginID(logStamp.getTime() + "", logID, logcode, logname);
+        return false;
+    }
+    
     public boolean saveLogintoFile(Date logStamp, String logID, String logcode, String logname) throws FileNotFoundException, IOException {
 //        Writer writer = null;
 //        Node node1 = null;
@@ -123,8 +129,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     public String getCashierID() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CID = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+        DataBaseHandler dbh = new DataBaseHandler();
+        String CID = dbh.getCashierID();
         return CID;
     }
 
@@ -135,8 +141,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     public String getCashierName() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CN = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+        DataBaseHandler dbh = new DataBaseHandler();
+        String CN = dbh.getCashierName();
         CN = CN.replaceAll(" ", "");
         return CN;
     }
@@ -418,12 +424,14 @@ public class LoginMOD extends javax.swing.JPanel {
 
     public void printAllofTodaysZReadFromDB(String Exitpoint) {
         String accumulatedTotal = "";
+        String accumulatedGrossTotal = "";
         try {
             XMLreader xr = new XMLreader();
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            DataBaseHandler dbh = new DataBaseHandler();
+            login_id = dbh.getLogID();
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
             SaveCollData scd = new SaveCollData();
-            DataBaseHandler dbh = new DataBaseHandler();
 
             Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
             Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
@@ -434,6 +442,8 @@ public class LoginMOD extends javax.swing.JPanel {
 
             String receiptNos = scd.getCurrentReceiptNos();
             String grandTotal = scd.getGRANDTOTAL();
+            String grandGrossTotal = scd.getGRANDGROSSTOTAL();
+
             String lastTransaction = dbh.getLastTransaction(Exitpoint);
 
             int i = 1;
@@ -441,35 +451,48 @@ public class LoginMOD extends javax.swing.JPanel {
                 String terminalnum = rs.getString("terminalnum");
                 String datetimeOut = rs.getString("CURRENT_TIMESTAMP");
                 String todaysale_dbl = rs.getString("TODAYSALE");
+                String todaysGross_dbl = rs.getString("TODAYSGROSS");
                 String vatablesale_dbl = rs.getString("VATABLESALE");
                 String vat12_dbl = rs.getString("VAT12");
+                String vatExemptedSales_dbl = rs.getString("vatExemptedSales");
+                String discounts_dbl = rs.getString("DISCOUNTS");
+                String voids_dbl = rs.getString("VOIDS");
                 String beginOR = rs.getString("BEGINOR");
                 String endOR = receiptNos;
                 String beginTrans = rs.getString("beginTrans");
                 String endTrans = lastTransaction;
                 String oldGrand = rs.getString("oldGrand");
                 String newGrand = grandTotal;
-                String startZCount = rs.getString("startZCount");
+                String oldGrossTotal = rs.getString("oldGrossTotal");
+                String newGrossTotal = grandGrossTotal;
+                String ZCount = rs.getString("zCount");
                 String endZCount = rs.getString("endZCount");
                 //String tellerCode = rs.getString("tellerCode");
                 //String logINID = rs.getString("logINID");
 
                 terminalnum = "Terminal N0:   " + terminalnum;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale = "Today's Sales      : " + todaysale_dbl;
-                String vatablesale = "VAT Sales          : " + vatablesale_dbl;
-                String vat12 = "12% VAT Sales      : " + vat12_dbl;
+                String todaysGross = "Gross Sales         : " + todaysGross_dbl;
+                String vatablesale = "VATables Sales      : " + vatablesale_dbl;
+                String vat12 = "VAT Amount (12%)    : " + vat12_dbl;
+                String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
+                String zeroRatedSales = "Zero-Rated Sales    : 0.00";
+                String discounts = "Discounts           : " + discounts_dbl;
+                String todaysale = "NET SALES           : " + todaysale_dbl;
+                //String voids =       "VOIDS               : " + voids_dbl;
                 beginOR = "Beginning OR       :" + Exitpoint + beginOR;
                 endOR = "Ending OR          :" + Exitpoint + endOR;
                 beginTrans = "Beginning Trans No :" + beginTrans;
                 endTrans = "Ending Trans No    :" + endTrans;
                 oldGrand = "Old Grand Total    : " + getAmountDue(Float.parseFloat(oldGrand));
                 newGrand = "New Grand Total    : " + getAmountDue(Float.parseFloat(newGrand));
-                startZCount = "Z-Count            : " + startZCount;
+                oldGrossTotal = "Old Gross Total    : " + getAmountDue(Float.parseFloat(oldGrossTotal));
+                newGrossTotal = "New Gross Total    : " + getAmountDue(Float.parseFloat(newGrossTotal));
+                ZCount = "Z-Count            : " + ZCount;
                 endZCount = "Z-Count(end)       : " + endZCount;
 //                String rCount = "Reset Count        : " + resetCount;
 
-                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, datetimeOut, todaysale, vatablesale, vat12, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, startZCount, "");
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, datetimeOut, todaysGross, vatablesale, vat12, vatExemptedSales, zeroRatedSales, discounts, todaysale, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, ZCount, oldGrossTotal, newGrossTotal);
 
                 if ((i % 2) == 0) {
                     delay(2000);
@@ -480,8 +503,12 @@ public class LoginMOD extends javax.swing.JPanel {
             //ALSO GET THE TOTAL COLLECTION PER PARKER TYPE
             //ResultSet collectionsToday = dbh.getTodaysTotalCollectionBydateColl();
             accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(grandTotal));
+            accumulatedGrossTotal = "Accumulated Gross Total    : " + getAmountDue(Float.parseFloat(grandGrossTotal));
             this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
-            this.printAccumulatedTotal(accumulatedTotal, Exitpoint);
+            USBEpsonHandler eh = new USBEpsonHandler();
+            this.printAccumulatedTotal(eh, accumulatedTotal, Exitpoint);
+            this.printAccumulatedTotal(eh, accumulatedGrossTotal, Exitpoint);
+            this.closePrintOut(eh, (byte) 0x08, Exitpoint);
             delay(1000);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -561,6 +588,55 @@ public class LoginMOD extends javax.swing.JPanel {
             log.error(ex.getMessage());
         }
 
+    }
+
+    
+    private void sendZRead2USBEpsonPrinter(int i, String Exitpoint, String Title, String datePrint, String line0, String line1, String line2, String line3, String line4,
+            String line5, String line6, String line7, String line8, String line9, String line10, String line11, String line12, String line13, String line14, String line15, String line16) {
+
+        try {
+            XMLreader xr = new XMLreader();
+            String feederlines = xr.getElementValue("C://JTerminals/initH.xml", "feederlines");
+            USBEpsonHandler eh = new USBEpsonHandler();
+            eh.closePrinter();
+            eh.openPrinter();
+            eh.initializePrinter();
+            eh.setBlack();
+            eh.printline("");
+
+            eh.Justify((byte) 1);
+            eh.printline(Title);
+            eh.printline(datePrint);
+            eh.startPrinter();
+            eh.Justify((byte) 0);
+            eh.printline("\n");
+            eh.printline(line0);
+            eh.printline(line1);
+            eh.printline(line2);
+            eh.printline(line3);
+            eh.printline(line4);
+            eh.printline(line5);
+            eh.printline(line6);
+            eh.printline(line7);
+            eh.printline(line8);
+            eh.printline(line9);
+            eh.printline(line10);
+            eh.printline(line11);
+            eh.printline(line12);
+            eh.printline(line13);
+            eh.printline(line14);
+            eh.printline(line15);
+            eh.printline(line16);
+
+            //eh.feedpaperup((byte) Short.parseShort(feederlines));
+            eh.printline("\n");
+            eh.startPrinter();
+            //eh.fullcut();
+            eh.closeReceiptFile(Exitpoint);
+            eh.closePrinter();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     //REPRINTS ZReading
@@ -1479,6 +1555,24 @@ public class LoginMOD extends javax.swing.JPanel {
         }
 
     }
+    
+    public void printAccumulatedTotal(USBEpsonHandler eh, String accTotal, String Exitpoint) {
+        eh.closePrinter();
+        eh.openPrinter();
+        eh.initializePrinter();
+        eh.Justify((byte) 1);
+        eh.setRed();
+        eh.printline(accTotal);
+    }
+    
+    public void closePrintOut(USBEpsonHandler eh, byte spacing, String Exitpoint) {
+        eh.startPrinter();
+        eh.feedpaperup(spacing);
+        eh.fullcut();
+        eh.closeReceiptFile(Exitpoint);
+        eh.closePrinter();
+    }
+
 
     //NEW COLLTRAIN
     //Dynamic Parker Types for X Read
@@ -2387,7 +2481,8 @@ public class LoginMOD extends javax.swing.JPanel {
         try {
             DataBaseHandler dbh = new DataBaseHandler();
             XMLreader xr = new XMLreader();
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            login_id = dbh.getLogID();
             dbh.updateTimeRecord("logoutStamp", "CURRENT_TIMESTAMP", login_id);
         } catch (Exception ex) {
             log.error(ex.getMessage());

@@ -289,7 +289,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             printerType = xr.getElementValue("C://JTerminals/initH.xml", "printerType");
             SlotsResetEnabled = xr.getElementValue("C://JTerminals/initH.xml", "reset");
             sResetTime = xr.getAttributeValue("C://JTerminals/initH.xml", "reset", "time");
-            loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            loginID = dbh.getLogID();
+            //loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");            
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
@@ -1659,7 +1660,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ProductName.getAccessibleContext().setAccessibleName("PARKING AREA SENTINEL SYSTEM\nTheoretics Inc");
 
         ClientName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        ClientName.setText("WELCOME TO PAYSTATION PARKING");
+        ClientName.setText("WELCOME TO CGH PAYSTATION PARKING");
         ClientName.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         ClientName.setForeground(new java.awt.Color(255, 255, 255));
         NorthPanel.add(ClientName, java.awt.BorderLayout.NORTH);
@@ -5539,7 +5540,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     //lm.saveLogintoFile(logname, LogUsercode2.getText());
                     lm.printLoginUSBSTUB(logStamp, LogUsercode2.getText(), logname, EX_SentinelID);
                     dbh.saveLog("L1", LogUsercode2.getText());
-                    lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);
+                    //lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);
+                    lm.saveLogintoDB(logStamp, logID, LogUsercode2.getText(), logname);  
                     currentmode = "";
                     //REFRESH
                     this.loginID = logID;

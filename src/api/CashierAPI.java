@@ -4,6 +4,7 @@
  */
 package api;
 
+import misc.DataBaseHandler;
 import misc.XMLreader;
 
 /**
@@ -13,14 +14,18 @@ import misc.XMLreader;
 public class CashierAPI {
 
     public String getCashierID() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CID = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+        DataBaseHandler dbh = new DataBaseHandler();
+//        XMLreader xr = new XMLreader();
+//        String CID = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+        String CID = dbh.getCashierID();
         return CID;
     }
 
     public String getCashierName() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CN = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+        DataBaseHandler dbh = new DataBaseHandler();
+//        XMLreader xr = new XMLreader();
+//        String CN = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+        String CN = dbh.getCashierName();
         return CN;
     }
 }

@@ -2631,6 +2631,19 @@ public class DataBaseHandler extends Thread {
         }
         return false;
     }
+
+    public void setCashierLoginID(String logStamp, String logID, String logcode, String logname) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("TRUNCATE carpark.gin");
+            st.execute("INSERT INTO carpark.gin (cashierID, logID, cashierName, loginDate) VALUES ('" + logcode + "', '" + logID + "', '" + logname + "', '" + logStamp + "')");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
     
     class prewait extends Thread {
 
