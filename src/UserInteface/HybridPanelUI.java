@@ -6860,6 +6860,24 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             //ss.updateServerCRDPLT();
 //                        ss.deleteOfflineCRDPLT(serverIP);
 //                        ss.updateCoupons(serverIP);
+                            DataBaseHandler dbh = new DataBaseHandler();
+                            Date serverDate = dbh.getTimeDateFromServer();
+                            if (null != serverDate) {
+                                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
+                                String strDateToSet = sdf.format(serverDate);   // dd-MM-yy 
+                                SimpleDateFormat stf = new SimpleDateFormat("hh:mm:ss");                
+                                String strTimeToSet = stf.format(serverDate);   //hh:mm:ss
+                                //String cmd = "java -jar \"C:/JTerminals/ServerDateUpdater.jar\" " + strDateToSet + " " + strTimeToSet;
+                                String cmd = "cmd /C date " + strDateToSet + "& time " + strTimeToSet;
+                                Runtime r = Runtime.getRuntime();
+                                Process p = r.exec(cmd);
+                                try {
+                                    p.waitFor();
+                                } catch (Exception ex) {
+                                    //admin1.setText(ex.getMessage());
+                                    log.error(ex.getMessage());
+                                }
+                            }
                         } else if (ss.checkOnline() == false) {
                             ServerStatus.setForeground(new java.awt.Color(255, 120, 0));
                             ServerStatus.setText("OFFLINE");
@@ -6884,7 +6902,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                         //proc = rt.exec("sudo /JTerminals/netunboot.sh");
                         //proc = rt.exec("sudo umount -t smbfs /SYSTEMS");//maybe unneeded
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(15 * 60000);
                     //resetAdmin();
                     Thread.sleep(2000);
                 }

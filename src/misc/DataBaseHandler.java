@@ -2644,6 +2644,26 @@ public class DataBaseHandler extends Thread {
             log.error(ex.getMessage());
         }
     }
+
+    public Timestamp getTimeDateFromServer() {
+        Timestamp serverDate = null;
+        try {
+            connection = getServerConnection(true);
+            //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
+            ResultSet rs = selectDatabyFields("SELECT CURRENT_TIMESTAMP as SERVERDATE");
+
+            if (rs.next()) {
+                serverDate = rs.getTimestamp("SERVERDATE");
+            }
+
+            st.close();
+            connection.close();
+            return serverDate;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+        return serverDate;
+    }
     
     class prewait extends Thread {
 
