@@ -601,6 +601,8 @@ public class ComputeAPI {
                 
                 //stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));            
                 //****************************
+            } else {
+                NetOfDiscount = 0;
             }
 
             //stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
@@ -714,6 +716,8 @@ public class ComputeAPI {
 //                updateOneTransFiles("discountAmount", vatAdjustment);
             }
             
+        } else {
+            NetOfDiscount = 0;
         }
         updateOneTransFiles("vat12", vat12);
         updateOneTransFiles("vatsale", vatsale);
