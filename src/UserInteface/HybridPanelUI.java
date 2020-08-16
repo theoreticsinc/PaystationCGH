@@ -6865,7 +6865,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             if (null != serverDate) {
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
                                 String strDateToSet = sdf.format(serverDate);   // dd-MM-yy 
-                                SimpleDateFormat stf = new SimpleDateFormat("hh:mm:ss");                
+                                SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");                
                                 String strTimeToSet = stf.format(serverDate);   //hh:mm:ss
                                 //String cmd = "java -jar \"C:/JTerminals/ServerDateUpdater.jar\" " + strDateToSet + " " + strTimeToSet;
                                 String cmd = "cmd /C date " + strDateToSet + "& time " + strTimeToSet;
