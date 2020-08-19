@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialization>
+	<servermode>standalone</servermode>
+
+	<cameraAdmin>admin</cameraAdmin>
+	<cameraPassword>user1234</cameraPassword>
+	<cameraProtocols>/onvif-http/snapshot?Profile_1</cameraProtocols>
+	
+	<numOfEntryCams>2</numOfEntryCams>
+	<cameraSetup>dualEntry</cameraSetup><!--dualEntry or singleExit -->
+	<entryCam1>192.168.1.68</entryCam1>
+	<entryCam2>192.168.1.68</entryCam2>
+	<exitCam1>192.168.1.68</exitCam1>
+	
+    <main1>127.0.0.1</main1>
+    <sub1>127.0.0.1</sub1>
+    
+    <backupmain1>192.168.1.80</backupmain1>
+    <backupsub1>192.168.2.80</backupsub1>
+    
+</initialization>

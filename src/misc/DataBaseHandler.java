@@ -296,7 +296,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public BufferedImage getImageFromCamera(String ipAdd, String username, String password) {
+    public BufferedImage getImageFromCamera(String ipAdd, String username, String password, String protocols) {
         Connection connection = null;
         BufferedImage buff = null;
         URLConnection uc1 = null;
@@ -320,13 +320,15 @@ public class DataBaseHandler extends Thread {
             String loginPassword = username + ":" + password;
             String encoded = new sun.misc.BASE64Encoder().encode(loginPassword.getBytes());
 
+            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+protocols);
+            
             //URL url = new URL("http://www.avajava.com/images/avajavalogo.jpg");
             //OLD HIKVISION IP Cameras
             //URL url = new URL("http://admin:user1234@192.168.1.64/Streaming/channels/1/picture");
             //HIKVISION DVR
             //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //HIKVISION IP Cameras
-            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
+            //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
             
             //HttpURLConnection yc = (HttpURLConnection) url.openConnection();
             //yc.setRequestProperty("Authorization", "Basic " + encoded);

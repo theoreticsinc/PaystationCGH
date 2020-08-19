@@ -74,6 +74,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     //public String entryIPCamera = "192.168.1.64";
     public String exitIPCamera = "192.168.100.219";    
     //public String exitIPCamera = "192.168.1.64";
+    public String cameraAdmin = "admin";
+    public String cameraPassword = "test";
+    public String cameraProtocols = "";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -294,6 +297,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
+            entryIPCamera = xr.getElementValue("C://JTerminals/net.xml", "entryCam1");
+            exitIPCamera = xr.getElementValue("C://JTerminals/net.xml", "exitCam1");
+            cameraAdmin = xr.getElementValue("C://JTerminals/net.xml", "cameraAdmin");
+            cameraPassword = xr.getElementValue("C://JTerminals/net.xml", "cameraPassword");
+            cameraProtocols = xr.getElementValue("C://JTerminals/net.xml", "cameraProtocols");
             ParkingArea = xr.getElementValue("C://JTerminals/initH.xml", "area_id");
             SlotsID = xr.getElementValue("C://JTerminals/initH.xml", "slots_id");
             serverIP = xr.getElementValue("C://JTerminals/initH.xml", "server_ip");
@@ -6571,7 +6579,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 try {
 
                     //dbh.insertImageFromURLToDB();
-                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "user1234");
+                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, cameraAdmin, cameraPassword, cameraProtocols);
                     if (null != buf) {
                         //entryCamera.setIcon(new ImageIcon(buf));       
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

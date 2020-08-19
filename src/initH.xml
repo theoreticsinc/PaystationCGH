@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialization>
+    <HNterminal_id type="HybridN">EN01</HNterminal_id>
+    <HXterminal_id type="HybridX">EX01</HXterminal_id>
+    <area_id>P1</area_id>
+    <slots_id>AVSLOTS01</slots_id>
+    <slots_port>COM7</slots_port>
+    <login_id>1176600010001151412</login_id>
+    <server_ip>127.0.0.1</server_ip>
+    <roundoff2>false</roundoff2>
+    <journal>enabled</journal>
+    <joggers>enabled</joggers>
+    <datamode>db</datamode><!--cards or db -->
+    <numOfEntryCams>2</numOfEntryCams>
+    <exitType>manned</exitType><!--manned or unmanned -->
+    <printerType>usb</printerType><!--usb or serial -->
+    <printerName>NETWORK EPSON TM-T82 ReceiptSA4</printerName><!--EPSON TM-U220 ReceiptE4 or EPSON TM-T82 Receipt -->
+    <printer port="COM12">enabled</printer>
+    <printerCutter>true</printerCutter><!--usb or serial -->
+    <settlement>enabled</settlement>    
+<sentinel>
+    <official>disabled</official>
+    <header>enabled</header>
+    <BIRheader>disabled</BIRheader>
+    <footer>disabled</footer>
+    <BIRfooter>disabled</BIRfooter>
+    <payuponentry>disabled</payuponentry>
+    <headerline1 print="enabled">A-PORT CORPORATION</headerline1>
+    <headerline2 print="enabled">UNIT 1001 CENTERPOINT BLDG GARNET ST</headerline2>
+    <headerline3 print="enabled">SAN ANTONIO ORTIGAS CENTER PASIG CITY</headerline3>
+    <headerline4 print="enabled">VAT REG TIN: 234905135-00000</headerline4>
+    <headerline5 print="enabled">Las Pinas Doctors Hospital</headerline5>
+    <headerline6 print="enabled">MIN: 20030312112189709</headerline6>
+    <headerline7 print="disabled"></headerline7>
+    <headerline8 print="disabled"></headerline8>
+    <headerline9 print="disabled"></headerline9>
+    <headerline10 print="disabled"></headerline10>
+    <receiptno>0</receiptno>
+    <footerline1 print="enabled">PARKING POS SUPPLIER</footerline1>
+    <footerline2 print="enabled">APPLIED MODERN THEORETICS INC.</footerline2>
+    <footerline3 print="enabled">ACCRED: 0470083988742019071113</footerline3>
+    <footerline4 print="enabled">Date Issued:  02/05/2020</footerline4>
+    <footerline5 print="enabled">Valid Until:  02/05/2025</footerline5>
+    <footerline6 print="enabled">PTU NO: FP032020-043-0252925-00000</footerline6>
+    <footerline7 print="enabled">Date Issued:  03/03/2020</footerline7>
+    <footerline8 print="enabled">Valid Until:  03/03/2025</footerline8>
+    <footerline9 print="enabled">THANK YOU. FOR PARKING</footerline9>
+    <footerline10 print="enabled"> --- DRIVE SAFELY --- </footerline10>
+    <message1>please visit</message1>
+    <message2>www.theoretics.com.ph</message2>
+    <feederlines>8</feederlines>
+    <serialno>EXT01-XXXXXXXXX</serialno>
+    <resetCount>0</resetCount>
+</sentinel>
+<slots>
+	<slotscompute>active</slotscompute>
+	<slotsmode>SERVER</slotsmode>
+	<entry n1="EN02SERV.SER">1</entry>
+	<exit x1="EX02SERV.SER" x2="EX03SERV.SER" x3="EX04SERV.SER">3</exit>
+	<reset time="7:30:00 AM">enabled</reset>
+</slots>
+<validation>
+    <key>V 5.1.1.1a</key>              
+</validation>
+</initialization>
