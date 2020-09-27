@@ -118,13 +118,13 @@ public class EntranceAPI {
         }
         String transTime = checkedHours + checkedMinutes;
         ParkerDataHandler pdh = new ParkerDataHandler();
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd H:mm:ss.S");
         String d2 = sdf.format(Now);
         long timeStampIN = dch.convertJavaDate2UnixTime(Now);
 //CHANGES TO MANUAL ENTRY. NO PLATE ENCODING AT ENTRY
         //if (tpui.PlateInput2.getText().length() >= tpui.PlateDigits) {
-            /*
+        /*
             try {
                 Process t = Runtime.getRuntime().exec("C://JTerminals/tim.bat");//Linux Update Time                        
             } catch (Exception ex) {
@@ -136,102 +136,102 @@ public class EntranceAPI {
             } catch (Exception ex) {
                 log.error(ex.getMessage());
             }
-            */
-            //Check if plate and card input is filled
-            //HYBRID ONLY --- Remember that Sentinel ID is separated into EN and EX
-            //if (tpui.CardInput2.getText().compareToIgnoreCase("") != 0 && tpui.PlateInput2.getText().compareToIgnoreCase("") != 0) {
-            if (tpui.CardInput2.getText().compareToIgnoreCase("") != 0) {
-                SysMsg[11] = "Checking Server...";
-                tpui.npd.PlsPay.setText("Welcome");
-                tpui.npd.lblComeAgain.setText("Have a pleasant day");
-                //Write to Card
-                long cardtimeStampIN = dch.convertArduinoDate2UnixTime(Now);
-                if (datamode.compareToIgnoreCase("cards") == 0) {
-                    mifare.writeManualEntrance(String.valueOf(cardtimeStampIN));
-                }
-                if (pdh.saveParkerDB(tpui.entryIPCamera,"admin","user1234",tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), tpui.PlateInput2.getText(), MEMtrtype, d2, timeStampIN) == false) {
-                    LogUtility logthis = new LogUtility();
-                    logthis.setLog(tpui.EN_SentinelID, "Unable to reach Server :" + Now.getTime() + " to save Ent Transaction: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
-                    tpui.PrevParker = tpui.CardInput2.getText();
-                    //if unable to save to server database then save to offline text file
-                    SysMsg[0] = "SERVER OFFLINE";
-                    if (pdh.saveParkerSTUB(tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText().substring(0, CardDigits), tpui.PlateInput2.getText(), MEMtrtype, sendTime) == false) //unable to save to self
+         */
+        //Check if plate and card input is filled
+        //HYBRID ONLY --- Remember that Sentinel ID is separated into EN and EX
+        //if (tpui.CardInput2.getText().compareToIgnoreCase("") != 0 && tpui.PlateInput2.getText().compareToIgnoreCase("") != 0) {
+        if (tpui.CardInput2.getText().compareToIgnoreCase("") != 0) {
+            SysMsg[11] = "Checking Server...";
+            tpui.npd.PlsPay.setText("Welcome");
+            tpui.npd.lblComeAgain.setText("Have a pleasant day");
+            //Write to Card
+            long cardtimeStampIN = dch.convertArduinoDate2UnixTime(Now);
+            if (datamode.compareToIgnoreCase("cards") == 0) {
+                mifare.writeManualEntrance(String.valueOf(cardtimeStampIN));
+            }
+            if (pdh.saveParkerDB(tpui.entryIPCamera, tpui.cameraAdmin, tpui.cameraPassword, tpui.cameraProtocols, tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), tpui.PlateInput2.getText(), MEMtrtype, d2, timeStampIN) == false) {
+                LogUtility logthis = new LogUtility();
+                logthis.setLog(tpui.EN_SentinelID, "Unable to reach Server :" + Now.getTime() + " to save Ent Transaction: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
+                tpui.PrevParker = tpui.CardInput2.getText();
+                //if unable to save to server database then save to offline text file
+                SysMsg[0] = "SERVER OFFLINE";
+                if (pdh.saveParkerSTUB(tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText().substring(0, CardDigits), tpui.PlateInput2.getText(), MEMtrtype, sendTime) == false) //unable to save to self
+                {
+                    SysMsg[11] = "ENTRY FAILED";
+                    SysMsg[12] = "Please Scan again: " + tpui.EN_SentinelID;
+                } else //means CRD & PLT was saved to self
+                {
+                    logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "saved locally: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
+                    SysMsg[11] = "GIVE CARD";
+                    SysMsg[13] = "Server Offline";
+                    try //update car served
                     {
-                        SysMsg[11] = "ENTRY FAILED";
-                        SysMsg[12] = "Please Scan again: " + tpui.EN_SentinelID;
-                    } else //means CRD & PLT was saved to self
-                    {
-                        logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "saved locally: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
-                        SysMsg[11] = "GIVE CARD";
-                        SysMsg[13] = "Server Offline";
-                        try //update car served
-                        {
-                            NOSfiles nf = new NOSfiles();
-                            nf.UpdateCarServed();
-                            logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "car served: " + servStatus);
-                            if (MEMtrtype.compareToIgnoreCase("M") != 0) {
-                                nf.UpdateCarSlots(tpui.EN_SentinelID, tpui.slotsmode);
-                            }
-                            servStatus = nf.getCarServed();
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
+                        NOSfiles nf = new NOSfiles();
+                        nf.UpdateCarServed();
+                        logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "car served: " + servStatus);
+                        if (MEMtrtype.compareToIgnoreCase("M") != 0) {
+                            nf.UpdateCarSlots(tpui.EN_SentinelID, tpui.slotsmode);
                         }
+                        servStatus = nf.getCarServed();
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
                     }
-                } else {
-                    //SysMessage1.setText("Server not Found");
-                    try //update car served and car slots because of the errors in saving the parking transactions
-                    {
-                        /*DataBaseHandler dbh = new DataBaseHandler();
+                }
+            } else {
+                //SysMessage1.setText("Server not Found");
+                try //update car served and car slots because of the errors in saving the parking transactions
+                {
+                    /*DataBaseHandler dbh = new DataBaseHandler();
                         BufferedImage buf = dbh.GetImageFromDB(tpui.CardInput2.getText());
                         if (null != buf) {
                             tpui.entryCamera.setIcon(new ImageIcon(buf));
                         }*/
-                        LogUtility logthis = new LogUtility();
-                        logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "successful Transaction: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
-                        NOSfiles nf = new NOSfiles();
+                    LogUtility logthis = new LogUtility();
+                    logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "successful Transaction: " + tpui.CardInput2.getText() + "   " + tpui.PlateInput2.getText());
+                    NOSfiles nf = new NOSfiles();
 //                        nf.UpdateCarServed();
-                        servStatus = nf.getCarServed();
-                        logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "car served: " + servStatus);
-                        if (MEMtrtype.compareToIgnoreCase("M") != 0) {
+                    servStatus = nf.getCarServed();
+                    logthis.setsysLog(tpui.EN_SentinelID, Now.getTime() + "car served: " + servStatus);
+                    if (MEMtrtype.compareToIgnoreCase("M") != 0) {
 //                            nf.UpdateCarSlots(tpui.EN_SentinelID, tpui.slotsmode);
-                        }
-
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
                     }
-                    if (pdh.saveENParkerTrans(tpui.CashierID, tpui.CashierName, tpui.EN_SentinelID, tpui.CardInput2.getText().substring(0, CardDigits), tpui.PlateInput2.getText(), MEMtrtype, transTime) == false) {
-                        SysMsg[17] = "TRANSACTION Saved Locally";
-                    }
-                    SysMsg[11] = "GIVE CARD";
 
-                    SysMsg[13] = tpui.PlateInput2.getText();
-                    SysMsg[15] = tpui.CardInput2.getText();
-                    ParkersAPI pa = new ParkersAPI();
-                    String ptemp = pa.checkPTypeFromDB(MEMtrtype);
-                    SysMsg[16] = "<" + ptemp + ">";
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
+                }
+                if (pdh.saveENParkerTrans(tpui.CashierID, tpui.CashierName, tpui.EN_SentinelID, tpui.CardInput2.getText().substring(0, CardDigits), tpui.PlateInput2.getText(), MEMtrtype, transTime) == false) {
+                    SysMsg[17] = "TRANSACTION Saved Locally";
+                }
+                SysMsg[11] = "GIVE CARD";
 
-                    SysMsg[18] = "Transaction Saved to Server";
-                    tpui.PrevParker = tpui.CardInput2.getText();
+                SysMsg[13] = tpui.PlateInput2.getText();
+                SysMsg[15] = tpui.CardInput2.getText();
+                ParkersAPI pa = new ParkersAPI();
+                String ptemp = pa.checkPTypeFromDB(MEMtrtype);
+                SysMsg[16] = "<" + ptemp + ">";
+
+                SysMsg[18] = "Transaction Saved to Server";
+                tpui.PrevParker = tpui.CardInput2.getText();
 //                        Process s = Runtime.getRuntime().exec("sudo chmod 777 /SYSTEMS/"+tpui.PrevParker+".crd");
 //                        s.waitFor();
 //                        s = Runtime.getRuntime().exec("sudo chmod 777 /SYSTEMS/"+tpui.PlateInput2.getText()+".plt");
 //                        s.waitFor();                                                
-                }
             }
-            //reset values
+        }
+        //reset values
 //            trtype = "R";
 //            PlateInput2.setText("");
 //            Cardinput.delete(0, Cardinput.length());
 //            CardInput2.setText(""); 
-            return true;
+        return true;
         //}
         //return false;
     }
-    
+
     public boolean createManualEntry(String MEMtrtype, String dateManuallyCreated, String plateManuallyCreated) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd H:mm:ss.S");
         ParkerDataHandler pdh = new ParkerDataHandler();
-        if (pdh.saveParkerDB(tpui.entryIPCamera,"admin","user1234",tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), plateManuallyCreated.toUpperCase(), MEMtrtype, dateManuallyCreated, 0L) == false) {
+        if (pdh.saveParkerDB(tpui.entryIPCamera, tpui.cameraAdmin, tpui.cameraPassword, tpui.cameraProtocols, tpui.ParkingArea, tpui.EN_SentinelID, tpui.CardInput2.getText(), plateManuallyCreated.toUpperCase(), MEMtrtype, dateManuallyCreated, 0L) == false) {
         }
         return false;
     }

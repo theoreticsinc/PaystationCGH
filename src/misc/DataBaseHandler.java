@@ -276,8 +276,8 @@ public class DataBaseHandler extends Thread {
             statement = connection.prepareStatement("insert into unidb.timeindb(CardCode, Plate, PIC2, PIC) " + "values(?,?,?,?)");
             statement.setString(1, "HFJ93230");
             statement.setString(2, "ABCDEFG");
-            statement.setBinaryStream(3, is1, 1024 * 96); //Last Parameter has to be bigger than actual 
-            statement.setBinaryStream(4, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
+            statement.setBinaryStream(3, is1, 1024 * 256); //Last Parameter has to be bigger than actual 
+            statement.setBinaryStream(4, is2, 1024 * 256); //Last Parameter has to be bigger than actual 
             statement.executeUpdate();
         } catch (FileNotFoundException e) {
 //            System.out.println("FileNotFoundException: - " + e);
@@ -470,7 +470,7 @@ public class DataBaseHandler extends Thread {
     public BufferedImage GetImageFromDB(String CardCode) {
         BufferedImage img = null;
         try {
-            connection = getLocalConnection(true);
+            connection = getServerConnection(true);
             String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE CardCode = '" + CardCode + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();

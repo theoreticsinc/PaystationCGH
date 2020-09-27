@@ -148,7 +148,7 @@ public class ParkerDataHandler {
         return false;
     }
 
-    public boolean saveParkerDB(String ipaddress, String username, String password, String AreaID, String entranceID, String Card, String Plate, String TRType, String DateTimeIN, Long timeStampIN) {
+    public boolean saveParkerDB(String ipaddress, String username, String password, String cameraProtocols, String AreaID, String entranceID, String Card, String Plate, String TRType, String DateTimeIN, Long timeStampIN) {
         DataBaseHandler DB = new DataBaseHandler();
         //DateTimeIN should now be null because Mysql is inserting a default timestamp
         //DateTimeIN = "";
@@ -177,7 +177,7 @@ public class ParkerDataHandler {
             //HIKVISION IP Cameras Old Versions
             //URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + "/Streaming/channels/1/picture");
             //HIKVISION IP Cameras
-            URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + "/onvif-http/snapshot?Profile_1");
+            URL url = new URL("http://" + username + ":" + password + "@" + ipaddress + cameraProtocols);
             //HIKVISION DVR
             //URL url = new URL("http://"+username+":"+password+"@"+ipaddress+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //URL url = new URL("http://192.168.100.220/onvifsnapshot/media_service/snapshot?channel=1&subtype=1");
@@ -216,22 +216,22 @@ public class ParkerDataHandler {
             statement = conn.prepareStatement(SQL);
             if (null != is1 && null != is2) {
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is1, 1024 * 96); //Last Parameter has to be bigger than actual      
-                statement.setBinaryStream(5, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
+                statement.setBinaryStream(4, is1, 1024 * 256); //Last Parameter has to be bigger than actual      
+                statement.setBinaryStream(5, is2, 1024 * 256); //Last Parameter has to be bigger than actual 
                 statement.setString(6, DateTimeIN);
             }
             if (null == is1 && null != is2) {
                 SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
                         + "(NULL, ?, 'CAR' , ?, NULL, NULL, ?, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
+                statement.setBinaryStream(4, is2, 1024 * 256); //Last Parameter has to be bigger than actual 
                 statement.setString(5, DateTimeIN);
             }
             if (null != is1 && null == is2) {
                 SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
                         + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, ?, 'ENTRY', ?)";
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is1, 1024 * 96); //Last Parameter has to be bigger than actual 
+                statement.setBinaryStream(4, is1, 1024 * 256); //Last Parameter has to be bigger than actual 
                 statement.setString(5, DateTimeIN);
             }
             if (null == is1 && null == is2) {
