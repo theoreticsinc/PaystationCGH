@@ -1179,7 +1179,7 @@ public class ParkersAPI {
             eh.closeReceiptFile(SentinenlID);
             eh.closePrinter();
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            log.error("USB Printer Error: " + ex.getMessage());
         }
     }
 
