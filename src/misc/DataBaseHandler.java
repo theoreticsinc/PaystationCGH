@@ -2266,7 +2266,7 @@ public class DataBaseHandler extends Thread {
                 receiptNos = "000000000001";
             }
             String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, zCount, tellerCode, logINID) "
-                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', " + logID + ")";
+                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', '" + logID + "')";
             st.execute(SQL);
             st.close();
             connection.close();
@@ -2411,7 +2411,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public String formatNos(String newReceipt) {
-        int stoploop = 12 - newReceipt.length();
+        int stoploop = 10 - newReceipt.length();
         int i = 0;
         do {
             newReceipt = "0" + newReceipt;

@@ -134,7 +134,7 @@ public class SlotsStatus {
         short noofentry;
         String[] computeEntry = null;
         try {
-            entryslots = xr.getElementValue("C://JTerminals/initH.xml", "entry");
+            entryslots = xr.getElementValue("C:/JTerminals/initH.xml", "entry");
 
             noofentry = Short.parseShort(entryslots);
 
