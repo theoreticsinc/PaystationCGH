@@ -81,10 +81,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-    private String USERNAME = "base";
-    private String PASSWORD = "theoreticsinc";
-//    private String USERNAME = "root";
-//    private String PASSWORD = "sa";
+//    private String USERNAME = "base";
+//    private String PASSWORD = "theoreticsinc";
+    private String USERNAME = "root";
+    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -2411,7 +2411,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public String formatNos(String newReceipt) {
-        int stoploop = 10 - newReceipt.length();
+        int stoploop = 8 - newReceipt.length();
         int i = 0;
         do {
             newReceipt = "0" + newReceipt;

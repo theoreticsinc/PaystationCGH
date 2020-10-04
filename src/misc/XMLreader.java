@@ -18,7 +18,7 @@ public class XMLreader {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         Reader fileReader = new FileReader(xmlfile);
         XMLEventReader reader = factory.createXMLEventReader(fileReader);
-
+        
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
@@ -31,12 +31,14 @@ public class XMLreader {
                         QName name = attribute.getName();
                         if (name.toString().compareToIgnoreCase(AttribName) == 0) {
                             String value = attribute.getValue();
+                            fileReader.close();
                             return (value);
                         }
                     }
                 }
             }
         }
+        fileReader.close();
         return ("");
     }
 
@@ -44,6 +46,7 @@ public class XMLreader {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         Reader fileReader = new FileReader(xmlfile);
         XMLEventReader reader = factory.createXMLEventReader(fileReader);
+        
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             //log.info(event.toString() + event.getEventType());
@@ -55,12 +58,14 @@ public class XMLreader {
                     event = reader.nextEvent();
                     if (event.isCharacters()) {
                         Characters characters = (Characters) event;
+                        fileReader.close();
                         return (characters.getData());
                     }
                 }
             }
 
         }
+        fileReader.close();
         return ("");
     }
 

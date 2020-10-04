@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 import misc.DataBaseHandler;
 import misc.DateConversionHandler;
 import misc.EncryptionTool;
+import misc.ImgResizer;
 import misc.USBEpsonHandler;
 import misc.SerialEpsonHandler;
 import misc.LogUtility;
@@ -72,7 +73,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
     public String entryIPCamera = "192.168.100.220";
     //public String entryIPCamera = "192.168.1.64";
-    public String exitIPCamera = "192.168.100.219";    
+    public String exitIPCamera = "192.168.100.219";
     //public String exitIPCamera = "192.168.1.64";
     public String cameraAdmin = "admin";
     public String cameraPassword = "test";
@@ -99,6 +100,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public boolean settlementEnabled = false;
     public boolean reprintEnabled = true;
     private boolean exitCamPressed = false;
+    private int zoomSize, zoomFactor;
     boolean online = false;
     boolean KeyAccepted = true;
     //--exit
@@ -302,6 +304,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             cameraAdmin = xr.getElementValue("C://JTerminals/net.xml", "cameraAdmin");
             cameraPassword = xr.getElementValue("C://JTerminals/net.xml", "cameraPassword");
             cameraProtocols = xr.getElementValue("C://JTerminals/net.xml", "cameraProtocols");
+            zoomFactor = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomFactor"));
+            zoomSize = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomSize"));
+
             ParkingArea = xr.getElementValue("C://JTerminals/initH.xml", "area_id");
             SlotsID = xr.getElementValue("C://JTerminals/initH.xml", "slots_id");
             serverIP = xr.getElementValue("C://JTerminals/initH.xml", "server_ip");
@@ -4172,7 +4177,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         CamPanel.add(exitCamera);
 
         getContentPane().add(CamPanel);
-        CamPanel.setBounds(0, 360, 970, 460);
+        CamPanel.setBounds(0, 320, 970, 460);
 
         background.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         background.setAlignmentY(0.0F);
@@ -4402,7 +4407,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 this.validate();
                 break;
             case 10: //ENTER button
-                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0) {
                     PrevPlate = Plateinput.toString();
                     goEnter();
                 }
@@ -4736,8 +4741,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //        } else {
 //            PrinterEnabled = false;
 //        }
-            LostOverride = true;
-          LostCardEntryPanel.setVisible(true);
+        LostOverride = true;
+        LostCardEntryPanel.setVisible(true);
 //        if (ea.InitiateExit(firstscan, currenttype, PrinterEnabled) == true) {
 //            firstscan = true;
 //        }
@@ -4833,7 +4838,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         }
         lostEnabled = false;
         LostPanel.setVisible(lostEnabled);
-        */
+         */
         LostCardEntryPanel.setVisible(true);
         this.repaint();
         this.requestFocus();
@@ -5132,7 +5137,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         int code = evt.getKeyCode();
         switch (code) {
             case 10:
-                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0) {
                     PrevPlate = Plateinput.toString();
                     goEnter();
                 }
@@ -5172,7 +5177,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 float tendered = Float.parseFloat(tend);
                 float change = tendered - amt;
                 DecimalFormat df2 = new DecimalFormat("#.00");
-                
+
                 if (change > 0) {
                     ChangeDisplay.setText("" + df2.format(change));
                 } else {
@@ -5211,7 +5216,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }//GEN-LAST:event_exitCameraMouseClicked
 
     private void exitCameraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitCameraMouseExited
-        
+
     }//GEN-LAST:event_exitCameraMouseExited
 
     private void fullScreenCameraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fullScreenCameraMouseClicked
@@ -5235,9 +5240,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         manualEntryDate.setDateFormat(sdf);
         SimpleDateFormat sdtf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                
+
         String dateManuallyCreated = manualEntryDate.getText() + " " + manualEntryTime.getTime();
-        
+
         na.createManualEntry(trtype, dateManuallyCreated, manualEntryPlate.getText());
         ManualEntryPanel.setVisible(false);
     }//GEN-LAST:event_CreateMouseClicked
@@ -5549,7 +5554,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     lm.printLoginUSBSTUB(logStamp, LogUsercode2.getText(), logname, EX_SentinelID);
                     dbh.saveLog("L1", LogUsercode2.getText());
                     //lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);
-                    lm.saveLogintoDB(logStamp, logID, LogUsercode2.getText(), logname);  
+                    lm.saveLogintoDB(logStamp, logID, LogUsercode2.getText(), logname);
                     currentmode = "";
                     //REFRESH
                     this.loginID = logID;
@@ -5825,9 +5830,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 //lm.printLogoutReceiptFromDB(EX_SentinelID, false);
                 lm.printHEADER(EX_SentinelID);
                 lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
-                
+
                 //---------------------------
-                
                 LogUsercode1.setText("");
                 LogPassword1.setText("");
                 LogUsercode2.setText("");
@@ -5841,13 +5845,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 String lastTransaction = dbh.getLastTransaction(EX_SentinelID);
                 Float grossCollected = dbh.getImptAmount("grossAmount", loginID);
                 Float totalCollected = dbh.getImptAmount("totalAmount", loginID);
-                Float discountCollected = dbh.getImptAmount("pwdDiscountAmount", loginID) + dbh.getImptAmount("seniorDiscountAmount", loginID) +dbh.getImptAmount("localseniorDiscountAmount", loginID);
+                Float discountCollected = dbh.getImptAmount("pwdDiscountAmount", loginID) + dbh.getImptAmount("seniorDiscountAmount", loginID) + dbh.getImptAmount("localseniorDiscountAmount", loginID);
                 Float vatsaleAmount = dbh.getImptAmount("vatsaleAmount", loginID);
                 Float vat12Amount = dbh.getImptAmount("vat12Amount", loginID);
-                Float vatExemptedSalesAmount = dbh.getImptAmount("vatExemptedSalesAmount", loginID);                
+                Float vatExemptedSalesAmount = dbh.getImptAmount("vatExemptedSalesAmount", loginID);
                 //Float voidsCollected = dbh.getImptAmount("voidsAmount", loginID);
                 Float voidsCollected = 0f;
-                
+
                 //Double Sale12Vat = (double) totalCollected * 0.12;
                 //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
                 //Double vatSale = totalCollected - Sale12Vat;
@@ -5862,15 +5866,15 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 ExitTickets.setText(scd.getExitTicketsServed());
                 LoginMOD la = new LoginMOD();
                 la.CheckValidCashierStamp(this);
-                
+
                 SysMessage1.setText("LOGOUT Successful");
                 SysMessage3.setText("LOGCODE Found");
                 SysMessage4.setText("-Please Login again-");
                 Loginput.delete(0, Loginput.length());
-                
-                this.StartLogInX();                
+
+                this.StartLogInX();
                 lm.eraseLoginDB();
-                
+
                 LoginLbl.setText("LOGIN");
                 LoginLbl.setForeground(new java.awt.Color(255, 255, 0));
                 return true;
@@ -6553,20 +6557,20 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         entryCamera.setIcon(new ImageIcon(buf));
     }
 
-    private void startLostCardSearch() {        
+    private void startLostCardSearch() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         SearchDateFrom.setDateFormat(sdf);
         SearchDateTo.setDateFormat(sdf);
         String DateFrom = SearchDateFrom.getText();
         String DateTo = SearchDateTo.getText();
-        
+
         int x = dbh.GetImageCountFromDB_byDate(DateFrom + " " + SearchTimeFrom, DateTo + " " + SearchTimeTo);
         BufferedImage[] buf = dbh.GetImageFromDB_byDate(DateFrom + " " + SearchTimeFrom, DateTo + " " + SearchTimeTo);
         for (int i = 0; i < x; i++) {
             javax.swing.JLabel Picture = new javax.swing.JLabel();
             Picture.setIcon(new ImageIcon(buf[i]));
             SearchDisplayPanel.add(Picture);
-        }        
+        }
     }
 
     //-----------------Threads------------------------
@@ -6580,21 +6584,38 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
                     //dbh.insertImageFromURLToDB();
                     BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, cameraAdmin, cameraPassword, cameraProtocols);
+                    //buf = ImgResizer.resize(buf, 2048 * 2, 768 * 2);
+//                    System.out.println("WIDTH: " + buf.getWidth());
+//                    System.out.println("HEIGHT: " + buf.getHeight());
+//                    zoomFactor = 6;
+//                    zoomSize = 100;
+                    XMLreader xr = new XMLreader();
+
+                    zoomFactor = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomFactor"));
+                    zoomSize = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomSize"));
+                    
+                    if (zoomFactor >= 3) {
+                        int Height = buf.getHeight() / zoomFactor;
+                        int Width = buf.getWidth() / zoomFactor;
+                        //buf = ImgResizer.cropImage(buf, buf.getWidth() / zoom - (zoom * 10), buf.getHeight() / zoom - (zoom * 10), (buf.getWidth() / zoom) * (zoom - 1), (buf.getHeight() / zoom) * (zoom - 1));
+                        //buf = ImgResizer.cropImage(buf, 150, 50, (buf.getWidth() / zoom) * (zoom - 1), (buf.getHeight() / zoom) * (zoom - 1));
+                        buf = ImgResizer.cropImage(buf, Width, Height, Width + zoomSize, Height + zoomSize);
+                    }                    
                     if (null != buf) {
                         //entryCamera.setIcon(new ImageIcon(buf));       
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                        
+
                         if (exitCamPressed) {
                             Image img = getScaledImage(buf, screenSize.width, screenSize.height);
                             fullScreenCamera.setIcon(new ImageIcon(new ImageIcon(buf)
-                            .getImage()
-                            .getScaledInstance(screenSize.width, screenSize.height, Image.SCALE_DEFAULT)));
-                            fullScreenCamera.setBounds(0, 0, screenSize.width, screenSize.height);                            
+                                    .getImage()
+                                    .getScaledInstance(screenSize.width, screenSize.height, Image.SCALE_DEFAULT)));
+                            fullScreenCamera.setBounds(0, 0, screenSize.width, screenSize.height);
                         } else {
-                            Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
+                            Image img = getScaledImage(buf, screenSize.width / 4 + 150, screenSize.height / 3 + 120);
                             fullScreenCamera.setIcon(null);
                             fullScreenCamera.setText("");
-                            fullScreenCamera.setBounds(0, 0, 0, 0);      
+                            fullScreenCamera.setBounds(0, 0, 0, 0);
                             exitCamera.setIcon(new ImageIcon(img));
                             exitCamera.setText("EXIT");
                         }
@@ -6614,7 +6635,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         }
 
     }
-    
+
     private Image getScaledImage(Image srcImg, int w, int h) {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
@@ -6625,6 +6646,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
         return resizedImg;
     }
+
     class DigitalClock implements Runnable {
 
         @Override
@@ -6873,7 +6895,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             if (null != serverDate) {
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
                                 String strDateToSet = sdf.format(serverDate);   // dd-MM-yy 
-                                SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");                
+                                SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");
                                 String strTimeToSet = stf.format(serverDate);   //hh:mm:ss
                                 //String cmd = "java -jar \"C:/JTerminals/ServerDateUpdater.jar\" " + strDateToSet + " " + strTimeToSet;
                                 String cmd = "cmd /C date " + strDateToSet + "& time " + strTimeToSet;
@@ -7681,7 +7703,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //                          resetInvalidFlatRates();
         } else if (ExitSwitch == true) {
             busyStamp = new Date();
-            
+
             if (PreCheckExit() == false) {
                 this.SysMessage5.setText("System");
                 this.SysMessage6.setText("OFFLINE");
@@ -7726,7 +7748,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //eh.closePrinter();
 
 //            if (PrinterEnabled == true) {
-        //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+            //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
             //PrevPlate = Plateinput.toString();
             if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0) {
                 //********This prevents from scanning the card again.
