@@ -175,7 +175,7 @@ public class USBEpsonHandler {
             this.printline("           TIN# 000-328-853-000");
             this.printline("     SW-ACCR : 042-006539714-000504");
             this.printline("             MS# : 130325653");
-            this.printline("             Terminal : POS-2");
+            this.printline("             Terminal : POS-3");
             this.printline("---------------------------------------");
             this.Justify((byte) 0);
         } catch (Exception ex) {
