@@ -49,12 +49,14 @@ public class USBEpsonHandler {
     public boolean PrinterEnabled;
     
     private String printerName;
+    private String marginSpaces = "";
     
     USBPrinterService printerService = new USBPrinterService();
 
     public USBEpsonHandler() {
         try {
         printerName = xr.getElementValue("C:\\JTerminals\\initH.xml", "printerName");
+        marginSpaces = xr.getElementValue("C:\\JTerminals\\initH.xml", "marginSpaces");
         //uline(false);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -581,7 +583,7 @@ public class USBEpsonHandler {
     
     public void printline(String line) {
         try {
-            printerService.printString(line + "");
+            printerService.printString(marginSpaces + line + "");
             strBldr.append(line + "" + "\n");//Init
             
         } catch (Exception ex) {

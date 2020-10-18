@@ -228,7 +228,7 @@ public class SaveCollData {
         dbh.setCarServed(trtype, loginID, carServed, totalAmount, extendedCount, extendedAmount, overnightCount, overnightAmount);
     }
     
-    public void UpdateReceiptNos() throws IOException {
+    public void UpdateReceiptNos(String sentinelID) throws IOException {
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -246,7 +246,8 @@ public class SaveCollData {
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
         */
         String oldcount = dbh.getNewReceiptNos();
-        dbh.updateCarparkMaster("receiptNos",oldcount);
+        dbh.updateCarparkMaster("receiptNos",oldcount,sentinelID);
+        dbh.updateRemoteCarparkMaster("receiptNos",oldcount,sentinelID);
     }
 
     public void UpdateReceiptAmount(double AmountRCPT) throws IOException {
@@ -301,7 +302,7 @@ public class SaveCollData {
         return curr;
     }
 
-    public void UpdateGRANDTOTAL(double AmountRCPT) throws IOException {
+    public void UpdateGRANDTOTAL(double AmountRCPT, String sentinelID) throws IOException {
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
@@ -325,7 +326,8 @@ public class SaveCollData {
 //        }
         */
         String oldcount = dbh.getGrandTotal(AmountRCPT);
-        dbh.updateCarparkMaster("grandTotal",oldcount);
+        dbh.updateCarparkMaster("grandTotal",oldcount,sentinelID);
+        dbh.updateRemoteCarparkMaster("grandTotal",oldcount,sentinelID);
     }
     
     public String getGRANDGROSSTOTAL() throws IOException {
@@ -343,7 +345,7 @@ public class SaveCollData {
         return curr;
     }
     
-    public void UpdateGRANDGROSSTOTAL(double AmountRCPT) throws IOException {
+    public void UpdateGRANDGROSSTOTAL(double AmountRCPT, String sentinelID) throws IOException {
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
@@ -373,7 +375,8 @@ public class SaveCollData {
 //        }
         */
         String oldcount = dbh.getGrossTotal(AmountRCPT);
-        dbh.updateCarparkMaster("grossTotal",oldcount);
+        dbh.updateCarparkMaster("grossTotal",oldcount,sentinelID);
+        dbh.updateRemoteCarparkMaster("grossTotal",oldcount,sentinelID);
     }    
     
     public String getPtypeAmount(String Ftype) {

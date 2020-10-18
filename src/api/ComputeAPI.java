@@ -1999,10 +1999,10 @@ public class ComputeAPI {
     private String updateReceiptFiles(double AmountRCPT, double GrossAmount) {
         try {
             SaveCollData scd = new SaveCollData();
-            scd.UpdateReceiptNos();
+            scd.UpdateReceiptNos(stn.EX_SentinelID);
             //scd.UpdateReceiptAmount(AmountRCPT);                  //
-            scd.UpdateGRANDTOTAL(AmountRCPT);
-            scd.UpdateGRANDGROSSTOTAL(GrossAmount);
+            scd.UpdateGRANDTOTAL(AmountRCPT, stn.EX_SentinelID);
+            scd.UpdateGRANDGROSSTOTAL(GrossAmount, stn.EX_SentinelID);
             return scd.getCurrentReceiptNos();
         } catch (Exception ex) {
             log.error(ex.getMessage());

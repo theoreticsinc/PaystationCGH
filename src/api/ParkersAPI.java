@@ -1476,7 +1476,7 @@ public class ParkersAPI {
             scd.UpdateVOIDPtypecountDB("voids", CashierID);
             scd.UpdateVOIDPtypeAmountDB("voids", CashierID, -refundAmount);
             scd.UpdateImptAmountDB("totalAmount", CashierID, -refundAmount);
-            scd.UpdateGRANDTOTAL(-refundAmount);
+            scd.UpdateGRANDTOTAL(-refundAmount, "");
             dbh.manualClose();
             //dateTimeIN = dbh.getTimeINStamp();
 
@@ -1572,7 +1572,7 @@ public class ParkersAPI {
             scd.UpdateVOIDPtypecountDB("voids", CashierID);
             scd.UpdateVOIDPtypeAmountDB("voids", CashierID, -refundAmount);
             scd.UpdateImptAmountDB("totalAmount", CashierID, -refundAmount);
-            scd.UpdateGRANDTOTAL(-refundAmount);
+            scd.UpdateGRANDTOTAL(-refundAmount, "");
             dbh.manualClose();
             //dateTimeIN = dbh.getTimeINStamp();
 
@@ -1664,7 +1664,7 @@ public class ParkersAPI {
             scd.UpdateVOIDPtypecountDB("voids", CashierID);
             scd.UpdateVOIDPtypeAmountDB("voids", CashierID, -refundAmount);
             scd.UpdateImptAmountDB("totalAmount", CashierID, -refundAmount);
-            scd.UpdateGRANDTOTAL(-refundAmount);
+            scd.UpdateGRANDTOTAL(-refundAmount, "");
             dbh.manualClose();
             //dateTimeIN = dbh.getTimeINStamp();
 

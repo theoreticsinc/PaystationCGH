@@ -81,10 +81,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-//    private String USERNAME = "base";
-//    private String PASSWORD = "theoreticsinc";
-    private String USERNAME = "root";
-    private String PASSWORD = "sa";
+    private String USERNAME = "base";
+    private String PASSWORD = "theoreticsinc";
+//    private String USERNAME = "root";
+//    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -2520,12 +2520,28 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public boolean updateCarparkMaster(String fieldName, String value) {
+    public boolean updateCarparkMaster(String fieldName, String value, String sentinelID) {
         try {
             connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE carpark.master SET " + fieldName + " = DES_ENCRYPT('" + value + "','Th30r3t1cs')");
+            st.execute("UPDATE carpark.master SET " + fieldName + " = DES_ENCRYPT('" + value + "','Th30r3t1cs'), `dateTimeRecorded` = CURRENT_TIMESTAMP WHERE sentinelID = '" + sentinelID + "'");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean updateRemoteCarparkMaster(String fieldName, String value, String sentinelID) {
+        try {
+            connection = getServerConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE carpark.master SET " + fieldName + " = DES_ENCRYPT('" + value + "','Th30r3t1cs'), `dateTimeRecorded` = CURRENT_TIMESTAMP WHERE sentinelID = '" + sentinelID + "'");
 
             st.close();
             connection.close();
