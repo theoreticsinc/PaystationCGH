@@ -549,7 +549,7 @@ public class SaveCollData {
     }
     
     public String formatNos(String newReceipt) {
-        int stoploop = 10 - newReceipt.length();
+        int stoploop = 12 - newReceipt.length();
         int i = 0;
         do {
             newReceipt = "0" + newReceipt;

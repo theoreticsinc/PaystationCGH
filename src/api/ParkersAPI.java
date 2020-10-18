@@ -1153,7 +1153,7 @@ public class ParkersAPI {
                 */
 //                eh.startPrinter();
             }
-            eh.Justify((byte) 1);
+            eh.Justify((byte) 0);
             eh.selectEMstyle(true);
             //eh.printline(message1);
             //eh.printline(message2);
@@ -1161,9 +1161,9 @@ public class ParkersAPI {
             //eh.selectEMstyle(false);
             //eh.Justify((byte) 1);
             eh.printFOOTER(SentinenlID, true);
-            eh.printline("THANK YOU FOR PARKING");
-            eh.printline("DRIVE SAFELY !!!");
-            eh.printline("CASHIER : " + CashierName);
+//            eh.printline("THANK YOU FOR PARKING");
+//            eh.printline("DRIVE SAFELY !!!");
+            eh.printline("        CASHIER : " + CashierName);
             
             eh.startPrinter();
 

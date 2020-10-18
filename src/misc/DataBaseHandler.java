@@ -2411,7 +2411,7 @@ public class DataBaseHandler extends Thread {
     }
 
     public String formatNos(String newReceipt) {
-        int stoploop = 8 - newReceipt.length();
+        int stoploop = 12 - newReceipt.length();
         int i = 0;
         do {
             newReceipt = "0" + newReceipt;
@@ -3155,8 +3155,30 @@ public class DataBaseHandler extends Thread {
         }
         return rs;
     }
+    
+    public String getZReadLastRead(String sentinelID) {
+        ResultSet rs = null;
+        String res = "";
+        try {
+            connection = getLocalConnection(true);
+            //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
+            String sql = "SELECT date FROM zread.lastdate "
+                    + "where sentinelID = '" + sentinelID + "'";
+            rs = selectDatabyFields(sql);
+            // iterate through the java resultset
+            while (rs.next()) {
+                res = rs.getString("date");
+            }
 
-    public ResultSet getZReadbydateColl(String dateColl) {
+            //connection.close();
+            return res;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return res;
+    }
+
+    public ResultSet getZReadbydateColl(String dateColl, String lastZRead) {
         ResultSet rs = null;
         try {
             connection = getLocalConnection(true);
@@ -3167,7 +3189,7 @@ public class DataBaseHandler extends Thread {
                     + "LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  "
                     + "MIN(zCount) AS startZCount, MAX(zCount) AS endZCount FROM zread.main "
-                    + "where date(datetimeOut) = '" + dateColl + "'";
+                    + "where datetimeOut >= '" + lastZRead + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
             //while (rs.next()) {

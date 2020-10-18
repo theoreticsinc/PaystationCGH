@@ -121,10 +121,10 @@ public class USBEpsonHandler {
             String headerline9 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline9");
             String headerline10 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline10");
             String BIRHeaderEnabled = xr.getElementValue("C://JTerminals/initH.xml", "BIRheader");
-            this.setRed();
-            this.Justify((byte) 1);
+//            this.setRed();
+            this.Justify((byte) 0);
             //this.feedpaperup((byte)1);
-/*            
+           
             if(headerline1PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(headerline1);
             }
@@ -155,7 +155,8 @@ public class USBEpsonHandler {
             if(headerline10PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(headerline10);
             }
-            
+            this.startPrinter();
+/*         
             this.setBlack();
             
             if (BIRHeaderEnabled.compareToIgnoreCase("enabled") == 0) {
@@ -169,15 +170,17 @@ public class USBEpsonHandler {
             //bos.write(13);
             //bos.close();
 */
-            this.printline(" CHINESE GENERAL HOSPITAL & MEDICAL CTR");
-            this.printline("  286 BLUMENTRITT ST. STA. CRUZ MANILA");
-            this.printline(" PERMIT : 0813-031-162959-000(08/1/2013)");
-            this.printline("           TIN# 000-328-853-000");
-            this.printline("     SW-ACCR : 042-006539714-000504");
-            this.printline("             MS# : 130325653");
-            this.printline("             Terminal : POS-3");
-            this.printline("---------------------------------------");
-            this.Justify((byte) 0);
+//            this.printline(" CHINESE GENERAL HOSPITAL & MEDICAL CTR");
+//            this.printline("  286 BLUMENTRITT ST. STA. CRUZ MANILA");
+//            this.printline(" PERMIT : 0813-031-162959-000(08/1/2013)");
+//            this.printline("           TIN# 000-328-853-000");
+//            this.printline("     SW-ACCR : 042-006539714-000504");
+//            this.printline("             MS# : 130325653");
+//            this.printline("             Terminal : POS-3");
+//            this.printline("---------------------------------------");
+//            this.Justify((byte) 0);
+//            this.printline("");
+//            this.startPrinter();
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -218,17 +221,17 @@ public class USBEpsonHandler {
                 this.startPrinter();
             }
             */
-            this.setBlack();
-            this.Justify((byte) 1);
-                this.printline("This Serves as your Official Receipt");
-                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
-                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
-//                this.printline("     THIS DOCUMENT IS NOT VALID");
-//                this.printline("       FOR CLAIM OF INPUT TAX");
-                //this.startPrinter();
+//            this.setBlack();
+//            this.Justify((byte) 1);
+//                this.printline("This Serves as your Official Receipt");
+//                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
+//                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
+////                this.printline("     THIS DOCUMENT IS NOT VALID");
+////                this.printline("       FOR CLAIM OF INPUT TAX");
+//                //this.startPrinter();
             
-            this.setRed();
-/*            
+//            this.setRed();
+//            this.Justify((byte) 1);
             if(footerline1PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(footerline1);
             }
@@ -259,8 +262,10 @@ public class USBEpsonHandler {
             if(footerline10PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(footerline10);
             }
-*/            
-            this.Justify((byte) 0);
+            
+            this.startPrinter();
+//            this.Justify((byte) 0);
+//            this.printline("");
 //            this.startPrinter();
         } catch (Exception ex) {
             log.error(ex.getMessage());
