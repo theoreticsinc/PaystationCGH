@@ -67,7 +67,9 @@ public class ComputeAPI {
     private double NetOfDiscount;
     private double tenderFloat;
     private double CGHtenderFloat;
+    private String LostPrice;
     private float AmountPaid = 0;
+    private String CGHRNos = "";
     private String RNos = "";
     private String sTimeOUT = "";
     private boolean OvernightOverride = false;
@@ -372,7 +374,7 @@ public class ComputeAPI {
             //-----end of overrides
             if (sets == true) {
                 try {
-                    stn.SysMessage2.setText("Processing...");
+                    stn.SysMessage1.setText("Processing...");
                     ComputeInSeconds(dateTimeINstamp, dateTimePaidstamp);
                 } catch (Exception ex) {
                     return 8;//Unable to convert the time from the card
@@ -586,7 +588,7 @@ public class ComputeAPI {
                 vatsale = getNonVat(AmountDue);
                 vatexempt = getVat(AmountDue);
                 CGHAmountDue = (vatsale - Float.parseFloat(discount));
-                stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(CGHAmountDue)));
+//                stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(CGHAmountDue)));
 
                 //******************************
                 //*************NEW COMPUTATION                
@@ -598,7 +600,7 @@ public class ComputeAPI {
                 vatExemptedSales = getNonVat(AmountDue);
                 NetOfDiscount = (vatExemptedSales - Float.parseFloat(discount));
                 AmountDue = NetOfDiscount + (NetOfDiscount * .12);
-                
+                stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
                 //stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));            
                 //****************************
             } else {
@@ -688,7 +690,7 @@ public class ComputeAPI {
             Double vatexemptF = getVat(CGHAmountGross);
             CGHvatexempt = vatexemptF;
             CGHAmountDue = (CGHvatsale - Float.parseFloat(CGHdiscount));
-            stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(CGHAmountDue)));
+//            stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(CGHAmountDue)));
             //updateOneTransFiles("discount", Float.parseFloat(CGHdiscount));
             //updateOneTransFiles("vatExempt", CGHvatexempt);            
             //****************************
@@ -696,11 +698,13 @@ public class ComputeAPI {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
             //discountDbl = getdDiscountFromVat(AmountGross, discountPercentage);
             discountDbl = getDiscount(AmountGross, discountPercentage);
+            double discountDbl2Str = Math.round(discountDbl * 100D) / 100D;
+            discount = discountDbl2Str + "";
             vatAdjustment = getVatAdjustment(AmountGross, discountPercentage);
             Double vT = getNonVat(AmountGross);       
             NetOfDiscount = (vT - discountDbl);
             AmountDue = NetOfDiscount + (NetOfDiscount * .12);
-            //stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
+            stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             updateOneTransFiles("exemptedVat12", 0);
             updateOneTransFiles("vatExemptedSales", 0);
             if (ParkerType.compareToIgnoreCase("PW") == 0) {
@@ -763,7 +767,9 @@ public class ComputeAPI {
                 //RNos = updateReceiptFiles(AmountDue);
                 if (RNos.equalsIgnoreCase("") == true) {
                 }
-                RNos = stn.EX_SentinelID.substring(2, 4) + RNos;
+                //OLD CGH RECEIPT NOS
+                CGHRNos = stn.EX_SentinelID.substring(2, 4) + RNos;
+                RNos = stn.EX_SentinelID + RNos;
             } catch (Exception ex) {
             }
             if (PrinterEnabled) {
@@ -795,7 +801,9 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        //SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                    
                     }
                 } else if (duplicateReceiptType == 2) {
                     DuplicateReceiptHeader = "            CUSTOMER COPY";
@@ -803,14 +811,14 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, CGHAmountDue, CGHAmountGross, CGHvat12, CGHvatsale, CGHvatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, CGHtenderFloat, stn.ChangeDisplay.getText(), CGHdiscount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                     DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
                     if (printerType.compareToIgnoreCase("serial") == 0) {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(false, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, CGHAmountDue, CGHAmountGross, CGHvat12, CGHvatsale, CGHvatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, CGHtenderFloat, stn.ChangeDisplay.getText(), CGHdiscount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                 }
             }
@@ -847,10 +855,12 @@ public class ComputeAPI {
 
             }
 
-            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
-
+            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                    
         }
-        String transactionNum = stn.EX_SentinelID.substring(2) + "" + RNos;
+        //OLD CGH Receipt Numbering
+        //String transactionNum = stn.EX_SentinelID.substring(2) + "" + CGHRNos;
+        String transactionNum = CGHRNos;
         //String vat12 = getVat(AmountDue);
         //String nonvat = getNonVat(AmountDue);
         tenderFloat = 0f;
@@ -864,13 +874,17 @@ public class ComputeAPI {
         } catch (Exception x) {
 
         }
+        if (stn.LostOverride) {
+                ParkerType = "L";
+        }
         String SaveParkerType = pa.checkPTypeFromDB(ParkerType).toUpperCase();
         if (SaveParkerType.contains("SENIOR")) {
             SaveParkerType = "SENIOR";
         }
 
-        boolean saveParkerTrans = PDH.saveEXParkerTrans2CGHDB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, SaveParkerType, datetimeIN, datetimeOUT, String.valueOf(CGHAmountGross), String.valueOf(CGHAmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, CGHvat12, CGHvatsale, CGHvatexempt, CGHdiscount, CGHtenderFloat, stn.ChangeDisplay.getText());
-        RNos = stn.EX_SentinelID + "" + RNos.substring(2, RNos.length());
+        boolean saveParkerTrans = PDH.saveEXParkerTrans2CGHDB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, CGHRNos, stn.CashierID, stn.CashierName, Cardno, Plateno, SaveParkerType, datetimeIN, datetimeOUT, String.valueOf(CGHAmountGross), String.valueOf(CGHAmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, CGHvat12, CGHvatsale, CGHvatexempt, CGHdiscount, CGHtenderFloat, stn.ChangeDisplay.getText());
+        //OLD CGH Receipt Numbers
+        //RNos = stn.EX_SentinelID + "" + RNos.substring(2, RNos.length());        
         saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vatAdjustment, vat12, vatsale, vatExemptedSales, discountDbl, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
@@ -2096,7 +2110,7 @@ public class ComputeAPI {
         int GracePeriod = dbh.getGracePeriod(ParkerType);
         int EveryNthHour = dbh.getEveryNthHour(ParkerType);
         String NthHourRate = dbh.getNthHourRate(ParkerType);
-        String LostPrice = dbh.getLostPrice(ParkerType);
+        LostPrice = dbh.getLostPrice(ParkerType);
         Boolean FractionThereOf = dbh.getFractionThereOf(ParkerType);
         int OTCutoff = dbh.getOTCutoff(ParkerType);
         String OTPrice = dbh.getOTPrice(ParkerType);

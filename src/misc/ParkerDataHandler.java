@@ -368,7 +368,7 @@ public class ParkerDataHandler {
             } catch (Exception ex) {
                 conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
-                log.info("Print Error in : " + SQLA);
+                log.info("saveEXParkerTrans2DB Error in : " + SQLA);
                 //int status2 = stmt.executeUpdate(SQL);
                 int status3 = stmt.executeUpdate(SQLA);
                 return true;

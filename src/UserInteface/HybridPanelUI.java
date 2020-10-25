@@ -689,25 +689,28 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SysMessage10 = new javax.swing.JLabel();
         SysMessage20 = new javax.swing.JLabel();
         RightMsgPanellbl = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         ParkerInfo11 = new javax.swing.JLabel();
-        ParkerInfo1 = new javax.swing.JLabel();
         ParkerInfo12 = new javax.swing.JLabel();
-        ParkerInfo2 = new javax.swing.JLabel();
         ParkerInfo13 = new javax.swing.JLabel();
-        ParkerInfo3 = new javax.swing.JLabel();
         ParkerInfo14 = new javax.swing.JLabel();
-        ParkerInfo4 = new javax.swing.JLabel();
         ParkerInfo15 = new javax.swing.JLabel();
-        ParkerInfo5 = new javax.swing.JLabel();
         ParkerInfo16 = new javax.swing.JLabel();
-        ParkerInfo6 = new javax.swing.JLabel();
         ParkerInfo17 = new javax.swing.JLabel();
-        ParkerInfo7 = new javax.swing.JLabel();
         ParkerInfo18 = new javax.swing.JLabel();
-        ParkerInfo8 = new javax.swing.JLabel();
         ParkerInfo19 = new javax.swing.JLabel();
-        ParkerInfo9 = new javax.swing.JLabel();
         ParkerInfo20 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        ParkerInfo1 = new javax.swing.JLabel();
+        ParkerInfo2 = new javax.swing.JLabel();
+        ParkerInfo3 = new javax.swing.JLabel();
+        ParkerInfo4 = new javax.swing.JLabel();
+        ParkerInfo5 = new javax.swing.JLabel();
+        ParkerInfo6 = new javax.swing.JLabel();
+        ParkerInfo7 = new javax.swing.JLabel();
+        ParkerInfo8 = new javax.swing.JLabel();
+        ParkerInfo9 = new javax.swing.JLabel();
         ParkerInfo10 = new javax.swing.JLabel();
         LowerLeftPanelX = new javax.swing.JPanel();
         LowerLeftPanel = new javax.swing.JPanel();
@@ -1468,8 +1471,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SearchPanel.setLayout(null);
 
         SearchDisplayPanel.setBackground(new java.awt.Color(0, 153, 255));
-        SearchDisplayPanel.setFocusable(false);
         SearchDisplayPanel.setAutoscrolls(true);
+        SearchDisplayPanel.setFocusable(false);
         java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING);
         flowLayout2.setAlignOnBaseline(true);
         SearchDisplayPanel.setLayout(flowLayout2);
@@ -1899,11 +1902,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         newMidPanel.setFocusable(false);
         newMidPanel.setOpaque(false);
-        newMidPanel.setLayout(new java.awt.GridLayout(3, 3));
+        newMidPanel.setLayout(new java.awt.GridLayout(3, 3, 10, 0));
 
         inputPanel.setMinimumSize(new java.awt.Dimension(116, 125));
-        inputPanel.setPreferredSize(new java.awt.Dimension(116, 125));
         inputPanel.setOpaque(false);
+        inputPanel.setPreferredSize(new java.awt.Dimension(116, 125));
         inputPanel.setLayout(new java.awt.GridLayout(4, 0));
 
         CardNumberlbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1961,9 +1964,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainPanel.add(amntlbl);
         amntlbl.setBounds(0, 90, 90, 80);
 
-        AMOUNTdisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         AMOUNTdisplay.setFont(new java.awt.Font("Arial Narrow", 0, 38)); // NOI18N
         AMOUNTdisplay.setForeground(new java.awt.Color(102, 255, 153));
+        AMOUNTdisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MainPanel.add(AMOUNTdisplay);
         AMOUNTdisplay.setBounds(80, 40, 440, 70);
 
@@ -2120,157 +2123,171 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         newMidPanel.add(LeftMIDMsgPanel);
 
+        RightMsgPanellbl.setAlignmentY(1.0F);
         RightMsgPanellbl.setBackground(new java.awt.Color(255, 255, 255));
         RightMsgPanellbl.setForeground(new java.awt.Color(255, 255, 255));
         RightMsgPanellbl.setOpaque(false);
-        RightMsgPanellbl.setLayout(new java.awt.GridLayout(10, 3));
+        RightMsgPanellbl.setLayout(new java.awt.GridLayout(1, 2));
 
+        jPanel4.setOpaque(false);
+        RightMsgPanellbl.add(jPanel4);
+
+        jPanel3.setOpaque(false);
+        jPanel3.setLayout(new java.awt.GridLayout(10, 1));
+
+        ParkerInfo11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo11.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo11.setText("Entrance From:  "); // NOI18N
         ParkerInfo11.setAlignmentX(1.0F);
         ParkerInfo11.setAlignmentY(1.0F);
         ParkerInfo11.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo11.setFocusable(false);
-        ParkerInfo11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo11.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo11);
+        jPanel3.add(ParkerInfo11);
 
-        ParkerInfo1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo1.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo1);
-
+        ParkerInfo12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo12.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo12.setText("Card Number  "); // NOI18N
         ParkerInfo12.setAlignmentX(1.0F);
         ParkerInfo12.setAlignmentY(1.0F);
         ParkerInfo12.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo12.setFocusable(false);
-        ParkerInfo12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo12.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo12);
+        jPanel3.add(ParkerInfo12);
 
-        ParkerInfo2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo2.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo2);
-
+        ParkerInfo13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo13.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo13.setText("Plate Number  "); // NOI18N
         ParkerInfo13.setAlignmentX(1.0F);
         ParkerInfo13.setAlignmentY(1.0F);
         ParkerInfo13.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo13.setFocusable(false);
-        ParkerInfo13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo13.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo13.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo13);
+        jPanel3.add(ParkerInfo13);
 
-        ParkerInfo3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo3.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo3);
-
+        ParkerInfo14.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo14.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo14.setText("Transaction Type  "); // NOI18N
         ParkerInfo14.setAlignmentX(1.0F);
         ParkerInfo14.setAlignmentY(1.0F);
         ParkerInfo14.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo14.setFocusable(false);
-        ParkerInfo14.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo14.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo14.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo14);
+        jPanel3.add(ParkerInfo14);
 
-        ParkerInfo4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo4.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo4);
-
+        ParkerInfo15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo15.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo15.setText("Timestamp  "); // NOI18N
         ParkerInfo15.setAlignmentX(1.0F);
         ParkerInfo15.setAlignmentY(1.0F);
         ParkerInfo15.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo15.setFocusable(false);
-        ParkerInfo15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo15.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo15.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo15);
+        jPanel3.add(ParkerInfo15);
 
-        ParkerInfo5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo5.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo5);
-
+        ParkerInfo16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo16.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo16.setAlignmentX(1.0F);
         ParkerInfo16.setAlignmentY(1.0F);
         ParkerInfo16.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo16.setFocusable(false);
-        ParkerInfo16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo16.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo16.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo16);
+        jPanel3.add(ParkerInfo16);
 
-        ParkerInfo6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo6.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo6);
-
+        ParkerInfo17.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo17.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo17.setText("Date IN  "); // NOI18N
         ParkerInfo17.setAlignmentX(1.0F);
         ParkerInfo17.setAlignmentY(1.0F);
         ParkerInfo17.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo17.setFocusable(false);
-        ParkerInfo17.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo17.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo17);
+        jPanel3.add(ParkerInfo17);
 
-        ParkerInfo7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo7.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo7);
-
+        ParkerInfo18.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo18.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo18.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo18.setText("Time IN  "); // NOI18N
         ParkerInfo18.setAlignmentX(1.0F);
         ParkerInfo18.setAlignmentY(1.0F);
         ParkerInfo18.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo18.setFocusable(false);
-        ParkerInfo18.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo18.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo18);
+        jPanel3.add(ParkerInfo18);
 
-        ParkerInfo8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo8.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo8);
-
+        ParkerInfo19.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo19.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo19.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo19.setAlignmentX(1.0F);
         ParkerInfo19.setAlignmentY(1.0F);
         ParkerInfo19.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo19.setFocusable(false);
-        ParkerInfo19.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo19.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo19);
+        jPanel3.add(ParkerInfo19);
 
-        ParkerInfo9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo9.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo9);
-
+        ParkerInfo20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo20.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo20.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         ParkerInfo20.setAlignmentX(1.0F);
         ParkerInfo20.setAlignmentY(1.0F);
         ParkerInfo20.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
         ParkerInfo20.setFocusable(false);
-        ParkerInfo20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ParkerInfo20.setForeground(new java.awt.Color(255, 255, 0));
         ParkerInfo20.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        RightMsgPanellbl.add(ParkerInfo20);
+        jPanel3.add(ParkerInfo20);
+
+        RightMsgPanellbl.add(jPanel3);
+
+        jPanel2.setOpaque(false);
+        jPanel2.setLayout(new java.awt.GridLayout(10, 1));
+
+        ParkerInfo1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo1.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo1);
+
+        ParkerInfo2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo2.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo2);
+
+        ParkerInfo3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo3.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo3);
+
+        ParkerInfo4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo4.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo4);
+
+        ParkerInfo5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo5.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo5);
+
+        ParkerInfo6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo6.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo6);
+
+        ParkerInfo7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo7.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo7);
+
+        ParkerInfo8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo8.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo8);
+
+        ParkerInfo9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ParkerInfo9.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(ParkerInfo9);
 
         ParkerInfo10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         ParkerInfo10.setForeground(new java.awt.Color(255, 255, 255));
-        RightMsgPanellbl.add(ParkerInfo10);
+        jPanel2.add(ParkerInfo10);
+
+        RightMsgPanellbl.add(jPanel2);
 
         newMidPanel.add(RightMsgPanellbl);
 
@@ -2741,8 +2758,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         CenterPanel.add(newMidPanel, java.awt.BorderLayout.CENTER);
 
         fullKeyBoard.setMinimumSize(new java.awt.Dimension(0, 0));
-        fullKeyBoard.setPreferredSize(new java.awt.Dimension(0, 200));
         fullKeyBoard.setOpaque(false);
+        fullKeyBoard.setPreferredSize(new java.awt.Dimension(0, 200));
         fullKeyBoard.setLayout(new java.awt.BorderLayout());
 
         keypadPanel.setOpaque(false);
@@ -5261,11 +5278,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //        CardInput2.setText("012345678");
         ExitAPI ea = new ExitAPI(this);
         Date now = new Date();
+        LostCardEntryPanel.setVisible(false);
+        SysMessage2.setText("Lost Card Created");
+        SysMessage4.setText("Now Printing...");
         if (ea.InitiateExit(now, true, "R", true) == true) {
             firstscan = true;
         }
-        ea.ValidPartII();
-        LostCardEntryPanel.setVisible(false);
+        ea.ValidPartII();        
     }//GEN-LAST:event_Create1MouseClicked
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
@@ -7477,6 +7496,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

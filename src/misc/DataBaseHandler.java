@@ -2265,8 +2265,8 @@ public class DataBaseHandler extends Thread {
             if (receiptNos.compareToIgnoreCase("000000000000") == 0) {
                 receiptNos = "000000000001";
             }
-            String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, zCount, tellerCode, logINID) "
-                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', '" + logID + "')";
+            String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, oldGrossTotal, newGrand, zCount, tellerCode, logINID) "
+                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "','" + grandGrossTotal + "', 0, NULL, '" + logcode + "', '" + logID + "')";
             st.execute(SQL);
             st.close();
             connection.close();

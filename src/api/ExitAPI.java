@@ -75,8 +75,8 @@ public class ExitAPI implements Runnable {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
                     if (null != buf) {
-                        Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
-
+                        //Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
+                        Image img = getScaledImage(buf, screenSize.width / 4 + 120, screenSize.height / 3 + 120);
                         stn.entryCamera.setIcon(new ImageIcon(img));
                         stn.entryCamera.setText("ENTRY");
                     }
