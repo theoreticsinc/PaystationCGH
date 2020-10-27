@@ -3220,7 +3220,32 @@ public class DataBaseHandler extends Thread {
         }
         return rs;
     }
+    
+    public ResultSet getPrevZReadTilTodayColl(Float totalCollected, Double Sale12Vat, Double vatSale) {
+        ResultSet rs = null;
+        try {
+            connection = getLocalConnection(true);
+            //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
+            String sql = "SELECT terminalnum, DATE(m.datetimeOut) AS datetimeOut, CURRENT_TIMESTAMP, "
+                    + "CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, "
+                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, "
+                    + "LPAD(TRIM(MIN(beginOR)+0),12,0) AS BEGINOR, LPAD(TRIM(MAX(endOR)+0),12,0) AS ENDOR, "
+                    + "LPAD(TRIM(MIN(beginTrans)+0),16,0) AS beginTrans, LPAD(TRIM(MAX(endTrans)+0),16,0) AS endTrans, "
+                    + "CAST(MIN(oldGrand) AS decimal(20,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(20,2)) AS newGrand, "
+                    + "zCount AS startZCount,  zCount AS endZCount FROM zread.main m "
+                    + "INNER JOIN zread.lastdate l WHERE l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date "
+                    + "GROUP BY DATE(datetimeOut) ORDER BY m.datetimeOut ASC";
+//            System.out.println(sql);
+            rs = selectDatabyFields(sql);
 
+            //connection.close();
+            return rs;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return rs;
+    }
+    
     public ResultSet getTodaysZReadbydateColl(Float totalCollected, Double Sale12Vat, Double vatSale) {
         ResultSet rs = null;
         try {
@@ -3228,9 +3253,9 @@ public class DataBaseHandler extends Thread {
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, CURRENT_TIMESTAMP, CAST(SUM(todaysale) + " + totalCollected + " AS decimal(20,2)) AS TODAYSALE, "
                     + "CAST(SUM(vatablesale) + " + vatSale + " AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) + " + Sale12Vat + " AS decimal(20,2)) AS VAT12, "
-                    + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
+                    + "LPAD(TRIM(MIN(beginOR))+0,12,0) AS BEGINOR, LPAD(TRIM(MAX(endOR))+0,12,0) AS ENDOR, LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  MIN(zCount) AS startZCount, MAX(zCount) AS endZCount "
-                    + "FROM zread.main where date(datetimeOut) = date(CURRENT_TIMESTAMP)";
+                    + "FROM zread.main m INNER JOIN zread.lastdate l WHERE l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date ORDER BY m.datetimeOut ASC";//where date(datetimeOut) = date(CURRENT_TIMESTAMP)";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
             //while (rs.next()) {

@@ -730,7 +730,7 @@ public class ComputeAPI {
             //ParkerType = stn.trtype;
             //ParkerType = pa.checkPTypeFromDB(stn.trtype).toUpperCase();
             if (stn.LostOverride) {
-                ParkerType = "LOST";
+                ParkerType = "L";
             }
             DateConversionHandler dch = new DateConversionHandler();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd HH:mm:ss.S");
@@ -802,7 +802,7 @@ public class ComputeAPI {
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
                         //SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
                     
                     }
                 } else if (duplicateReceiptType == 2) {
@@ -811,14 +811,14 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
                     }
                     DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
                     if (printerType.compareToIgnoreCase("serial") == 0) {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
                     }
                 }
             }
@@ -855,7 +855,7 @@ public class ComputeAPI {
 
             }
 
-            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter, isLost, LostPrice.trim().substring(1) + ".00");
                     
         }
         //OLD CGH Receipt Numbering
