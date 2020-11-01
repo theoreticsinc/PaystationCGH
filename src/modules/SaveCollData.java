@@ -350,7 +350,7 @@ public class SaveCollData {
         }
         return curr;
         */
-        String curr = dbh.getGrossTotal(0);
+        String curr = dbh.getGrossTotal(0, sentinelID);
         return curr;
     }
     
@@ -383,7 +383,7 @@ public class SaveCollData {
 //            LogManager.getLogger(SaveCollData.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         */
-        String oldcount = dbh.getGrossTotal(AmountRCPT);
+        String oldcount = dbh.getGrossTotal(AmountRCPT, sentinelID);
         dbh.updateCarparkMaster("grossTotal",oldcount,sentinelID);
         dbh.updateRemoteCarparkMaster("grossTotal",oldcount,sentinelID);
     }    

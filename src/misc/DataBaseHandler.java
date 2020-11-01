@@ -2476,13 +2476,13 @@ public class DataBaseHandler extends Thread {
         String data = AmountRCPT + "";
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grandTotal, 'Th30r3t1cs') AS grandTotal FROM carpark.master");
+            String sql = "SELECT DES_DECRYPT(grandTotal, 'Th30r3t1cs') AS grandTotal FROM carpark.master WHERE sentinelID = '" + sentinelID + "'";
+            ResultSet rs = selectDatabyFields(sql);
             // iterate through the java resultset
             while (rs.next()) {
-                Double count = rs.getDouble("grandTotal");
-
-                count = count + AmountRCPT;
-                data = count + "";
+                String count = rs.getString("grandTotal");
+                double dat = AmountRCPT + Double.parseDouble(count);
+                data = dat + "";
 
             }
             st.close();
@@ -2494,16 +2494,17 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public String getGrossTotal(double AmountRCPT) {
+    public String getGrossTotal(double AmountRCPT, String sentinelID) {
         String data = AmountRCPT + "";
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grossTotal, 'Th30r3t1cs') AS grossTotal FROM carpark.master");
+            String sql = "SELECT DES_DECRYPT(grossTotal, 'Th30r3t1cs') AS grossTotal FROM carpark.master WHERE sentinelID = '" + sentinelID + "'";
+            ResultSet rs = selectDatabyFields(sql);
             // iterate through the java resultset
             while (rs.next()) {
-                Double count = rs.getDouble("grossTotal");
-                count = count + AmountRCPT;
-                data = count + "";
+                String count = rs.getString("grossTotal");
+                double dat = AmountRCPT + Double.parseDouble(count);
+                data = dat + "";
             }
             st.close();
             connection.close();
@@ -3260,7 +3261,7 @@ public class DataBaseHandler extends Thread {
         return rs;
     }
     
-    public ResultSet getPrevZReadTilTodayColl(Float totalCollected, Double Sale12Vat, Double vatSale) {
+    public ResultSet getPrevZReadTilTodayColl(String Exitpoint, Float totalCollected, Double Sale12Vat, Double vatSale) {
         ResultSet rs = null;
         try {
             connection = getLocalConnection(true);
@@ -3272,7 +3273,7 @@ public class DataBaseHandler extends Thread {
                     + "LPAD(TRIM(MIN(beginTrans)+0),16,0) AS beginTrans, LPAD(TRIM(MAX(endTrans)+0),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(20,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(20,2)) AS newGrand, "
                     + "zCount AS startZCount,  zCount AS endZCount FROM zread.main m "
-                    + "INNER JOIN zread.lastdate l WHERE l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date "
+                    + "INNER JOIN zread.lastdate l WHERE m.terminalnum = '" + Exitpoint +"' AND l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date "
                     + "GROUP BY DATE(datetimeOut) ORDER BY m.datetimeOut ASC";
 //            System.out.println(sql);
             rs = selectDatabyFields(sql);

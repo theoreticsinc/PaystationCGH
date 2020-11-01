@@ -532,7 +532,7 @@ public class LoginMOD extends javax.swing.JPanel {
             //Double Sale12Vat = (double) totalCollected * 0.12;
             Double vatSale = totalCollected - Sale12Vat;
 
-            ResultSet rs = dbh.getPrevZReadTilTodayColl(totalCollected, Sale12Vat, vatSale);
+            ResultSet rs = dbh.getPrevZReadTilTodayColl(Exitpoint, totalCollected, Sale12Vat, vatSale);
             //ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
 //            String receiptNos = scd.getCurrentReceiptNos();
