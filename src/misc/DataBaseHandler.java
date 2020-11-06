@@ -2257,7 +2257,7 @@ public class DataBaseHandler extends Thread {
         return card2Exit;
     }
 
-    public boolean saveZReadLogIn(String logID, String Exitpoint, String receiptNos, String grandTotal, String grandGrossTotal, String lastTransaction, String logcode) {
+    public boolean saveZReadLogIn(String logID, String Exitpoint, String receiptNos, String grandTotal, String grandGrossTotal, String lastTransaction, String logcode, String zCount) {
         try {
             DateConversionHandler dch = new DateConversionHandler();
             connection = getLocalConnection(true);
@@ -2266,7 +2266,7 @@ public class DataBaseHandler extends Thread {
                 receiptNos = "000000000001";
             }
             String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, oldGrossTotal, newGrand, zCount, tellerCode, logINID) "
-                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "','" + grandGrossTotal + "', 0, NULL, '" + logcode + "', '" + logID + "')";
+                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "','" + grandGrossTotal + "', 0, '" + zCount + "', '" + logcode + "', '" + logID + "')";
             st.execute(SQL);
             st.close();
             connection.close();
@@ -2369,7 +2369,7 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getLocalConnection(true);
             //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
-            ResultSet rs = selectDatabyFields("SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate");
+            ResultSet rs = selectDatabyFields("SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate WHERE sentinelID = '"+sentinel + "'");
 
             if (rs.next()) {
                 zreadActive = rs.getBoolean("active");
@@ -2431,6 +2431,45 @@ public class DataBaseHandler extends Thread {
         } while (i != stoploop);
 
         return newString;
+    }
+    
+    public String getLastZRead() {
+        String data = null;
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT zCount FROM zread.main WHERE DATE(datetimeIn) = CURRENT_DATE");
+            // iterate through the java resultset
+            while (rs.next()) {
+                int count = rs.getInt("zCount");
+                data = count + "";
+            }
+            st.close();
+            connection.close();
+        } catch (Exception ex) {
+            log.error("getLastZRead Error: " + ex.getMessage());
+        }
+
+        return data;
+    }
+    
+    public String getMaxZRead() {
+        String data = null;
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT MAX(zCount) AS zCount FROM zread.main");
+            // iterate through the java resultset
+            while (rs.next()) {
+                int count = rs.getInt("zCount");
+                count++;
+                data = count + "";
+            }
+            st.close();
+            connection.close();
+        } catch (Exception ex) {
+            log.error("getMaxZRead Error: " + ex.getMessage());
+        }
+
+        return data;
     }
 
     public String getGrandTotal(double AmountRCPT) {
