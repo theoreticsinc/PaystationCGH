@@ -245,7 +245,7 @@ public class SaveCollData {
         }
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
         */
-        String oldcount = dbh.getNewReceiptNos();
+        String oldcount = dbh.getCurrentReceiptNos();
         dbh.updateCarparkMaster("receiptNos",oldcount,sentinelID);
         dbh.updateRemoteCarparkMaster("receiptNos",oldcount,sentinelID);
     }

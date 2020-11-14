@@ -2526,7 +2526,7 @@ public class DataBaseHandler extends Thread {
                     data = formatNos("1");
                 } else {
                     count++;
-                    data = formatNos(count + "");
+                    data = formatNos(count + "" );
                 }
             }
             st.close();

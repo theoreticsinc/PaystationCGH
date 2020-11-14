@@ -710,12 +710,15 @@ public class ComputeAPI {
             if (ParkerType.compareToIgnoreCase("PW") == 0) {
                 updateOneTransFiles("pwdDiscount", discountDbl);
                 updateOneTransFiles("vatAdjPWD", vatAdjustment);
+                updateOneTransFiles("vat12PWD", vatexemptF);                
             } else if (ParkerType.compareToIgnoreCase("S") == 0) {
                 updateOneTransFiles("seniorDiscount", discountDbl);
                 updateOneTransFiles("vatAdjSenior", vatAdjustment);
+                updateOneTransFiles("vat12Senior", vatexemptF);     
             } else if (ParkerType.compareToIgnoreCase("LS") == 0) {
                 updateOneTransFiles("localSeniorDiscount", discountDbl);
                 updateOneTransFiles("vatAdjLocalSenior", vatAdjustment);
+                updateOneTransFiles("vat12LocalSenior", vatexemptF);     
             } else {
 //                updateOneTransFiles("discountAmount", vatAdjustment);
             }

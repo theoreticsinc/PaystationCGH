@@ -600,19 +600,25 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         PWORDlbl = new javax.swing.JLabel();
         PWORDInput2 = new javax.swing.JLabel();
         LoginPanelX = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
         LoginLbl = new javax.swing.JLabel();
         LogUsercode2 = new javax.swing.JTextField();
         LoginLbl1 = new javax.swing.JLabel();
         LogPassword2 = new javax.swing.JPasswordField();
         LoginLbl2 = new javax.swing.JLabel();
         LoginButton2 = new javax.swing.JButton();
+        SysLbl1 = new javax.swing.JLabel();
+        SysLbl2 = new javax.swing.JLabel();
         LogoutPanelX = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         LogoutLbl = new javax.swing.JLabel();
         LogUsercode1 = new javax.swing.JTextField();
         LogoutLbl1 = new javax.swing.JLabel();
         LogPassword1 = new javax.swing.JPasswordField();
         LogoutLbl2 = new javax.swing.JLabel();
         LoginButton1 = new javax.swing.JButton();
+        SysLbl3 = new javax.swing.JLabel();
+        SysLbl4 = new javax.swing.JLabel();
         MasterCardPanel = new javax.swing.JPanel();
         MasterCardLbl = new javax.swing.JLabel();
         MasterCardInput2 = new javax.swing.JLabel();
@@ -1559,32 +1565,45 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         LoginPanelX.setFocusable(false);
         LoginPanelX.setOpaque(false);
-        LoginPanelX.setLayout(new java.awt.GridLayout(3, 3, 1, 0));
+        LoginPanelX.setLayout(new java.awt.BorderLayout());
 
-        LoginLbl.setText("Usercode:");
+        jPanel5.setOpaque(false);
+        jPanel5.setLayout(new java.awt.GridLayout(3, 3));
+
         LoginLbl.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LoginLbl.setForeground(new java.awt.Color(255, 255, 255));
-        LoginPanelX.add(LoginLbl);
+        LoginLbl.setText("Usercode:");
+        jPanel5.add(LoginLbl);
 
         LogUsercode2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         LogUsercode2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        LoginPanelX.add(LogUsercode2);
+        LogUsercode2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                LogUsercode2KeyPressed(evt);
+            }
+        });
+        jPanel5.add(LogUsercode2);
 
-        LoginLbl1.setText("Password:");
         LoginLbl1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LoginLbl1.setForeground(new java.awt.Color(255, 255, 255));
-        LoginPanelX.add(LoginLbl1);
+        LoginLbl1.setText("Password:");
+        jPanel5.add(LoginLbl1);
 
         LogPassword2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         LogPassword2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        LoginPanelX.add(LogPassword2);
+        LogPassword2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                LogPassword2KeyPressed(evt);
+            }
+        });
+        jPanel5.add(LogPassword2);
 
         LoginLbl2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LoginLbl2.setForeground(new java.awt.Color(255, 255, 255));
-        LoginPanelX.add(LoginLbl2);
+        jPanel5.add(LoginLbl2);
 
-        LoginButton2.setText("Login");
         LoginButton2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        LoginButton2.setText("Login");
         LoginButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 LoginButton2MouseClicked(evt);
@@ -1595,36 +1614,63 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
                 LoginButton2ActionPerformed(evt);
             }
         });
-        LoginPanelX.add(LoginButton2);
+        jPanel5.add(LoginButton2);
+
+        LoginPanelX.add(jPanel5, java.awt.BorderLayout.NORTH);
+
+        SysLbl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SysLbl1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        SysLbl1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        SysLbl1.setForeground(new java.awt.Color(255, 255, 255));
+        LoginPanelX.add(SysLbl1, java.awt.BorderLayout.CENTER);
+
+        SysLbl2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SysLbl2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        SysLbl2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        SysLbl2.setForeground(new java.awt.Color(255, 255, 255));
+        LoginPanelX.add(SysLbl2, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(LoginPanelX);
-        LoginPanelX.setBounds(440, 280, 420, 160);
+        LoginPanelX.setBounds(440, 280, 420, 250);
 
         LogoutPanelX.setFocusable(false);
         LogoutPanelX.setOpaque(false);
-        LogoutPanelX.setLayout(new java.awt.GridLayout(3, 3, 1, 0));
+        LogoutPanelX.setLayout(new java.awt.BorderLayout());
+
+        jPanel6.setOpaque(false);
+        jPanel6.setLayout(new java.awt.GridLayout(3, 3, 1, 0));
 
         LogoutLbl.setText("Usercode:");
         LogoutLbl.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LogoutLbl.setForeground(new java.awt.Color(255, 255, 255));
-        LogoutPanelX.add(LogoutLbl);
+        jPanel6.add(LogoutLbl);
 
         LogUsercode1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         LogUsercode1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        LogoutPanelX.add(LogUsercode1);
+        LogUsercode1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                LogUsercode1KeyPressed(evt);
+            }
+        });
+        jPanel6.add(LogUsercode1);
 
         LogoutLbl1.setText("Password:");
         LogoutLbl1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LogoutLbl1.setForeground(new java.awt.Color(255, 255, 255));
-        LogoutPanelX.add(LogoutLbl1);
+        jPanel6.add(LogoutLbl1);
 
         LogPassword1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         LogPassword1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        LogoutPanelX.add(LogPassword1);
+        LogPassword1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                LogPassword1KeyPressed(evt);
+            }
+        });
+        jPanel6.add(LogPassword1);
 
         LogoutLbl2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         LogoutLbl2.setForeground(new java.awt.Color(255, 255, 255));
-        LogoutPanelX.add(LogoutLbl2);
+        jPanel6.add(LogoutLbl2);
 
         LoginButton1.setText("Logout");
         LoginButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -1633,10 +1679,24 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
                 LoginButton1MouseClicked(evt);
             }
         });
-        LogoutPanelX.add(LoginButton1);
+        jPanel6.add(LoginButton1);
+
+        LogoutPanelX.add(jPanel6, java.awt.BorderLayout.NORTH);
+
+        SysLbl3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        SysLbl3.setForeground(new java.awt.Color(255, 255, 255));
+        SysLbl3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SysLbl3.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        LogoutPanelX.add(SysLbl3, java.awt.BorderLayout.CENTER);
+
+        SysLbl4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        SysLbl4.setForeground(new java.awt.Color(255, 255, 255));
+        SysLbl4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SysLbl4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        LogoutPanelX.add(SysLbl4, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(LogoutPanelX);
-        LogoutPanelX.setBounds(440, 280, 420, 160);
+        LogoutPanelX.setBounds(440, 280, 420, 250);
 
         MasterCardPanel.setFocusable(false);
         MasterCardPanel.setOpaque(false);
@@ -5284,8 +5344,78 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         if (ea.InitiateExit(now, true, "R", true) == true) {
             firstscan = true;
         }
-        ea.ValidPartII();        
+        ea.ValidPartII();
     }//GEN-LAST:event_Create1MouseClicked
+
+    private void LogUsercode1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_LogUsercode1KeyPressed
+        int code = evt.getKeyCode();
+        switch (code) {
+            case 10:
+                if (this.isLogoutValidfromDB() == false) {
+                    SysMessage1.setText("LogOut Invalid");
+                }
+                this.repaint();
+                this.requestFocus();
+                this.validate();
+                break;
+        }
+
+    }//GEN-LAST:event_LogUsercode1KeyPressed
+
+    private void LogPassword1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_LogPassword1KeyPressed
+        int code = evt.getKeyCode();
+        switch (code) {
+            case 10:
+                if (this.isLogoutValidfromDB() == false) {
+                    SysMessage1.setText("LogOut Invalid");
+                }
+                this.repaint();
+                this.requestFocus();
+                this.validate();
+                break;
+        }
+
+    }//GEN-LAST:event_LogPassword1KeyPressed
+
+    private void LogUsercode2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_LogUsercode2KeyPressed
+        int code = evt.getKeyCode();
+        switch (code) {
+            case 10:
+                if (this.StartLogInX() == false) {
+                    SysMessage1.setText("Log IN Invalid");
+                    LoginPanelX.setVisible(true);
+                    LoginPanelX.transferFocus();
+                    LoginPanelX.requestFocus();
+                    LogUsercode2.requestFocus();
+                    LogUsercode2.validate();
+                }
+                this.repaint();
+                this.requestFocus();
+                this.validate();
+                break;
+        }
+
+    }//GEN-LAST:event_LogUsercode2KeyPressed
+
+    private void LogPassword2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_LogPassword2KeyPressed
+        int code = evt.getKeyCode();
+        switch (code) {
+            case 10:
+                if (this.StartLogInX() == false) {
+                    SysMessage1.setText("Log IN Invalid");
+                    LoginPanelX.setVisible(true);
+                    LoginPanelX.transferFocus();
+                    LoginPanelX.requestFocus();
+                    LogUsercode2.requestFocus();
+                    LogUsercode2.validate();
+                }
+                this.repaint();
+                this.requestFocus();
+                this.validate();
+                break;
+        }
+
+    }//GEN-LAST:event_LogPassword2KeyPressed
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
@@ -5539,7 +5669,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         }
     }
 
-    private void StartLogInX() {
+    private boolean StartLogInX() {
         //RightMsgPanel.setVisible(false);
         DataBaseHandler dbh = new DataBaseHandler();
         SaveCollData scd = new SaveCollData();
@@ -5562,8 +5692,18 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             if (LogUsercode2.getText().compareToIgnoreCase("") != 0) {
                 logname = lm.getLOGINDATcashiernameFromDB(LogUsercode2.getText().toString(), LogPassword2.getText().toString());
                 if (logname.compareToIgnoreCase("") == 0) {
-                    SysMessage1.setText("LOGCODE INVALID");
-                    SysMessage3.setText(LogUsercode.getText());
+                    SysLbl1.setText("LOGCODE / LOG PASSWORD INVALID");
+                    SysLbl2.setText(LogUsercode2.getText());
+                    CashierName = lm.getCashierName();
+                    TellerName.setText(CashierName);
+                    LogUsercode2.setText("");
+                    LogPassword2.setText("");
+                    LoginPanelX.setVisible(true);
+                    LoginPanelX.transferFocus();
+                    LoginPanelX.requestFocus();
+                    LogUsercode2.requestFocus();
+                    LogUsercode2.validate();
+                    return false;
                 } else {
                     clearLeftMIDMsgPanel();
                     CashierID = LogUsercode2.getText().toString();
@@ -5584,16 +5724,20 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     }
                     dbh.saveLogin(logID, CashierID, logname, EX_SentinelID);
                     scd.saveZRead(logID, EX_SentinelID, lastTransaction, LogUsercode2.getText());
+                    CashierName = lm.getCashierName();
+                    TellerName.setText(CashierName);
+                    SysLbl1.setText("LOGCODE " + LogUsercode2.getText());
+                    SysLbl2.setText("Successful");
+                    LogUsercode2.setText("");
+                    LogPassword2.setText("");
+                    
+                    return true;
                 }
-
-                CashierName = lm.getCashierName();
-                TellerName.setText(CashierName);
-                LogUsercode.setText("");
-                LoginLbl.setText("");
             }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
+        return false;
     }
 
     private void StartLogInOld() {
@@ -5891,7 +6035,15 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 SysMessage4.setText("-Please Login again-");
                 Loginput.delete(0, Loginput.length());
 
-                this.StartLogInX();
+//                this.StartLogInX();
+                RightMsgPanellbl.setVisible(false);
+                newMidPanel.setVisible(false);
+                LoginPanelX.setVisible(true);
+                LoginPanelX.setVisible(true);
+                LoginPanelX.transferFocus();
+                LoginPanelX.requestFocus();
+                LogUsercode2.requestFocus();
+                LogUsercode2.validate();
                 lm.eraseLoginDB();
 
                 LoginLbl.setText("LOGIN");
@@ -6612,14 +6764,14 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
                     zoomFactor = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomFactor"));
                     zoomSize = Integer.parseInt(xr.getElementValue("C://JTerminals/zoom.xml", "zoomSize"));
-                    
+
                     if (zoomFactor >= 3) {
                         int Height = buf.getHeight() / zoomFactor;
                         int Width = buf.getWidth() / zoomFactor;
                         //buf = ImgResizer.cropImage(buf, buf.getWidth() / zoom - (zoom * 10), buf.getHeight() / zoom - (zoom * 10), (buf.getWidth() / zoom) * (zoom - 1), (buf.getHeight() / zoom) * (zoom - 1));
                         //buf = ImgResizer.cropImage(buf, 150, 50, (buf.getWidth() / zoom) * (zoom - 1), (buf.getHeight() / zoom) * (zoom - 1));
                         buf = ImgResizer.cropImage(buf, Width, Height, Width + zoomSize, Height + zoomSize);
-                    }                    
+                    }
                     if (null != buf) {
                         //entryCamera.setIcon(new ImageIcon(buf));       
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -6951,7 +7103,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                         //proc = rt.exec("sudo /JTerminals/netunboot.sh");
                         //proc = rt.exec("sudo umount -t smbfs /SYSTEMS");//maybe unneeded
                     }
-                    Thread.sleep(15 * 60000);
+                    Thread.sleep(15 * 6000);
                     //resetAdmin();
                     Thread.sleep(2000);
                 }
@@ -7395,6 +7547,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel Switch;
     private javax.swing.JLabel Switch_Entry;
     private javax.swing.JLabel Switch_Exit;
+    private javax.swing.JLabel SysLbl1;
+    private javax.swing.JLabel SysLbl2;
+    private javax.swing.JLabel SysLbl3;
+    private javax.swing.JLabel SysLbl4;
     public javax.swing.JLabel SysMessage1;
     public javax.swing.JLabel SysMessage10;
     public javax.swing.JLabel SysMessage11;
@@ -7499,6 +7655,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
