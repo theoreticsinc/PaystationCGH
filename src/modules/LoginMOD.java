@@ -440,9 +440,9 @@ public class LoginMOD extends javax.swing.JPanel {
 
             ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
-            String receiptNos = scd.getCurrentReceiptNos();
-            String grandTotal = scd.getGRANDTOTAL();
-            String grandGrossTotal = scd.getGRANDGROSSTOTAL();
+            String receiptNos = scd.getCurrentReceiptNos(Exitpoint);
+            String grandTotal = scd.getGRANDTOTAL(Exitpoint);
+            String grandGrossTotal = scd.getGRANDGROSSTOTAL(Exitpoint);
 
             String lastTransaction = dbh.getLastTransaction(Exitpoint);
 
@@ -536,8 +536,8 @@ public class LoginMOD extends javax.swing.JPanel {
             //ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
 //            String receiptNos = scd.getCurrentReceiptNos();
-            String grandTotal = scd.getGRANDTOTAL();
-            String grandGrossTotal = scd.getGRANDGROSSTOTAL();
+            String grandTotal = scd.getGRANDTOTAL(Exitpoint);
+            String grandGrossTotal = scd.getGRANDGROSSTOTAL(Exitpoint);
 //            String lastTransaction = dbh.getLastTransaction(Exitpoint);
 
             int i = 1;
@@ -1941,9 +1941,9 @@ public class LoginMOD extends javax.swing.JPanel {
                 //***********PRINT*******
             }
 
-            receiptNos = scd.getGeneratedReceiptNos();
-            grandTotal = scd.getGRANDTOTAL();
-            grandGrossTotal = scd.getGRANDGROSSTOTAL();
+            receiptNos = scd.getGeneratedReceiptNos(Exitpoint);
+            grandTotal = scd.getGRANDTOTAL(Exitpoint);
+            grandGrossTotal = scd.getGRANDGROSSTOTAL(Exitpoint);
 
 //
             eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);
@@ -2141,8 +2141,8 @@ public class LoginMOD extends javax.swing.JPanel {
             //Double Sale12Vat = (double) totalCollected * 0.12;
             Double vatSale = totalCollected - Sale12Vat;
 
-            String receiptNos = scd.getCurrentReceiptNos();
-            String grandTotal = scd.getGRANDTOTAL();
+            String receiptNos = scd.getCurrentReceiptNos(Exitpoint);
+            String grandTotal = scd.getGRANDTOTAL(Exitpoint);
             String lastTransaction = dbh.getLastTransaction(Exitpoint);
 
             eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);

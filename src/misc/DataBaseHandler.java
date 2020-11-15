@@ -2472,7 +2472,7 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public String getGrandTotal(double AmountRCPT) {
+    public String getGrandTotal(double AmountRCPT, String sentinelID) {
         String data = AmountRCPT + "";
         try {
             connection = getLocalConnection(true);
@@ -2514,11 +2514,11 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public String getNewReceiptNos() {
+    public String getNewReceiptNos(String sentinelID) {
         String data = "";
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master WHERE sentinelID = '" + sentinelID + "'");
             // iterate through the java resultset
             while (rs.next()) {
                 Integer count = rs.getInt("receiptNos");
@@ -2537,11 +2537,11 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
-    public String getCurrentReceiptNos() {
+    public String getCurrentReceiptNos(String sentinelID) {
         String data = "";
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master WHERE sentinelID = '" + sentinelID + "'");
             // iterate through the java resultset
             while (rs.next()) {
                 Integer count = rs.getInt("receiptNos");

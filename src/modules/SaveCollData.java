@@ -245,9 +245,9 @@ public class SaveCollData {
         }
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
         */
-        String oldcount = dbh.getCurrentReceiptNos();
-        dbh.updateCarparkMaster("receiptNos",oldcount,sentinelID);
-        dbh.updateRemoteCarparkMaster("receiptNos",oldcount,sentinelID);
+        String newCount = dbh.getNewReceiptNos(sentinelID);
+        dbh.updateCarparkMaster("receiptNos",newCount,sentinelID);
+        dbh.updateRemoteCarparkMaster("receiptNos",newCount,sentinelID);
     }
 
     public void UpdateReceiptAmount(double AmountRCPT) throws IOException {
@@ -287,7 +287,7 @@ public class SaveCollData {
         rfh.putfile("C://JTerminals/FnF/iXyZp12R/", "astrid.jrt", newcurr);
     }
     
-    public String getGRANDTOTAL() throws IOException {
+    public String getGRANDTOTAL(String sentinelID) throws IOException {
         /*
         String curr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
@@ -298,7 +298,7 @@ public class SaveCollData {
         }
         return curr;
         */
-        String curr = dbh.getGrandTotal(0);
+        String curr = dbh.getGrandTotal(0, sentinelID);
         return curr;
     }
 
@@ -325,7 +325,7 @@ public class SaveCollData {
 //            LogManager.getLogger(SaveCollData.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         */
-        String oldcount = dbh.getGrandTotal(AmountRCPT);
+        String oldcount = dbh.getGrandTotal(AmountRCPT, sentinelID);
         dbh.updateCarparkMaster("grandTotal",oldcount,sentinelID);
         dbh.updateRemoteCarparkMaster("grandTotal",oldcount,sentinelID);
     }
@@ -339,7 +339,7 @@ public class SaveCollData {
         return ZReadCount;
     }
     
-    public String getGRANDGROSSTOTAL() throws IOException {
+    public String getGRANDGROSSTOTAL(String sentinelID) throws IOException {
         /*
         String curr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
@@ -407,7 +407,7 @@ public class SaveCollData {
         return newcurr;
     }
 
-    public String getCurrentReceiptNos() throws IOException {
+    public String getCurrentReceiptNos(String sentinelID) throws IOException {
         /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -429,11 +429,11 @@ public class SaveCollData {
         }
         return newReceipt;
         */
-        String newReceipt = dbh.getCurrentReceiptNos();
-        return newReceipt;
+        String currReceipt = dbh.getCurrentReceiptNos(sentinelID);
+        return currReceipt;
     }
 
-    public String getNewReceiptNos() throws IOException {
+    public String getNewReceiptNos(String sentinelID) throws IOException {
         /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -455,7 +455,7 @@ public class SaveCollData {
         }
         return newReceipt;
         */
-        String newReceipt = dbh.getNewReceiptNos();
+        String newReceipt = dbh.getNewReceiptNos(sentinelID);
         return newReceipt;
     }
 
@@ -525,9 +525,9 @@ public class SaveCollData {
 
     public void saveZRead(String logID, String Exitpoint, String lastTransaction, String logcode) {
         try {
-            String receiptNos = getCurrentReceiptNos();
-            String grandTotal = getGRANDTOTAL();
-            String grandGrossTotal = getGRANDGROSSTOTAL();
+            String receiptNos = getCurrentReceiptNos(Exitpoint);
+            String grandTotal = getGRANDTOTAL(Exitpoint);
+            String grandGrossTotal = getGRANDGROSSTOTAL(Exitpoint);
             String newZReadCount = getLastZRead(Exitpoint);
             
             //String transaction = dbh.getTransactionNos();
@@ -541,10 +541,10 @@ public class SaveCollData {
     
     public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voidsCollected) {
         try {
-            String endingReceiptNos = getGeneratedReceiptNos();
-            String endingGrandTotal = getGRANDTOTAL();
+            String endingReceiptNos = getGeneratedReceiptNos(Exitpoint);
+            String endingGrandTotal = getGRANDTOTAL(Exitpoint);
 
-            String endingGrandGrossTotal = getGRANDGROSSTOTAL();
+            String endingGrandGrossTotal = getGRANDGROSSTOTAL(Exitpoint);
             boolean wasReceiptGenerated = dbh.wasReceiptGenerated(logID, endingReceiptNos);
             //if (endingReceiptNos.compareTo("000000000001") == 0) {
             //    dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExemptedSales, discounts, voidsCollected);
@@ -572,8 +572,8 @@ public class SaveCollData {
         return newReceipt;
     }
 
-    public String getGeneratedReceiptNos() throws IOException {        
-        String newReceipt = dbh.getCurrentReceiptNos();
+    public String getGeneratedReceiptNos(String sentinelID) throws IOException {        
+        String newReceipt = dbh.getCurrentReceiptNos(sentinelID);
         return newReceipt;
     }
 

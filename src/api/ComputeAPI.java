@@ -2020,7 +2020,7 @@ public class ComputeAPI {
             //scd.UpdateReceiptAmount(AmountRCPT);                  //
             scd.UpdateGRANDTOTAL(AmountRCPT, stn.EX_SentinelID);
             scd.UpdateGRANDGROSSTOTAL(GrossAmount, stn.EX_SentinelID);
-            return scd.getCurrentReceiptNos();
+            return scd.getCurrentReceiptNos(stn.EX_SentinelID);
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return "";
