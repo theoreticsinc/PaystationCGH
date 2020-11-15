@@ -2433,11 +2433,11 @@ public class DataBaseHandler extends Thread {
         return newString;
     }
     
-    public String getLastZRead() {
+    public String getLastZRead(String SentinelID) {
         String data = null;
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT zCount FROM zread.main WHERE DATE(datetimeIn) = CURRENT_DATE");
+            ResultSet rs = selectDatabyFields("SELECT zCount FROM zread.main WHERE DATE(datetimeIn) = CURRENT_DATE AND terminalnum = '" + SentinelID + "'");
             // iterate through the java resultset
             while (rs.next()) {
                 int count = rs.getInt("zCount");
@@ -2452,11 +2452,11 @@ public class DataBaseHandler extends Thread {
         return data;
     }
     
-    public String getMaxZRead() {
+    public String getMaxZRead(String SentinelID) {
         String data = null;
         try {
             connection = getLocalConnection(true);
-            ResultSet rs = selectDatabyFields("SELECT MAX(zCount) AS zCount FROM zread.main");
+            ResultSet rs = selectDatabyFields("SELECT MAX(zCount) AS zCount FROM zread.main WHERE terminalnum = '" + SentinelID + "'");
             // iterate through the java resultset
             while (rs.next()) {
                 int count = rs.getInt("zCount");

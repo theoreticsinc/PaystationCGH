@@ -330,11 +330,11 @@ public class SaveCollData {
         dbh.updateRemoteCarparkMaster("grandTotal",oldcount,sentinelID);
     }
     
-    public String getLastZRead() {
+    public String getLastZRead(String SentinelID) {
         String ZReadCount = null;
-        ZReadCount = dbh.getLastZRead();
+        ZReadCount = dbh.getLastZRead(SentinelID);
         if (null == ZReadCount) {
-            ZReadCount = dbh.getMaxZRead();
+            ZReadCount = dbh.getMaxZRead(SentinelID);
         }
         return ZReadCount;
     }
@@ -528,7 +528,7 @@ public class SaveCollData {
             String receiptNos = getCurrentReceiptNos();
             String grandTotal = getGRANDTOTAL();
             String grandGrossTotal = getGRANDGROSSTOTAL();
-            String newZReadCount = getLastZRead();
+            String newZReadCount = getLastZRead(Exitpoint);
             
             //String transaction = dbh.getTransactionNos();
             //dbh.saveZReadLogIn(logID, Exitpoint, receiptNos, grandTotal, lastTransaction, logcode);
