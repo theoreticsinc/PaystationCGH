@@ -587,6 +587,45 @@ public class LoginMOD extends javax.swing.JPanel {
                 i++;
             }
 
+            if (rs.getRow() == 0) {
+                SimpleDateFormat dateOutFormat = new SimpleDateFormat("M/dd/yy");
+                SimpleDateFormat timeOutFormat = new SimpleDateFormat("hh:mm a");
+                String dTOut = dateOutFormat.format(new Date());
+                String terminalnum = Exitpoint;
+                String dtO1 = "000000000000";
+                prtD = "000000000000";
+                String tds1 = "0.00";
+                String vtS1 = "0.00";
+                String vt12 = "0.00";
+                String bgOR = "000000000000";
+                String edOR = "000000000000";
+                String bgTR = "000000000000";
+                String enTR = "000000000000";
+                String oldG = "0.00";
+                String newG = "0.00";
+                String stZC = "0";
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+//                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dTOut;
+                prtD = "Date Printed       : " + dTOut;
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "Z-Count            : " + stZC;
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+                
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+            }
             //ALSO GET THE TOTAL COLLECTION PER PARKER TYPE
             //ResultSet collectionsToday = dbh.getTodaysTotalCollectionBydateColl();
             accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(grandTotal));
@@ -1564,8 +1603,10 @@ public class LoginMOD extends javax.swing.JPanel {
                 while (itr0.hasNext()) {
                     String entry = (String) itr0.next();
 //                    System.out.println(entry);
-                    String dataCount = rs.getString(entry.toLowerCase().trim() + "Count");
-                    String dataAmount = rs.getString(entry.toLowerCase().trim() + "Amount");
+                    //String dataCount = rs.getString(entry.toLowerCase().trim() + "Count");
+//                    String dataAmount = rs.getString(entry.toLowerCase().trim() + "Amount");
+                    String dataCount = (rs.getString(entry.toLowerCase().trim() + "Count") != null) ? rs.getString(entry.toLowerCase().trim() + "Count") : "0";
+                    String dataAmount = (rs.getString(entry.toLowerCase().trim() + "Amount") != null) ? rs.getString(entry.toLowerCase().trim() + "Amount") : "0.00";
                     //      COUNT
 //                    System.out.print(dataCount);
 //                    System.out.print(parkerTypeCount.get(entry));
