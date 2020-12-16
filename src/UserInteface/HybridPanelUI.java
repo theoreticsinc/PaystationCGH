@@ -185,11 +185,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String CashierName = "";
     public String PrevParker = "";
     public String PrevPlate = "";
-    public String settlementName;
-    public String settlementAddr;
-    public String settlementTIN;
-    public String settlementBusStyle;
-    public String settlementRef;
+    public String settlementName = "";
+    public String settlementAddr = "";
+    public String settlementTIN = "";
+    public String settlementBusStyle = "";
+    public String settlementRef = "";
     //--exit
     public StringBuffer PWORDinput = new StringBuffer("");
     public StringBuffer MasterCardinput = new StringBuffer("");
