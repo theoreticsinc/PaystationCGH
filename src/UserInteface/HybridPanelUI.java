@@ -179,6 +179,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String EN_SentinelID;
     public String EX_SentinelID;
     public String SlotsID;
+    public String defaultType = "R";
     public String TerminalType = "";
     public String CashierID = "";
     public String CashierName = "";
@@ -295,7 +296,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             SlotsResetEnabled = xr.getElementValue("C://JTerminals/initH.xml", "reset");
             sResetTime = xr.getAttributeValue("C://JTerminals/initH.xml", "reset", "time");
             loginID = dbh.getLogID();
-            //loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");            
+            //loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            defaultType = xr.getElementValue("C://JTerminals/initH.xml", "defaultType");
+            trtype = defaultType;
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
@@ -2698,7 +2701,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         reprintPlate.setBounds(129, 25, 190, 50);
 
         reprintLbl2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        reprintLbl2.setText("Plate No.:");
+        reprintLbl2.setText("Receipt No.:");
         reprintLbl2.setFocusable(false);
         reprintLbl2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         reprintLbl2.setForeground(new java.awt.Color(204, 204, 204));
@@ -5341,7 +5344,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         LostCardEntryPanel.setVisible(false);
         SysMessage2.setText("Lost Card Created");
         SysMessage4.setText("Now Printing...");
-        if (ea.InitiateExit(now, true, "R", true) == true) {
+        if (ea.InitiateExit(now, true, defaultType, true) == true) {
             firstscan = true;
         }
         ea.ValidPartII();
@@ -6325,7 +6328,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         this.setEntryMode(ExitSwitch);
         PlateInput2.setText("");
         PlateNumberlbl.setVisible(false);
-        trtype = "R";
+        trtype = defaultType;
     }
 
     public void resetAllOverrides() {
@@ -6352,7 +6355,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         //settAddr.setEditable(false);
         //settTIN.setEditable(false);
         PWDoscaID.setEditable(false);
-        //trtype = "R";
+        //trtype = defaultType;
         currenttype = "";
         resetVIP();
     }
@@ -6440,7 +6443,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void PrivateCarsFunction() {
         clearLeftMIDMsgPanel();
         Funcbutton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/retail_press.png")));
-        trtype = "R";
+        trtype = defaultType;
         resetAllOverrides();
         MainFuncPad.setVisible(true);
         clearRightPanel();
@@ -8215,7 +8218,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 break;
             case 114: //F3
                 log.info("Entry Mode");
-                trtype = "R";
+                trtype = defaultType;
                 if (payuponentry.compareToIgnoreCase("disabled") == 0) {
                     Plateinput.delete(0, Plateinput.length() + 1);
                     PlateInput2.setText("");

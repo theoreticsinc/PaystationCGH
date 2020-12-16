@@ -259,7 +259,7 @@ public class ComputeAPI {
                     Entrypoint = "EN01";
                     Cardno = "12345678";
                     Plateno = stn.LostCardEntryPlate.getText().trim().toUpperCase();
-                    ParkerType = "R";
+                    ParkerType = stn.defaultType;
                     isLost = true;
                     AmountPaid = 0;
                 } else {
@@ -268,7 +268,8 @@ public class ComputeAPI {
                     Entrypoint = SP.getSysID();
                     Cardno = SP.getCardID();
                     Plateno = SP.getPlateID();
-                    ParkerType = SP.getTRID();
+                    //ParkerType = SP.getTRID();
+                    ParkerType = stn.defaultType;
                     isLost = SP.getIsLost();
                     AmountPaid = Float.parseFloat(SP.getAmountPaid());
                 }
@@ -901,7 +902,7 @@ public class ComputeAPI {
             SP.addCarSlots("car");
         }
         //SP.UpdateCarSlots(stn.EX_SentinelID);
-        stn.trtype = "R";
+        stn.trtype = stn.defaultType;
         stn.resetAllOverrides();
         stn.Cardinput.delete(0, stn.Cardinput.length());
         stn.CardInput2.setText("PRINTING...");
@@ -2368,7 +2369,19 @@ public class ComputeAPI {
             else if (HoursElapsed > 0 && MinutesElapsed == 0) {
                 if (HRWaived1st[i] == false) {
                     if (HR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
-                        AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));
+                        //if (i > 0) {
+                        //    System.out.println("HR - 1 (" + i + ") "+ Float.parseFloat(HR[i - 1].trim().substring(1)));
+                        //    System.out.println("HRplus - 1 (" + i + ") "+ Float.parseFloat(HRplus[i - 1].trim().substring(1)));
+                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i - 1].trim().substring(1));// + Float.parseFloat(HRplus[i - 1].trim().substring(1));
+                        //} else {
+                        //    System.out.println("HR (" + i + ") "+ Float.parseFloat(HR[i].trim().substring(1)));
+                        //    System.out.println("HRplus (" + i + ") "+ Float.parseFloat(HRplus[i].trim().substring(1)));
+                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));// + Float.parseFloat(HRplus[i].trim().substring(1));                       
+                        //}
+                        
+                        AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1)); 
+                        //if (i == 5)
+                        //    AmountComputed  = AmountComputed + 20;
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
                         AmountComputed = AmountComputed - Float.parseFloat(HR[i].trim().substring(1));
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
@@ -2379,9 +2392,20 @@ public class ComputeAPI {
             else if (HoursElapsed > 0 && MinutesElapsed > 0) {
                 if (HRWaived1st[i] == false) {
                     if (HR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
-                        AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));
+                        //if (i > 1) {
+                        //    System.out.println("HR - 1 (" + i + ") " + Float.parseFloat(HR[i - 1].trim().substring(1)));
+                        //    System.out.println("HRplus - 1 (" + i + ") " + Float.parseFloat(HRplus[i - 1].trim().substring(1)));                            
+                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i - 1].trim().substring(1)) + Float.parseFloat(HRplus[i - 1].trim().substring(1));
+                        //} else {
+                        //    System.out.println("HR (" + i + ") " + Float.parseFloat(HR[i].trim().substring(1)));
+                        //    System.out.println("HRplus (" + i + ") " + Float.parseFloat(HRplus[i].trim().substring(1)));                            
+                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1)) + Float.parseFloat(HRplus[i].trim().substring(1));
+                        //}
+                        AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1)) + Float.parseFloat(HRplus[i].trim().substring(1));
+                        if (i == 4)
+                            AmountComputed  = AmountComputed - 20;
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
-                        AmountComputed = AmountComputed - Float.parseFloat(HR[i].trim().substring(1));
+                        AmountComputed = AmountComputed - Float.parseFloat(HR[i].trim().substring(1)) - Float.parseFloat(HRplus[i].trim().substring(1));
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
                         AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
                     }
@@ -2556,11 +2580,13 @@ public class ComputeAPI {
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();
+        
+        String type = "R";
 
         SP.setSysID("EN01");
         SP.setCardID("A82A94B1");
         SP.setPlateID("AA28934");
-        SP.setTRID("R");
+        SP.setTRID(type);
         SP.setAmountPaid("");
 
         ComputeAPI ca = new ComputeAPI(null);
@@ -2575,24 +2601,34 @@ public class ComputeAPI {
         /////GRACE PERIOD
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 0;
-        computed = ca.Computation("R", true, false);
+        computed = ca.Computation(type, true, false);
         System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         ca.HoursElapsed = 0;
-        ca.MinutesElapsed = 19;
-        computed = ca.Computation("R", true, false);
+        ca.MinutesElapsed = 15;
+        computed = ca.Computation(type, true, false);
+        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        /////
+        ca.HoursElapsed = 0;
+        ca.MinutesElapsed = 16;
+        computed = ca.Computation(type, true, false);
+        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        /////
+        ca.HoursElapsed = 0;
+        ca.MinutesElapsed = 17;
+        computed = ca.Computation(type, true, false);
         System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
         /////
 
         for (int i = 1; i <= 48; i++) {
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 0;
-            computed = ca.Computation("R", true, false);
+            computed = ca.Computation(type, true, false);
             System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 1;
-            computed = ca.Computation("R", true, false);
+            computed = ca.Computation(type, true, false);
             System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         }

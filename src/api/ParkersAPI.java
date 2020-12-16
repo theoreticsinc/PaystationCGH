@@ -1499,7 +1499,7 @@ public class ParkersAPI {
             while (rs.next()) {
                 ParkersAPI pa = new ParkersAPI();
                 String ParkerType = rs.getString("ParkerType");
-                String LostPrice = "";
+                String LostPrice = "0";
                 boolean isLost = false;
                 if (ParkerType.compareToIgnoreCase("L") == 0) {
                     LostPrice = dbh.getLostPrice(ParkerType);
@@ -1517,7 +1517,18 @@ public class ParkersAPI {
                 Date dIN = sdfIN.parse(rs.getString("DateTimeIN"));
                 Date dOUT = sdfIN.parse(rs.getString("DateTimeOUT"));
                 if (duplicateReceiptType == 2) {
-                    DuplicateReceiptHeader = "              CUSTOMER COPY";
+                    DuplicateReceiptHeader = "           ###  REPRINT  ###";
+                    DuplicateReceiptHeader = DuplicateReceiptHeader + "\n" + "              CUSTOMER COPY";
+                    try {
+                    /*
+                    System.out.println(rs.getString("ExitID") + "," + rs.getString("EntranceID") + rs.getString("PlateNumber"));
+                    System.out.println(rs.getString("HoursParked") + "," + rs.getString("MinutesParked") + "," + rs.getString("NetOfDiscount"));
+                    System.out.println(rs.getString("Amount") + "," + rs.getString("GrossAmount") + "," + rs.getString("vat12"));
+                    System.out.println(rs.getString("vatsale") + "," + rs.getString("vatExemptedSales") + "," + rs.getString("username"));
+                    System.out.println(rs.getString("SettlementAddr") + "," + rs.getString("SettlementTIN") + "," + rs.getString("SettlementBusStyle"));
+                    System.out.println(rs.getString("tendered") + "," + rs.getString("changeDue") + "," + rs.getString("discount"));
+                    System.out.println(isLost + "," + LostPrice.trim().substring(1) + ".00" + "," + rs.getString("CashierName"));
+                    */
                     printUSBReceipt(
                             firstRun,
                             true,
@@ -1551,7 +1562,14 @@ public class ParkersAPI {
                             rs.getString("changeDue"),
                             rs.getString("discount"),
                             true, isLost, LostPrice.trim().substring(1) + ".00");
-                    DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
+                    
+//                        printUSBReceipt(false, isLost, dateTimePaid, LostPrice, plate2check, LostPrice, ParkerType, dateTimeIN, dateTimeIN, duplicateReceiptType, duplicateReceiptType, discountPercentage, discountPercentage, discountPercentage, discountPercentage, discountPercentage, discountPercentage, LostPrice, LostPrice, ParkerType, dateTimeIN, dateTimeINStamp, dateTimePaid, dateTimeIN, dateTimeINStamp, DuplicateReceiptHeader, isDiscounted, discountPercentage, discountPercentage, LostPrice, LostPrice, isDiscounted, isLost, LostPrice);
+                    }
+                    catch (Exception ex) {
+                            ex.printStackTrace();
+                            }
+                    DuplicateReceiptHeader = "           ###  REPRINT  ###";
+                    DuplicateReceiptHeader = DuplicateReceiptHeader + "\n" + "        ACCOUNTING / STORE COPY";
                 } else {
                     DuplicateReceiptHeader = "           ###  REPRINT  ###";
                 }

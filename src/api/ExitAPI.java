@@ -100,7 +100,7 @@ public class ExitAPI implements Runnable {
                     SysMsg[3] = "Errors";
                     SysMsg[4] = "Card Unprocessed";
                     SysMsg[6] = "Please separate card";
-                    stn.trtype = "R";
+                    stn.trtype = stn.defaultType;
                     stn.PreviousCard = "";
                     stn.Cardinput.delete(0, stn.Cardinput.length());
                     stn.CardInput2.setText("");
@@ -119,7 +119,7 @@ public class ExitAPI implements Runnable {
                     //SysMsg[8] = "P30.00";
                     //stn.StartInvalidFlatRate();
                     stn.processRightPanelMsgs(cmp.PrksMsg);
-                    stn.trtype = "R";
+                    stn.trtype = stn.defaultType;
                     //PlateInput2.setText("");
                     stn.Plateinput.delete(0, stn.Plateinput.length());
                     stn.PlateInput2.setText("");
@@ -129,7 +129,7 @@ public class ExitAPI implements Runnable {
                     //SysMsg[4] = "Please separate card";
                     SysMsg[2] = "Card has already been paid for";
                     SysMsg[4] = "Please proceed to Exit";
-                    stn.trtype = "R";
+                    stn.trtype = stn.defaultType;
                     stn.PreviousCard = "";
                     stn.Cardinput.delete(0, stn.Cardinput.length());
                     stn.CardInput2.setText("");
@@ -138,7 +138,7 @@ public class ExitAPI implements Runnable {
                 } else if (process == 8) {
                     SysMsg[2] = "Card has wrong Date/Time";
                     SysMsg[4] = "Please separate card";
-                    stn.trtype = "R";
+                    stn.trtype = stn.defaultType;
                     stn.PreviousCard = "";
                     stn.Cardinput.delete(0, stn.Cardinput.length());
                     stn.CardInput2.setText("");
@@ -149,7 +149,7 @@ public class ExitAPI implements Runnable {
                     SysMsg[3] = "Local Files";
                     SysMsg[4] = "Please Call Service Engineers";
                     SysMsg[5] = "immediately";
-                    stn.trtype = "R";
+                    stn.trtype = stn.defaultType;
                     stn.PreviousCard = "";
                     stn.Cardinput.delete(0, stn.Cardinput.length());
                     stn.CardInput2.setText("");
@@ -234,7 +234,7 @@ public class ExitAPI implements Runnable {
 
     public void ValidPartII() {
         cmp.ValidPartII();//printing stuff and saving stuff
-        stn.trtype = "R";
+        stn.trtype = stn.defaultType;
     }
 
     @Override

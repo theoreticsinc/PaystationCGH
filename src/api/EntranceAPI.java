@@ -86,7 +86,7 @@ public class EntranceAPI {
                         tpui.ServedNo.setText(servStatus);
                         tpui.processLeftPanelMsgs(SysMsg);
                         //reset
-                        tpui.trtype = "R";
+                        tpui.trtype = tpui.defaultType;
                         tpui.Plateinput.delete(0, tpui.Plateinput.length());
                         tpui.PlateInput2.setText("");
                         tpui.Plateinput.delete(0, tpui.Plateinput.length());
