@@ -52,6 +52,7 @@ public class SaveCollData {
             int oldCount = Integer.parseInt(dbh.getImptCount(fieldName, logcode)) + 1;
             dbh.setImptCount(fieldName, logcode, oldCount);
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
         }
 
@@ -109,6 +110,7 @@ public class SaveCollData {
             double newAmount = oldAmount + data;
             dbh.setImptAmount(fieldName, logcode, newAmount);
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
         }
     }   

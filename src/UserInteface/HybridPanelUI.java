@@ -5996,6 +5996,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 //lm.printLogoutReceiptFromDB(EX_SentinelID, false);
                 lm.printHEADER(EX_SentinelID);
                 lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
+                lm.printHEADER(EX_SentinelID);
+                lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
 
                 //---------------------------
                 LogUsercode1.setText("");
@@ -6919,7 +6921,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         public void run() {
             try {
                 while (true) {
-                    Thread.sleep(10000);
+                    Thread.sleep(25000);
                     ServerDataHandler sdh = new ServerDataHandler();
                     SystemStatus ss = new SystemStatus();
                     DataBaseHandler DBH = new DataBaseHandler();
@@ -6931,10 +6933,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //                        DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
 //                        DBH.copyColltrainfromLocal("colltrain.main", "colltrain.main");
 //                        DBH.copyZReadfromLocal("zread.main", "zread.main");
-                        DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
-                        DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
-                        DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
-                        DBH.copyTransToServerfromLocal("unidb", "incomereport", "unidb", "incomereport", "TimeOut");
+                        //DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
+                        //DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
+                        //DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
+//                        DBH.copyTransToServerfromLocal("unidb", "incomereport", "unidb", "incomereport", "TimeOut");
                     }
                     Thread.sleep(10000);
                 }
@@ -7106,7 +7108,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                         //proc = rt.exec("sudo /JTerminals/netunboot.sh");
                         //proc = rt.exec("sudo umount -t smbfs /SYSTEMS");//maybe unneeded
                     }
-                    Thread.sleep(15 * 6000);
+                    Thread.sleep(15 * 60000);
                     //resetAdmin();
                     Thread.sleep(2000);
                 }

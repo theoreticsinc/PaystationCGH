@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
@@ -627,7 +628,7 @@ public class ComputeAPI {
         }
         return retval;
     }
-
+    
     public void ValidPartII() {
         stn.Cardinput.delete(0, stn.Cardinput.length());
         stn.CardInput2.setText("PROCESSING...");
@@ -706,6 +707,7 @@ public class ComputeAPI {
             NetOfDiscount = (vT - discountDbl);
             AmountDue = NetOfDiscount + (NetOfDiscount * .12);
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
+            System.out.println(" = Discounted Price :" + String.valueOf(df2.format(AmountDue)));            
             updateOneTransFiles("exemptedVat12", 0);
             updateOneTransFiles("vatExemptedSales", 0);
             if (ParkerType.compareToIgnoreCase("PW") == 0) {
@@ -2063,6 +2065,7 @@ public class ComputeAPI {
 
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
             return false;
         }
@@ -2074,8 +2077,10 @@ public class ComputeAPI {
             LogUtility logthis = new LogUtility();
             scd.UpdateImptCountDB(fieldName + "Count", stn.loginID);               //ParkerType Listing
             scd.UpdateImptAmountDB(fieldName + "Amount", stn.loginID, Amount);
+            //System.out.println(fieldName + "Amount = " +Amount);
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
             return false;
         }
@@ -2426,7 +2431,9 @@ public class ComputeAPI {
 //                }
 
             }
-
+            if (ParkerType.compareToIgnoreCase("IN") == 0) {
+               AmountComputed = 150.0f;
+            }
             System.out.print(".");
         }
 
@@ -2580,9 +2587,10 @@ public class ComputeAPI {
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         
-        String type = "R";
-
+        String type = "S";
+        
         SP.setSysID("EN01");
         SP.setCardID("A82A94B1");
         SP.setPlateID("AA28934");
@@ -2592,44 +2600,77 @@ public class ComputeAPI {
         ComputeAPI ca = new ComputeAPI(null);
         ca.SP = SP;
         ca.stn = stn;
+        ca.stn.loginID = "157angelo20217";
+        ca.ParkerType = type;
+        ca.stn.trtype = type;
+        ca.sets = true;
+        ca.datePaid = new Date();
         DateConversionHandler dch = new DateConversionHandler();
         dch.convertJavaDate2UnixTime(new Date());
         ca.dateTimeINstamp = new Date().getTime() + "";
-
+        Calendar cal = Calendar.getInstance();              
         Float computed = 0f;
 
         /////GRACE PERIOD
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 0;
-        computed = ca.Computation(type, true, false);
-        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
-
+        cal.add(Calendar.HOUR, 0);
+        cal.add(Calendar.MINUTE, 0);
+        ca.datetimeIN = sdf1.format(cal.getTime());
+        ca.datetimeOUT = sdf1.format(new Date().getTime());  
+        computed = ca.Computation(type, true, false);        
+        System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        ca.ValidPartII();
+        
+        ca.ParkerType = type;
+        ca.stn.trtype = type;
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 15;
+        cal.add(Calendar.HOUR, 0);
+        cal.add(Calendar.MINUTE, -15);
+        ca.datetimeIN = sdf1.format(cal.getTime());
+        ca.datetimeOUT = sdf1.format(new Date().getTime());
         computed = ca.Computation(type, true, false);
-        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        ca.ValidPartII();
         /////
+        ca.ParkerType = type;
+        ca.stn.trtype = type;
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 16;
+        cal.add(Calendar.HOUR, 0);
+        cal.add(Calendar.MINUTE, -16);
+        ca.datetimeIN = sdf1.format(cal.getTime());
+        ca.datetimeOUT = sdf1.format(new Date().getTime());
         computed = ca.Computation(type, true, false);
-        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        ca.ValidPartII();
         /////
-        ca.HoursElapsed = 0;
-        ca.MinutesElapsed = 17;
-        computed = ca.Computation(type, true, false);
-        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
-        /////
-
+        
         for (int i = 1; i <= 48; i++) {
+            ca.ParkerType = type;
+            ca.stn.trtype = type;
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 0;
+            cal.add(Calendar.HOUR, -1);
+            cal.add(Calendar.MINUTE, 0);
+            ca.datetimeIN = sdf1.format(cal.getTime());
+            ca.datetimeOUT = sdf1.format(new Date().getTime());
             computed = ca.Computation(type, true, false);
-            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            ca.ValidPartII();
 
+            ca.ParkerType = type;
+            ca.stn.trtype = type;
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 1;
+            cal.add(Calendar.HOUR, -1);
+            cal.add(Calendar.MINUTE, -1);
+            ca.datetimeIN = sdf1.format(cal.getTime());
+            ca.datetimeOUT = sdf1.format(new Date().getTime());
             computed = ca.Computation(type, true, false);
-            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            ca.ValidPartII();
 
         }
 

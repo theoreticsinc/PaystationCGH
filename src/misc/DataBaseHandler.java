@@ -54,6 +54,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1821,7 +1822,11 @@ public class DataBaseHandler extends Thread {
                 while (x <= columnNumber) {
                     String colName = rsmd.getColumnName(x);
                     if (primaryKey.compareToIgnoreCase(colName) == 0) {
-                        remotePST.setNull(x, Types.NULL);
+                        if (colName.compareToIgnoreCase("logINID") == 0) {
+                            remotePST.setString(x, rs.getString(colName));
+                        } else { 
+                            remotePST.setNull(x, Types.NULL);
+                        }                        
                     } else {
                         int dataType = rsmd.getColumnType(x);
                         if (dataType == 12) {
@@ -1879,12 +1884,13 @@ public class DataBaseHandler extends Thread {
 
                 }
                 try {
+                    //System.out.println(remotePST.getResultSet().getStatement());
                     remotePST.executeUpdate();
                     //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
-//                    System.out.println("\n" + rs.getString("cardNumber") + " Copied Successfully");
+                    System.out.println("\n" + "Backup" + destdb + "." + desttbl + "=" +lTime + " Copied Successfully");
                 } catch (Exception ex) {
                     try {
-
+                        ex.printStackTrace();
                         //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
 //                        System.out.println("\n" + rs.getString("cardNumber") + " Overwritten Successfully");
                     } catch (Exception ex2) {
@@ -3584,6 +3590,61 @@ public class DataBaseHandler extends Thread {
             return false;
         }
     }
+    
+    public int getMissingReceipt(String ExitID) {
+        int dup = 0;
+        String recNum;
+        List<String> origlist = new ArrayList<>();
+        List<String> copylist = new ArrayList<>();
+
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT ReceiptNumber FROM carpark.exit_trans WHERE ExitID = '" + ExitID + "' ORDER BY ReceiptNumber");
+
+            while (rs.next()) {
+                recNum = rs.getString("ReceiptNumber");
+                origlist.add(recNum);
+                copylist.add(recNum);                
+                //System.out.println(recNum.substring(4));
+            }
+            /* Sort statement*/
+	   Collections.sort(origlist);
+	   Collections.sort(copylist);
+           
+            Enumeration<String> orig = Collections.enumeration(origlist);
+		while(orig.hasMoreElements()){
+                    int ReceiptNum = 0;
+                    ReceiptNum = Integer.parseInt(orig.nextElement().substring(4));
+			//System.out.println(ReceiptNum);
+                        
+                        Enumeration<String> copy = Collections.enumeration(copylist);
+                        
+                        while(copy.hasMoreElements()){
+                            String receipts = copy.nextElement().substring(4);
+                            int CopyReceiptNum = 0;
+                            CopyReceiptNum = Integer.parseInt(receipts);
+                            if (CopyReceiptNum > ReceiptNum) {
+                                if (ReceiptNum + 1 == CopyReceiptNum) {
+                                    //System.out.println("receipts has no missing");
+                                    break;
+                                } else {
+                                    System.out.println(CopyReceiptNum + " is missing");
+                                    System.out.println("SELECT * FROM `carpark`.`exit_trans` WHERE ReceiptNumber LIKE '%00"+CopyReceiptNum+"' ORDER BY `DateTimeOUT` DESC");
+                                    break;
+                                }
+                            }
+                        }
+                        
+		}
+
+            st.close();
+            connection.close();
+            return dup;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return dup;
+    }
 
     public static void main(String[] args) {
         try {
@@ -3596,8 +3657,9 @@ public class DataBaseHandler extends Thread {
             //DBH.copyZReadfromLocal("zread.main", "server_zread.main");
             //DBH.getEntranceCard();
 //            DBH.insertImageToDB();
-            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
-            DBH.ShowImageFromDB();
+//            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
+//            DBH.ShowImageFromDB();
+            DBH.getMissingReceipt("EX03");
 
 //            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
 //            String destinationFile = "C:/avaimage.jpg";
