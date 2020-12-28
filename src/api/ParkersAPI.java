@@ -1368,6 +1368,7 @@ public class ParkersAPI {
             eh.closeReceiptFile(SentinenlID);
             eh.closePrinter();
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
         }
     }

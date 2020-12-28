@@ -2563,6 +2563,7 @@ public class DataBaseHandler extends Thread {
             st.close();
             connection.close();
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error("getCurrentReceiptNos Error: " + ex.getMessage());
         }
         return data;
@@ -2595,6 +2596,7 @@ public class DataBaseHandler extends Thread {
             connection.close();
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error(ex.getMessage());
             return false;
         }

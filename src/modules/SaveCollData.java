@@ -47,22 +47,27 @@ public class SaveCollData {
 
     }
     
-    public void UpdateImptCountDB(String fieldName, String logcode) {
+    public boolean UpdateImptCountDB(String fieldName, String logcode) {
         try {
             int oldCount = Integer.parseInt(dbh.getImptCount(fieldName, logcode)) + 1;
-            dbh.setImptCount(fieldName, logcode, oldCount);
+            while (dbh.setImptCount(fieldName, logcode, oldCount) == false) {
+                Thread.sleep(1250L);
+            }
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
-
+        return false;
     }
     
     public void UpdatePtypecountDB(String Ftype, String logcode) {
         try {
             String ptypeName = dbh.getPtypeName(Ftype);
             int oldCount = Integer.parseInt(dbh.getPtypecount(ptypeName, logcode)) + 1;
-            dbh.setPtypecount(ptypeName, logcode, oldCount);
+            while (dbh.setPtypecount(ptypeName, logcode, oldCount) == false) {
+                Thread.sleep(1250L);
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -104,15 +109,19 @@ public class SaveCollData {
 
     }
     
-     public void UpdateImptAmountDB(String fieldName, String logcode, Double data) {
+     public boolean UpdateImptAmountDB(String fieldName, String logcode, Double data) {
         try {
             double oldAmount = dbh.getImptAmount(fieldName, logcode);
             double newAmount = oldAmount + data;
-            dbh.setImptAmount(fieldName, logcode, newAmount);
+            while (dbh.setImptAmount(fieldName, logcode, newAmount) == false) {
+                Thread.sleep(1250L);
+            }
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
+        return false;
     }   
             
     public void UpdatePtypeAmountDB(String Ftype, String logcode, double data) {
@@ -120,7 +129,9 @@ public class SaveCollData {
             String ptypeName = dbh.getPtypeName(Ftype);
             double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
             double newAmount = oldAmount + data;
-            dbh.setPtypeAmount(ptypeName, logcode, newAmount);
+            while (dbh.setPtypeAmount(ptypeName, logcode, newAmount) == false) {
+                Thread.sleep(1250L);
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -230,7 +241,7 @@ public class SaveCollData {
         dbh.setCarServed(trtype, loginID, carServed, totalAmount, extendedCount, extendedAmount, overnightCount, overnightAmount);
     }
     
-    public void UpdateReceiptNos(String sentinelID) throws IOException {
+    public void UpdateReceiptNos(String sentinelID) throws Exception {
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -248,8 +259,13 @@ public class SaveCollData {
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
         */
         String newCount = dbh.getNewReceiptNos(sentinelID);
-        dbh.updateCarparkMaster("receiptNos",newCount,sentinelID);
-        dbh.updateRemoteCarparkMaster("receiptNos",newCount,sentinelID);
+        while(dbh.updateCarparkMaster("receiptNos",newCount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
+        while(dbh.updateRemoteCarparkMaster("receiptNos",newCount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
+        
     }
 
     public void UpdateReceiptAmount(double AmountRCPT) throws IOException {
@@ -304,7 +320,7 @@ public class SaveCollData {
         return curr;
     }
 
-    public void UpdateGRANDTOTAL(double AmountRCPT, String sentinelID) throws IOException {
+    public void UpdateGRANDTOTAL(double AmountRCPT, String sentinelID) throws Exception{
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
@@ -328,8 +344,12 @@ public class SaveCollData {
 //        }
         */
         String oldcount = dbh.getGrandTotal(AmountRCPT, sentinelID);
-        dbh.updateCarparkMaster("grandTotal",oldcount,sentinelID);
-        dbh.updateRemoteCarparkMaster("grandTotal",oldcount,sentinelID);
+        while(dbh.updateCarparkMaster("grandTotal",oldcount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
+        while(dbh.updateRemoteCarparkMaster("grandTotal",oldcount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
     }
     
     public String getLastZRead(String SentinelID) {
@@ -356,7 +376,7 @@ public class SaveCollData {
         return curr;
     }
     
-    public void UpdateGRANDGROSSTOTAL(double AmountRCPT, String sentinelID) throws IOException {
+    public void UpdateGRANDGROSSTOTAL(double AmountRCPT, String sentinelID) throws Exception {
         /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
@@ -386,8 +406,12 @@ public class SaveCollData {
 //        }
         */
         String oldcount = dbh.getGrossTotal(AmountRCPT, sentinelID);
-        dbh.updateCarparkMaster("grossTotal",oldcount,sentinelID);
-        dbh.updateRemoteCarparkMaster("grossTotal",oldcount,sentinelID);
+        while (dbh.updateCarparkMaster("grossTotal",oldcount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
+        while (dbh.updateRemoteCarparkMaster("grossTotal",oldcount,sentinelID) == false) {
+            Thread.sleep(1250L);
+        }
     }    
     
     public String getPtypeAmount(String Ftype) {
@@ -409,7 +433,7 @@ public class SaveCollData {
         return newcurr;
     }
 
-    public String getCurrentReceiptNos(String sentinelID) throws IOException {
+    public String getCurrentReceiptNos(String sentinelID) throws Exception {
         /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -432,6 +456,10 @@ public class SaveCollData {
         return newReceipt;
         */
         String currReceipt = dbh.getCurrentReceiptNos(sentinelID);
+        while(currReceipt.compareTo("") == 0) {
+            System.out.println("current Receipt was not read from DB");
+            currReceipt = dbh.getCurrentReceiptNos(sentinelID);
+        }
         return currReceipt;
     }
 
@@ -535,7 +563,7 @@ public class SaveCollData {
             //String transaction = dbh.getTransactionNos();
             //dbh.saveZReadLogIn(logID, Exitpoint, receiptNos, grandTotal, lastTransaction, logcode);
             dbh.saveZReadLogIn(logID, Exitpoint, receiptNos, grandTotal, grandGrossTotal, lastTransaction, logcode, newZReadCount);        
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
