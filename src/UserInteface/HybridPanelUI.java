@@ -40,6 +40,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -198,6 +202,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public StringBuffer Prepaidinput = new StringBuffer("");
     private DataBaseHandler dbh = new DataBaseHandler();
 
+    private static final int PORT = 65000;  // random large port number
+    public static ServerSocket s;
+
     ReadMIFARE mifare;
 
     private int width;
@@ -208,6 +215,18 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public HybridPanelUI() {
         super();
         setUndecorated(debugMode);
+
+        try {
+            s = new ServerSocket(PORT, 10, InetAddress.getLocalHost());
+        } catch (UnknownHostException e) {
+            // shouldn't happen for localhost
+        } catch (IOException e) {
+            // port taken, so app is already running
+            System.out.print("Application is already running,");
+            System.out.println(" so terminating this instance.");
+            System.exit(0);
+        }
+
         initSentinelValues();
         initComponents();
         initLoadParkerTypes();
@@ -5733,7 +5752,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     SysLbl2.setText("Successful");
                     LogUsercode2.setText("");
                     LogPassword2.setText("");
-                    
+
                     return true;
                 }
             }
@@ -6933,9 +6952,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //                        DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
 //                        DBH.copyColltrainfromLocal("colltrain.main", "colltrain.main");
 //                        DBH.copyZReadfromLocal("zread.main", "zread.main");
-                        //DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
-                        //DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
-                        //DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
+                        DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
+                        DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
+                        DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
 //                        DBH.copyTransToServerfromLocal("unidb", "incomereport", "unidb", "incomereport", "TimeOut");
                     }
                     Thread.sleep(10000);

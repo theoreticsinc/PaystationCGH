@@ -33,6 +33,16 @@ public class Main {
     public static void main(String[] args) throws Exception {
         log.info("Starting Hybrid");
         HybridPanelUI tpUI = new HybridPanelUI();
+//        
+//        System.out.print("OK, only this instance is running");
+//        System.out.println(" but will terminate in 10 seconds.");
+//        try {
+//            //Thread.sleep(10000);
+//            //if (tpUI.s != null && !tpUI.s.isClosed()) tpUI.s.close();
+//        } catch (Exception e) {
+//            System.err.println(e);
+//        }
+        
         tpUI.dispose();
         tpUI.setUndecorated(true);
         tpUI.setVisible(true);

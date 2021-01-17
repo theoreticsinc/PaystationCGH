@@ -1757,6 +1757,7 @@ public class DataBaseHandler extends Thread {
 
     public void copyTransToServerfromLocal(String srcdb, String srctbl, String destdb, String desttbl, String dateTimeOutName) throws SQLException {
         String primaryKey = "";
+        boolean copySuccessful = false;
         connection = getLocalConnection(true);
         String insertSQL, lastDT = "";
         String lTime = "2018-1-1 00:00:00";
@@ -1887,7 +1888,8 @@ public class DataBaseHandler extends Thread {
                     //System.out.println(remotePST.getResultSet().getStatement());
                     remotePST.executeUpdate();
                     //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
-                    System.out.println("\n" + "Backup" + destdb + "." + desttbl + "=" +lTime + " Copied Successfully");
+                    System.out.println("\n" + " " + destdb + "." + desttbl + "=" +lTime + " BACKUP Copied Successfully");
+                    copySuccessful = true;
                 } catch (Exception ex) {
                     try {
                         ex.printStackTrace();
@@ -1902,10 +1904,21 @@ public class DataBaseHandler extends Thread {
 //                System.out.println("");
                 remotePST.close();
 //                serverConnection.close();
-                connection = getLocalConnection(true);
-                st = (Statement) connection.createStatement();
-                st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
-                st.close();
+                if (copySuccessful) {
+                    connection = getLocalConnection(true);
+                    st = (Statement) connection.createStatement();
+                    st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
+                    st.close();
+                }
+                else {
+                    try {
+                        st.close();
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                        log.error(ex.getMessage());
+                    }
+                }
             }
         }
 
@@ -3595,9 +3608,10 @@ public class DataBaseHandler extends Thread {
     
     public int getMissingReceipt(String ExitID) {
         int dup = 0;
+        int missingCount = 0;
         String recNum;
         List<String> origlist = new ArrayList<>();
-        List<String> copylist = new ArrayList<>();
+        //List<String> copylist = new ArrayList<>();
 
         try {
             connection = getLocalConnection(true);
@@ -3606,22 +3620,44 @@ public class DataBaseHandler extends Thread {
             while (rs.next()) {
                 recNum = rs.getString("ReceiptNumber");
                 origlist.add(recNum);
-                copylist.add(recNum);                
+                //copylist.add(recNum);                
                 //System.out.println(recNum.substring(4));
             }
+            rs.close();
+            connection.close();
             /* Sort statement*/
 	   Collections.sort(origlist);
-	   Collections.sort(copylist);
-           
+	   //Collections.sort(copylist);
+           int startRecNum = 0;
+           int endRecNum = 5561;
             Enumeration<String> orig = Collections.enumeration(origlist);
-		while(orig.hasMoreElements()){
-                    int ReceiptNum = 0;
-                    ReceiptNum = Integer.parseInt(orig.nextElement().substring(4));
-			//System.out.println(ReceiptNum);
+	    while(startRecNum < endRecNum){
+                startRecNum++;
+		//System.out.println(ReceiptNum);
                         
-                        Enumeration<String> copy = Collections.enumeration(copylist);
-                        
-                        while(copy.hasMoreElements()){
+             //           Enumeration<String> copy = Collections.enumeration(copylist);
+            connection = getLocalConnection(true);
+            String receipt2find = ExitID + formatNos(startRecNum + "");
+            String SQL = "SELECT ReceiptNumber FROM carpark.exit_trans WHERE ReceiptNumber = '" + receipt2find + "' AND ExitID = '" + ExitID + "' ORDER BY ReceiptNumber";
+            //System.out.println(SQL);
+            ResultSet rs1 = selectDatabyFields(SQL);
+            recNum = "";
+            while (rs1.next()) {
+                recNum = rs1.getString("ReceiptNumber");                
+                //copylist.add(recNum);                
+                //System.out.println(recNum.substring(4));
+            }
+            if(recNum.compareTo("") == 0) {
+                    System.out.println(receipt2find + " is missing");
+                    System.out.println(SQL);
+                    missingCount++;
+                } else {
+            //        System.out.println(recNum + " OK");
+            }
+            //System.out.print(".");
+            rs1.close();
+            connection.close();
+                            /*
                             String receipts = copy.nextElement().substring(4);
                             int CopyReceiptNum = 0;
                             CopyReceiptNum = Integer.parseInt(receipts);
@@ -3635,15 +3671,15 @@ public class DataBaseHandler extends Thread {
                                     break;
                                 }
                             }
-                        }
-                        
+                            */
+                                                
 		}
-
-            st.close();
-            connection.close();
+            System.out.println("Missing Receipts Checking Completed");
+            System.out.println("Missing: " + missingCount);
+            
             return dup;
         } catch (SQLException ex) {
-            log.error(ex.getMessage());
+            ex.printStackTrace();
         }
         return dup;
     }
@@ -3661,7 +3697,7 @@ public class DataBaseHandler extends Thread {
 //            DBH.insertImageToDB();
 //            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
 //            DBH.ShowImageFromDB();
-            DBH.getMissingReceipt("EX03");
+            DBH.getMissingReceipt("EX02");
 
 //            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
 //            String destinationFile = "C:/avaimage.jpg";

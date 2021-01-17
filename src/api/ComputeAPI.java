@@ -888,8 +888,14 @@ public class ComputeAPI {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
+        int tries = 0;
         while (saveParkerTrans == false) {
             try {
+                tries++;
+                if(tries >= 3) {
+                    //OFFLINE SAVE Insert Here
+                    break;
+                }
                 Thread.sleep(1250L);
                 saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vatAdjustment, vat12, vatsale, vatExemptedSales, discountDbl, tenderFloat, stn.ChangeDisplay.getText());
             } catch (Exception ex) {
@@ -901,7 +907,13 @@ public class ComputeAPI {
         //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatexempt, discount, tenderFloat, stn.ChangeDisplay.getText());
         //}
         try {
+            tries = 0;
             while (updateTrans2DB() == false) {//Updates Car Served and Total Amount
+                tries++;
+                if(tries >= 3) {
+                    //OFFLINE SAVE Insert Here
+                    break;
+                }
                 Thread.sleep(1250L);
             }
         } catch (Exception ex) {
@@ -2124,10 +2136,22 @@ public class ComputeAPI {
         try {
             SaveCollData scd = new SaveCollData();
             LogUtility logthis = new LogUtility();
+            int tries = 0;
             while (scd.UpdateImptCountDB(fieldName + "Count", stn.loginID) == false) {
+                tries++;
+                if(tries >= 3) {
+                    //OFFLINE SAVE Insert Here
+                    break;
+                }
                 Thread.sleep(1250);
             } //ParkerType Listing
+            tries = 0;
             while (scd.UpdateImptAmountDB(fieldName + "Amount", stn.loginID, Amount) == false) {
+                tries++;
+                if(tries >= 3) {
+                    //OFFLINE SAVE Insert Here
+                    break;
+                }
                 Thread.sleep(1250);
             }
             //System.out.println(fieldName + "Amount = " +Amount);
