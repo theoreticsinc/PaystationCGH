@@ -98,7 +98,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 //      public boolean logging = false;
     public javax.swing.JLabel errorMsg[];
     public String currentmode = "";
-    public String currenttype = "R";
+    public String currenttype = "";
     public boolean firstscan = true, firstRun = true;
     public boolean lostEnabled = false;
     public boolean settlementEnabled = false;
@@ -7093,11 +7093,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                 SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");
                                 String strTimeToSet = stf.format(serverDate);   //hh:mm:ss
                                 //String cmd = "java -jar \"C:/JTerminals/ServerDateUpdater.jar\" " + strDateToSet + " " + strTimeToSet;
-                                String cmd = "cmd /C date " + strDateToSet + "& time " + strTimeToSet;
+                                String cmd = "cmd /C date " + strDateToSet + " & time " + strTimeToSet;
+                                System.out.println(cmd);
                                 Runtime r = Runtime.getRuntime();
                                 Process p = r.exec(cmd);
                                 try {
                                     p.waitFor();
+                                    System.out.println("Date / Time sync successfully...");
                                 } catch (Exception ex) {
                                     //admin1.setText(ex.getMessage());
                                     log.error(ex.getMessage());
@@ -7127,9 +7129,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                         //proc = rt.exec("sudo /JTerminals/netunboot.sh");
                         //proc = rt.exec("sudo umount -t smbfs /SYSTEMS");//maybe unneeded
                     }
-                    Thread.sleep(15 * 60000);
+                    Thread.sleep(60000 * 10);   //10 MIN INTERVAL
                     //resetAdmin();
-                    Thread.sleep(2000);
+                    //Thread.sleep(2000);
                 }
             } catch (Exception ex) {
                 log.error(ex.getMessage());

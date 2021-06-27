@@ -281,8 +281,8 @@ public class ComputeAPI {
                     Entrypoint = SP.getSysID();
                     Cardno = SP.getCardID();
                     Plateno = SP.getPlateID();
-                    //ParkerType = SP.getTRID();
-                    ParkerType = stn.defaultType;
+                    ParkerType = SP.getTRID();
+                    //ParkerType = stn.defaultType;
                     isLost = SP.getIsLost();
                     AmountPaid = Float.parseFloat(SP.getAmountPaid());
                 }
@@ -2667,7 +2667,7 @@ public class ComputeAPI {
         ParkersAPI SP = new ParkersAPI();
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-        String type = "S";
+        String type = "AB";
 
         SP.setSysID("EN01");
         SP.setCardID("A82A94B1");
@@ -2717,14 +2717,14 @@ public class ComputeAPI {
         ca.ParkerType = type;
         ca.stn.trtype = type;
         ca.HoursElapsed = 0;
-        ca.MinutesElapsed = 16;
+        ca.MinutesElapsed = 31;
         cal.add(Calendar.HOUR, 0);
-        cal.add(Calendar.MINUTE, -17);
+        cal.add(Calendar.MINUTE, (int) -ca.MinutesElapsed);
         ca.datetimeIN = sdf1.format(cal.getTime());
         ca.datetimeOUT = sdf1.format(new Date().getTime());
         computed = ca.Computation(type, true, false);
         ca.AmountDue = computed;
-        System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
         ca.ValidPartII();
         /////
 
@@ -2739,7 +2739,7 @@ public class ComputeAPI {
             ca.datetimeOUT = sdf1.format(new Date().getTime());
             computed = ca.Computation(type, true, false);
             ca.AmountDue = computed;
-            System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
             ca.ValidPartII();
 
             ca.ParkerType = type;
@@ -2752,7 +2752,7 @@ public class ComputeAPI {
             ca.datetimeOUT = sdf1.format(new Date().getTime());
             computed = ca.Computation(type, true, false);
             ca.AmountDue = computed;
-            System.out.print("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
+            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
             ca.ValidPartII();
 
         }

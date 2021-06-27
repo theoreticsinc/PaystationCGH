@@ -1340,7 +1340,7 @@ public class DataBaseHandler extends Thread {
             String entranceID = rs.getString("Lane");
             String cardNum = rs.getString("CardCode");
             String plateNumber = rs.getString("Plate");
-            String trtype = "R";
+            String trtype = rs.getString("TRType");
             Timestamp dateIN = rs.getTimestamp("Timein");
             dateTimeINStamp = String.valueOf(dch.convertJavaDate2UnixTime4Card(dateIN));
             boolean isLost = false;
@@ -3697,7 +3697,7 @@ public class DataBaseHandler extends Thread {
 //            DBH.insertImageToDB();
 //            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
 //            DBH.ShowImageFromDB();
-            DBH.getMissingReceipt("EX02");
+            DBH.getMissingReceipt("EX03");
 
 //            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
 //            String destinationFile = "C:/avaimage.jpg";
