@@ -44,12 +44,19 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
@@ -202,7 +209,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public StringBuffer Prepaidinput = new StringBuffer("");
     private DataBaseHandler dbh = new DataBaseHandler();
 
-    private static final int PORT = 65000;  // random large port number
+    private static final int PORT = 5777;  // random large port number
     public static ServerSocket s;
 
     ReadMIFARE mifare;
@@ -217,16 +224,127 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         setUndecorated(debugMode);
 
         try {
-            s = new ServerSocket(PORT, 10, InetAddress.getLocalHost());
+            //s = new ServerSocket(PORT, 10, InetAddress.getLocalHost());
+            final AsynchronousServerSocketChannel listener =
+                    AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(PORT));
+            // Listen for a new request
+            listener.accept( null, new CompletionHandler<AsynchronousSocketChannel,Void>() {
+
+                @Override
+                public void completed(AsynchronousSocketChannel ch, Void att)
+                {
+                    // Accept the next connection
+                    listener.accept( null, this );
+
+                    // Greet the client
+                    ch.write( ByteBuffer.wrap( "Server is listening!\n".getBytes() ) );
+
+                    // Allocate a byte buffer (4K) to read from the client
+                    ByteBuffer byteBuffer = ByteBuffer.allocate( 4096 );
+                    try
+                    {
+                        // Read the first line
+                        int bytesRead = ch.read( byteBuffer ).get( 20, TimeUnit.SECONDS );
+
+                        boolean running = true;
+                        while( bytesRead != -1 && running )
+                        {
+                            //System.out.println( "bytes read: " + bytesRead );
+
+                            // Make sure that we have data to read
+                            if( byteBuffer.position() > 2 )
+                            {
+                                // Make the buffer ready to read
+                                byteBuffer.flip();
+
+                                // Convert the buffer into a line
+                                byte[] lineBytes = new byte[ bytesRead ];
+                                byteBuffer.get( lineBytes, 0, bytesRead );
+                                String line = new String( lineBytes );
+
+                                // Debug
+                                System.out.println( "Message: " + line );
+                                String msgs[] = line.split(",");
+                                if (msgs[0].toString().compareToIgnoreCase("ENTRYVIP") == 0) {
+                                    ctrlMsg2.setText(msgs[0]);
+                                    ctrlMsg5.setText(msgs[1]);
+                                    ctrlMsg8.setText(msgs[2]);
+                                    ctrlMsg11.setText(msgs[3]);
+                                }
+                                if (msgs[0].toString().compareToIgnoreCase("DISPENSER") == 0) {
+                                    ctrlMsg2.setText(msgs[0]);
+                                    if (msgs[1].startsWith("card number:") == true) {
+                                        
+                                    }
+                                    ctrlMsg5.setText(msgs[1]);
+                                    ctrlMsg8.setText(msgs[2]);
+                                    ctrlMsg11.setText(msgs[3]);
+                                }
+                                //ctrlMsg1.setText(msgs[0]);
+                                // Echo back to the caller
+                                ch.write( ByteBuffer.wrap( line.getBytes() ) );
+
+                                // Make the buffer ready to write
+                                byteBuffer.clear();
+
+                                // Read the next line
+                                bytesRead = ch.read( byteBuffer ).get( 20, TimeUnit.SECONDS );
+                            }
+                            else
+                            {
+                                // An empty line signifies the end of the conversation in our protocol
+                                running = false;
+                            }
+                        }
+                        
+
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    catch (ExecutionException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    catch (TimeoutException e)
+                    {
+                        // The user exceeded the 20 second timeout, so close the connection
+                        // close
+                        ch.write( ByteBuffer.wrap( "msg_received!\n".getBytes() ) );
+                        System.out.println( "Connection timed out, closing connection" );
+                    }
+
+                    System.out.println( "End of conversation" );
+                    try
+                    {
+                        // Close the connection if we need to
+                        if( ch.isOpen() )
+                        {
+                            ch.close();
+                        }
+                    }
+                    catch (IOException e1)
+                    {
+                        e1.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failed(Throwable exc, Void att) {
+                    ///...
+                }
+            });
+
         } catch (UnknownHostException e) {
             // shouldn't happen for localhost
-        } catch (IOException e) {
+        } catch (Exception e) {
             // port taken, so app is already running
             System.out.print("Application is already running,");
             System.out.println(" so terminating this instance.");
             System.exit(0);
         }
-
+        
         initSentinelValues();
         initComponents();
         initLoadParkerTypes();
@@ -655,16 +773,19 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         Status = new javax.swing.JPanel();
         ServerStatus = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        slotsPanel = new javax.swing.JPanel();
-        slotsType = new javax.swing.JLabel();
-        carsMinusbtn = new javax.swing.JLabel();
-        carsNum = new javax.swing.JTextField();
-        carsPlusbtn = new javax.swing.JLabel();
-        sep = new javax.swing.JLabel();
-        slotsType2 = new javax.swing.JLabel();
-        motorMinusbtn = new javax.swing.JLabel();
-        motorNum = new javax.swing.JTextField();
-        motorPlusbtn = new javax.swing.JLabel();
+        controllerPanel = new javax.swing.JPanel();
+        ctrlMsg1 = new javax.swing.JLabel();
+        ctrlMsg2 = new javax.swing.JLabel();
+        ctrlMsg3 = new javax.swing.JLabel();
+        ctrlMsg4 = new javax.swing.JLabel();
+        ctrlMsg5 = new javax.swing.JLabel();
+        ctrlMsg6 = new javax.swing.JLabel();
+        ctrlMsg7 = new javax.swing.JLabel();
+        ctrlMsg8 = new javax.swing.JLabel();
+        ctrlMsg9 = new javax.swing.JLabel();
+        ctrlMsg10 = new javax.swing.JLabel();
+        ctrlMsg11 = new javax.swing.JLabel();
+        ctrlMsg12 = new javax.swing.JLabel();
         SouthPanel = new javax.swing.JPanel();
         version = new javax.swing.JLabel();
         RDatePanel = new javax.swing.JPanel();
@@ -1499,8 +1620,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SearchPanel.setLayout(null);
 
         SearchDisplayPanel.setBackground(new java.awt.Color(0, 153, 255));
-        SearchDisplayPanel.setAutoscrolls(true);
         SearchDisplayPanel.setFocusable(false);
+        SearchDisplayPanel.setAutoscrolls(true);
         java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING);
         flowLayout2.setAlignOnBaseline(true);
         SearchDisplayPanel.setLayout(flowLayout2);
@@ -1747,11 +1868,14 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         BGPanel.setOpaque(false);
         BGPanel.setLayout(new java.awt.BorderLayout());
 
+        NorthPanel.setMinimumSize(new java.awt.Dimension(544, 150));
+        NorthPanel.setPreferredSize(new java.awt.Dimension(544, 150));
         NorthPanel.setOpaque(false);
         NorthPanel.setLayout(new java.awt.BorderLayout());
 
         ProductName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/small SilverLogo.png"))); // NOI18N
         ProductName.setText("PARKING AREA SENTINEL SYSTEM");
+        ProductName.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 10));
         ProductName.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
         ProductName.setForeground(new java.awt.Color(255, 255, 255));
         NorthPanel.add(ProductName, java.awt.BorderLayout.WEST);
@@ -1763,6 +1887,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ClientName.setForeground(new java.awt.Color(255, 255, 255));
         NorthPanel.add(ClientName, java.awt.BorderLayout.NORTH);
 
+        LeftMsgPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 3));
         LeftMsgPanel.setPreferredSize(new java.awt.Dimension(280, 34));
         LeftMsgPanel.setOpaque(false);
         LeftMsgPanel.setLayout(new java.awt.GridLayout(1, 2));
@@ -1770,10 +1895,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         Labels.setOpaque(false);
         Labels.setLayout(new java.awt.GridLayout(2, 2));
 
-        ServerInfo1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        ServerInfo1.setForeground(new java.awt.Color(204, 204, 204));
         ServerInfo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         ServerInfo1.setText("SERVER ="); // NOI18N
+        ServerInfo1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        ServerInfo1.setForeground(new java.awt.Color(204, 204, 204));
         ServerInfo1.setMinimumSize(null);
         ServerInfo1.setPreferredSize(null);
         Labels.add(ServerInfo1);
@@ -1811,76 +1936,73 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         NorthPanel.add(LeftMsgPanel, java.awt.BorderLayout.EAST);
 
-        slotsPanel.setOpaque(false);
+        controllerPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        controllerPanel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        controllerPanel.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.setOpaque(false);
+        controllerPanel.setLayout(new java.awt.GridLayout(4, 3, 5, 1));
 
-        slotsType.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        slotsType.setForeground(new java.awt.Color(255, 255, 255));
-        slotsType.setText("CARS");
-        slotsPanel.add(slotsType);
+        ctrlMsg1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg1.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg1);
 
-        carsMinusbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/buttonMinus1.png"))); // NOI18N
-        carsMinusbtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                carsMinusbtnMouseClicked(evt);
-            }
-        });
-        slotsPanel.add(carsMinusbtn);
+        ctrlMsg2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg2.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg2);
 
-        carsNum.setEditable(false);
-        carsNum.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        carsNum.setText("120");
-        carsNum.setBackground(new java.awt.Color(0, 0, 0));
-        carsNum.setFont(new java.awt.Font("DSEG14 Modern", 0, 24)); // NOI18N
-        carsNum.setForeground(new java.awt.Color(255, 255, 255));
-        carsNum.setMargin(new java.awt.Insets(10, 10, 10, 10));
-        carsNum.setMinimumSize(new java.awt.Dimension(76, 76));
-        carsNum.setName(""); // NOI18N
-        slotsPanel.add(carsNum);
+        ctrlMsg3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg3.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg3);
 
-        carsPlusbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/buttonPlus1.png"))); // NOI18N
-        carsPlusbtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                carsPlusbtnMouseClicked(evt);
-            }
-        });
-        slotsPanel.add(carsPlusbtn);
+        ctrlMsg4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg4.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg4);
 
-        sep.setText("                        ");
-        slotsPanel.add(sep);
+        ctrlMsg5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg5.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg5);
 
-        slotsType2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        slotsType2.setForeground(new java.awt.Color(255, 255, 255));
-        slotsType2.setText("Motorcycle");
-        slotsPanel.add(slotsType2);
+        ctrlMsg6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg6.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg6);
 
-        motorMinusbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/buttonMinus1.png"))); // NOI18N
-        motorMinusbtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                motorMinusbtnMouseClicked(evt);
-            }
-        });
-        slotsPanel.add(motorMinusbtn);
+        ctrlMsg7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg7.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg7.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg7);
 
-        motorNum.setEditable(false);
-        motorNum.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        motorNum.setText("120");
-        motorNum.setBackground(new java.awt.Color(0, 0, 0));
-        motorNum.setFont(new java.awt.Font("DSEG14 Modern", 0, 24)); // NOI18N
-        motorNum.setForeground(new java.awt.Color(255, 255, 255));
-        motorNum.setMargin(new java.awt.Insets(10, 10, 10, 10));
-        motorNum.setMinimumSize(new java.awt.Dimension(76, 76));
-        motorNum.setName(""); // NOI18N
-        slotsPanel.add(motorNum);
+        ctrlMsg8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg8.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg8);
 
-        motorPlusbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/buttonPlus1.png"))); // NOI18N
-        motorPlusbtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                motorPlusbtnMouseClicked(evt);
-            }
-        });
-        slotsPanel.add(motorPlusbtn);
+        ctrlMsg9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ctrlMsg9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg9.setForeground(new java.awt.Color(255, 255, 255));
+        controllerPanel.add(ctrlMsg9);
 
-        NorthPanel.add(slotsPanel, java.awt.BorderLayout.CENTER);
+        ctrlMsg10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg10.setForeground(new java.awt.Color(255, 255, 255));
+        ctrlMsg10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        controllerPanel.add(ctrlMsg10);
+
+        ctrlMsg11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg11.setForeground(new java.awt.Color(255, 255, 255));
+        ctrlMsg11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        controllerPanel.add(ctrlMsg11);
+
+        ctrlMsg12.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ctrlMsg12.setForeground(new java.awt.Color(255, 255, 255));
+        ctrlMsg12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        controllerPanel.add(ctrlMsg12);
+
+        NorthPanel.add(controllerPanel, java.awt.BorderLayout.CENTER);
 
         BGPanel.add(NorthPanel, java.awt.BorderLayout.NORTH);
 
@@ -2046,9 +2168,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MainPanel.add(amntlbl);
         amntlbl.setBounds(0, 90, 90, 80);
 
+        AMOUNTdisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         AMOUNTdisplay.setFont(new java.awt.Font("Arial Narrow", 0, 38)); // NOI18N
         AMOUNTdisplay.setForeground(new java.awt.Color(102, 255, 153));
-        AMOUNTdisplay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MainPanel.add(AMOUNTdisplay);
         AMOUNTdisplay.setBounds(80, 40, 440, 70);
 
@@ -4234,7 +4356,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         BGPanel.add(EastPanel, java.awt.BorderLayout.EAST);
 
         getContentPane().add(BGPanel);
-        BGPanel.setBounds(0, 0, 1430, 870);
+        BGPanel.setBounds(0, 0, 1430, 920);
 
         CamPanel.setFocusable(false);
         CamPanel.setRequestFocusEnabled(false);
@@ -5039,35 +5161,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void LoginButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButton2MouseClicked
         StartLogInX();
     }//GEN-LAST:event_LoginButton2MouseClicked
-
-    private void carsMinusbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_carsMinusbtnMouseClicked
-        DataBaseHandler dbh = new DataBaseHandler();
-        dbh.Slotsminus1("car");
-        int car = dbh.getSlotAvail("car");
-        carsNum.setText(String.valueOf(car));
-
-    }//GEN-LAST:event_carsMinusbtnMouseClicked
-
-    private void carsPlusbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_carsPlusbtnMouseClicked
-        DataBaseHandler dbh = new DataBaseHandler();
-        dbh.Slotsplus1("car");
-        int car = dbh.getSlotAvail("car");
-        carsNum.setText(String.valueOf(car));
-    }//GEN-LAST:event_carsPlusbtnMouseClicked
-
-    private void motorPlusbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_motorPlusbtnMouseClicked
-        DataBaseHandler dbh = new DataBaseHandler();
-        dbh.Slotsplus1("motor");
-        int motor = dbh.getSlotAvail("motor");
-        motorNum.setText(String.valueOf(motor));
-    }//GEN-LAST:event_motorPlusbtnMouseClicked
-
-    private void motorMinusbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_motorMinusbtnMouseClicked
-        DataBaseHandler dbh = new DataBaseHandler();
-        dbh.Slotsminus1("motor");
-        int motor = dbh.getSlotAvail("motor");
-        motorNum.setText(String.valueOf(motor));
-    }//GEN-LAST:event_motorMinusbtnMouseClicked
 
     private void LoginButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButton2ActionPerformed
         // TODO add your handling code here:
@@ -6005,9 +6098,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         try {
             LoginMOD lm = new LoginMOD();
             String compcode = "";
-            compcode = lm.getCashierID();
+            compcode = lm.getCashierID().trim();
             Date logStamp = new Date();
-            if (compcode.compareToIgnoreCase(LogUsercode1.getText().toString()) == 0 && lm.getCashierPassword(LogUsercode1.getText().toString(), LogPassword1.getText().toString())) {//Startlog out if code is valid
+            if (compcode.compareToIgnoreCase(LogUsercode1.getText().toString().trim()) == 0 && lm.getCashierPassword(LogUsercode1.getText().toString().trim(), LogPassword1.getText().toString().trim())) {//Startlog out if code is valid
                 SaveCollData scd = new SaveCollData();
                 DataBaseHandler dbh = new DataBaseHandler();
                 dbh.saveLog("L0", LogUsercode1.getText().toString());
@@ -6730,8 +6823,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         DataBaseHandler dbh = new DataBaseHandler();
         int motor = dbh.getSlotAvail("motor");
         int car = dbh.getSlotAvail("car");
-        carsNum.setText(String.valueOf(car));
-        motorNum.setText(String.valueOf(motor));
+//        carsNum.setText(String.valueOf(car));
+//        motorNum.setText(String.valueOf(motor));
+        
     }
 
     private void check4Succeeding() {
@@ -7638,13 +7732,23 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel amntlbl2;
     private javax.swing.JLabel amntlbl3;
     private javax.swing.JLabel background;
-    private javax.swing.JLabel carsMinusbtn;
-    private javax.swing.JTextField carsNum;
-    private javax.swing.JLabel carsPlusbtn;
     private javax.swing.JLabel cashColLbl;
     private javax.swing.JButton closeButton;
     private javax.swing.JButton closeButton1;
     private javax.swing.JButton closeButton2;
+    private javax.swing.JPanel controllerPanel;
+    private javax.swing.JLabel ctrlMsg1;
+    private javax.swing.JLabel ctrlMsg10;
+    private javax.swing.JLabel ctrlMsg11;
+    private javax.swing.JLabel ctrlMsg12;
+    private javax.swing.JLabel ctrlMsg2;
+    private javax.swing.JLabel ctrlMsg3;
+    private javax.swing.JLabel ctrlMsg4;
+    private javax.swing.JLabel ctrlMsg5;
+    private javax.swing.JLabel ctrlMsg6;
+    private javax.swing.JLabel ctrlMsg7;
+    private javax.swing.JLabel ctrlMsg8;
+    private javax.swing.JLabel ctrlMsg9;
     private javax.swing.JLabel datedisplay;
     private javax.swing.JLabel daydisplay;
     public javax.swing.JLabel entryCamera;
@@ -7698,9 +7802,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private datechooser.beans.DateChooserCombo manualEntryDate;
     private javax.swing.JTextField manualEntryPlate;
     private com.github.lgooddatepicker.components.TimePicker manualEntryTime;
-    private javax.swing.JLabel motorMinusbtn;
-    private javax.swing.JTextField motorNum;
-    private javax.swing.JLabel motorPlusbtn;
     private javax.swing.JPanel newMidPanel;
     private javax.swing.JLabel num0;
     private javax.swing.JLabel num1;
@@ -7731,7 +7832,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JTextField reprintPlate;
     private javax.swing.JLabel searchCollectionBtn;
     private javax.swing.JLabel searchLbl;
-    private javax.swing.JLabel sep;
     private javax.swing.JLabel settLbl;
     private javax.swing.JLabel settLbl1;
     private javax.swing.JLabel settLbl2;
@@ -7742,9 +7842,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel settLbl7;
     private javax.swing.JTextField settName;
     private javax.swing.JTextField settTIN;
-    private javax.swing.JPanel slotsPanel;
-    private javax.swing.JLabel slotsType;
-    private javax.swing.JLabel slotsType2;
     private javax.swing.JLabel spacer;
     private javax.swing.JLabel spacer1;
     private javax.swing.JLabel spacer2;
