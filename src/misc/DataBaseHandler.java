@@ -70,7 +70,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Encoder;
 
 //import com.sun.jersey.core.util.Base64;
 import sun.net.www.protocol.http.HttpURLConnection;
