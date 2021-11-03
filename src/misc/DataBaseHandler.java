@@ -82,10 +82,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-//    private String USERNAME = "base";
-//    private String PASSWORD = "theoreticsinc";
-    private String USERNAME = "root";
-    private String PASSWORD = "sa";
+    private String USERNAME = "base";
+    private String PASSWORD = "theoreticsinc";
+//    private String USERNAME = "root";
+//    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -467,6 +467,62 @@ public class DataBaseHandler extends Thread {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
+    
+    public BufferedImage GetVIPImageFromDB(String CardCode) {
+        BufferedImage img = null;
+        try {
+            connection = getServerConnection(true);
+            String sql = "SELECT CardCode, Plate, PIC FROM vips.dtr WHERE CardCode = '" + CardCode + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+
+            img = new BufferedImage(400, 400,
+                    BufferedImage.TYPE_BYTE_INDEXED);
+
+            while (resultSet.next()) {
+                String name = resultSet.getString(1);
+                String description = resultSet.getString(2);
+                //File image = new File("C:\\card" + name + ".jpg");
+                //FileOutputStream fos = new FileOutputStream(image);
+
+                byte[] buffer = new byte[1];
+                InputStream is = resultSet.getBinaryStream(3);
+                //while (is.read(buffer) > 0) {
+                //    fos.write(buffer);
+                //}
+                //is.close();
+
+                //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
+                try {
+                    img = ImageIO.read(is);
+                    is.close();
+                } catch (Exception ex) {
+
+                }
+
+                //fos.close();
+                //show(name, img, 7);
+            }
+
+            //Kernel kernel = new Kernel(3, 3, new float[] { -1, -1, -1, -1, 9, -1, -1,
+            //    -1, -1 });
+            //BufferedImageOp op = new ConvolveOp(kernel);
+            //img = op.filter(img, null);
+//        JFrame frame = new JFrame();
+//        frame.getContentPane().setLayout(new FlowLayout());
+//        frame.getContentPane().add(new JLabel(new ImageIcon(img)));
+//        frame.pack();
+//        frame.setVisible(true);
+            //mediaPlayer.controls().stop();
+            //show("Captured", img, 7);
+            return img;
+
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+
 
     public BufferedImage GetImageFromDB(String CardCode) {
         BufferedImage img = null;
@@ -735,19 +791,52 @@ public class DataBaseHandler extends Thread {
         }
         return null;
     }
-
-    public boolean findEntranceCard(String cardNumber) throws SQLException {
+    
+    public boolean findVIPEntranceCard(String cardNumber) {
         boolean found = false;
-        connection = getServerConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
-        DateConversionHandler dch = new DateConversionHandler();
-        // iterate through the java resultset
-        while (rs.next()) {
-            dateTimeIN = rs.getString("Timein");
-            found = true;
+        try {            
+            try {
+                connection = getServerConnection(true);
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+            DateConversionHandler dch = new DateConversionHandler();
+            // iterate through the java resultset
+            while (rs.next()) {
+                dateTimeIN = rs.getString("Timein");
+                found = true;
+            }
+            st.close();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        st.close();
-        connection.close();
+        return found;
+    }
+
+    public boolean findEntranceCard(String cardNumber) {
+        boolean found = false;
+        try {            
+            try {
+                connection = getServerConnection(true);
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+            DateConversionHandler dch = new DateConversionHandler();
+            // iterate through the java resultset
+            while (rs.next()) {
+                dateTimeIN = rs.getString("Timein");
+                found = true;
+            }
+            st.close();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
         return found;
     }
 

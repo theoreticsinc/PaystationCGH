@@ -54,6 +54,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -225,116 +227,148 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         try {
             //s = new ServerSocket(PORT, 10, InetAddress.getLocalHost());
-            final AsynchronousServerSocketChannel listener =
-                    AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(PORT));
+            final AsynchronousServerSocketChannel listener
+                    = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(PORT));
             // Listen for a new request
-            listener.accept( null, new CompletionHandler<AsynchronousSocketChannel,Void>() {
+            listener.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
 
                 @Override
-                public void completed(AsynchronousSocketChannel ch, Void att)
-                {
+                public void completed(AsynchronousSocketChannel ch, Void att) {
                     // Accept the next connection
-                    listener.accept( null, this );
+                    listener.accept(null, this);
 
                     // Greet the client
-                    ch.write( ByteBuffer.wrap( "Server is listening!\n".getBytes() ) );
+                    ch.write(ByteBuffer.wrap("Server is listening!\n".getBytes()));
 
                     // Allocate a byte buffer (4K) to read from the client
-                    ByteBuffer byteBuffer = ByteBuffer.allocate( 4096 );
-                    try
-                    {
+                    ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+                    try {
                         // Read the first line
-                        int bytesRead = ch.read( byteBuffer ).get( 20, TimeUnit.SECONDS );
+                        int bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
 
                         boolean running = true;
-                        while( bytesRead != -1 && running )
-                        {
+                        while (bytesRead != -1 && running) {
                             //System.out.println( "bytes read: " + bytesRead );
 
                             // Make sure that we have data to read
-                            if( byteBuffer.position() > 2 )
-                            {
+                            if (byteBuffer.position() > 2) {
                                 // Make the buffer ready to read
                                 byteBuffer.flip();
 
                                 // Convert the buffer into a line
-                                byte[] lineBytes = new byte[ bytesRead ];
-                                byteBuffer.get( lineBytes, 0, bytesRead );
-                                String line = new String( lineBytes );
+                                byte[] lineBytes = new byte[bytesRead];
+                                byteBuffer.get(lineBytes, 0, bytesRead);
+                                String line = new String(lineBytes);
 
                                 // Debug
-                                System.out.println( "Message: " + line );
+                                System.out.println("Message: " + line);
                                 String msgs[] = line.split(",");
                                 if (msgs[0].toString().compareToIgnoreCase("ENTRYVIP") == 0) {
                                     ctrlMsg2.setText(msgs[0]);
-                                    ctrlMsg5.setText(msgs[1]);
+                                    String cardToDisplay = "";
+                                    if (msgs[1].startsWith("card number:") == true) {
+                                        final String cardFromReader = msgs[1].substring(12, msgs[1].length());
+                                        //cardFromReader = "4234996A";
+                                        cardToDisplay = cardFromReader;
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                if (dbh.findVIPEntranceCard(cardFromReader)) {
+                                                    BufferedImage buf = dbh.GetVIPImageFromDB(cardFromReader);
+                                                    Image img = getScaledImage(buf, 170, 115);
+                                                    dispenserCam.setIcon(new ImageIcon(img));
+                                                } else {
+                                                    new Timer().schedule(new TimerTask() {
+                                                        @Override
+                                                        public void run() {
+                                                            BufferedImage buff = dbh.GetVIPImageFromDB(cardFromReader);
+                                                            Image img = getScaledImage(buff, 170, 115);
+                                                            dispenserCam.setIcon(new ImageIcon(img));
+                                                        }
+                                                    }, 5000);
+                                                }
+                                            }
+                                        }, 5000);
+                                    }
+                                    ctrlMsg5.setText(cardToDisplay);
                                     ctrlMsg8.setText(msgs[2]);
                                     ctrlMsg11.setText(msgs[3]);
                                 }
-                                if (msgs[0].toString().compareToIgnoreCase("DISPENSER") == 0) {
+                                else if (msgs[0].toString().compareToIgnoreCase("DISPENSER") == 0) {
                                     ctrlMsg2.setText(msgs[0]);
+                                    String cardToDisplay = "";
                                     if (msgs[1].startsWith("card number:") == true) {
-                                        
+                                        final String cardFromReader = msgs[1].substring(12, msgs[1].length());
+                                        //cardFromReader = "4234996A";
+                                        cardToDisplay = cardFromReader;
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                if (dbh.findEntranceCard(cardFromReader)) {
+                                                    BufferedImage buf = dbh.GetImageFromDB(cardFromReader);
+                                                    Image img = getScaledImage(buf, 170, 115);
+                                                    dispenserCam.setIcon(new ImageIcon(img));
+                                                } else {
+                                                    new Timer().schedule(new TimerTask() {
+                                                        @Override
+                                                        public void run() {
+                                                            BufferedImage buff = dbh.GetImageFromDB(cardFromReader);
+                                                            Image img = getScaledImage(buff, 170, 115);
+                                                            dispenserCam.setIcon(new ImageIcon(img));
+                                                        }
+                                                    }, 5000);
+                                                }
+                                            }
+                                        }, 5000);
                                     }
-                                    ctrlMsg5.setText(msgs[1]);
+                                    ctrlMsg5.setText(cardToDisplay);
                                     ctrlMsg8.setText(msgs[2]);
                                     ctrlMsg11.setText(msgs[3]);
                                 }
                                 //ctrlMsg1.setText(msgs[0]);
                                 // Echo back to the caller
-                                ch.write( ByteBuffer.wrap( line.getBytes() ) );
+                                ch.write(ByteBuffer.wrap(line.getBytes()));
 
                                 // Make the buffer ready to write
                                 byteBuffer.clear();
 
                                 // Read the next line
-                                bytesRead = ch.read( byteBuffer ).get( 20, TimeUnit.SECONDS );
-                            }
-                            else
-                            {
+                                bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
+                            } else {
                                 // An empty line signifies the end of the conversation in our protocol
                                 running = false;
                             }
                         }
-                        
 
-                    }
-                    catch (InterruptedException e)
-                    {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
-                    catch (ExecutionException e)
-                    {
+                    } catch (ExecutionException e) {
                         e.printStackTrace();
-                    }
-                    catch (TimeoutException e)
-                    {
+                    } catch (TimeoutException e) {
                         // The user exceeded the 20 second timeout, so close the connection
                         // close
-                        ch.write( ByteBuffer.wrap( "msg_received!\n".getBytes() ) );
-                        System.out.println( "Connection timed out, closing connection" );
+                        ch.write(ByteBuffer.wrap("msg_received!\n".getBytes()));
+                        System.out.println("Connection timed out, closing connection");
                     }
 
-                    System.out.println( "End of conversation" );
-                    try
-                    {
+                    System.out.println("End of conversation");
+                    try {
                         // Close the connection if we need to
-                        if( ch.isOpen() )
-                        {
+                        if (ch.isOpen()) {
                             ch.close();
                         }
-                    }
-                    catch (IOException e1)
-                    {
+                    } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
 
                 @Override
+
                 public void failed(Throwable exc, Void att) {
                     ///...
                 }
-            });
+            }
+            );
 
         } catch (UnknownHostException e) {
             // shouldn't happen for localhost
@@ -344,7 +378,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             System.out.println(" so terminating this instance.");
             System.exit(0);
         }
-        
+
         initSentinelValues();
         initComponents();
         initLoadParkerTypes();
@@ -774,6 +808,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ServerStatus = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         controllerPanel = new javax.swing.JPanel();
+        dispenserCam = new javax.swing.JLabel();
+        messages = new javax.swing.JPanel();
         ctrlMsg1 = new javax.swing.JLabel();
         ctrlMsg2 = new javax.swing.JLabel();
         ctrlMsg3 = new javax.swing.JLabel();
@@ -1903,8 +1939,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         ServerInfo1.setPreferredSize(null);
         Labels.add(ServerInfo1);
 
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("created by");
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setMinimumSize(null);
         jLabel2.setPreferredSize(null);
         Labels.add(jLabel2);
@@ -1917,10 +1953,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         Status.setPreferredSize(new java.awt.Dimension(200, 20));
         Status.setLayout(new java.awt.GridLayout(2, 2));
 
-        ServerStatus.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        ServerStatus.setForeground(new java.awt.Color(110, 5, 10));
         ServerStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ServerStatus.setText("checking..."); // NOI18N
+        ServerStatus.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        ServerStatus.setForeground(new java.awt.Color(110, 5, 10));
         Status.add(ServerStatus);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1940,67 +1976,82 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         controllerPanel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         controllerPanel.setForeground(new java.awt.Color(255, 255, 255));
         controllerPanel.setOpaque(false);
-        controllerPanel.setLayout(new java.awt.GridLayout(4, 3, 5, 1));
+        controllerPanel.setLayout(null);
+
+        dispenserCam.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        dispenserCam.setFocusable(false);
+        dispenserCam.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        dispenserCam.setForeground(new java.awt.Color(255, 255, 0));
+        dispenserCam.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        dispenserCam.setRequestFocusEnabled(false);
+        controllerPanel.add(dispenserCam);
+        dispenserCam.setBounds(1, 1, 170, 118);
+
+        messages.setOpaque(false);
+        messages.setLayout(new java.awt.GridLayout(4, 3, 5, 1));
 
         ctrlMsg1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg1.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg1);
+        messages.add(ctrlMsg1);
 
         ctrlMsg2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg2.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg2);
+        messages.add(ctrlMsg2);
 
         ctrlMsg3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg3.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg3);
+        messages.add(ctrlMsg3);
 
         ctrlMsg4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg4.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg4);
+        messages.add(ctrlMsg4);
 
         ctrlMsg5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg5.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg5);
+        messages.add(ctrlMsg5);
 
         ctrlMsg6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg6.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg6);
+        messages.add(ctrlMsg6);
 
         ctrlMsg7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg7.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg7.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg7);
+        messages.add(ctrlMsg7);
 
         ctrlMsg8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg8.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg8);
+        messages.add(ctrlMsg8);
 
         ctrlMsg9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ctrlMsg9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg9.setForeground(new java.awt.Color(255, 255, 255));
-        controllerPanel.add(ctrlMsg9);
+        messages.add(ctrlMsg9);
 
         ctrlMsg10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg10.setForeground(new java.awt.Color(255, 255, 255));
         ctrlMsg10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        controllerPanel.add(ctrlMsg10);
+        messages.add(ctrlMsg10);
 
         ctrlMsg11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg11.setForeground(new java.awt.Color(255, 255, 255));
         ctrlMsg11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        controllerPanel.add(ctrlMsg11);
+        messages.add(ctrlMsg11);
 
         ctrlMsg12.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         ctrlMsg12.setForeground(new java.awt.Color(255, 255, 255));
         ctrlMsg12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        controllerPanel.add(ctrlMsg12);
+        messages.add(ctrlMsg12);
+
+        controllerPanel.add(messages);
+        messages.setBounds(172, 1, 700, 118);
 
         NorthPanel.add(controllerPanel, java.awt.BorderLayout.CENTER);
 
@@ -5316,8 +5367,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     return dates[i];
                 }
             });
+
         } catch (ParseException ex) {
-            java.util.logging.Logger.getLogger(HybridPanelUI.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HybridPanelUI.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_searchCollectionBtnMouseClicked
 
@@ -6825,7 +6878,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         int car = dbh.getSlotAvail("car");
 //        carsNum.setText(String.valueOf(car));
 //        motorNum.setText(String.valueOf(motor));
-        
+
     }
 
     private void check4Succeeding() {
@@ -6859,6 +6912,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             javax.swing.JLabel Picture = new javax.swing.JLabel();
             Picture.setIcon(new ImageIcon(buf[i]));
             SearchDisplayPanel.add(Picture);
+
         }
     }
 
@@ -6934,6 +6988,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         g2.dispose();
 
         return resizedImg;
+
     }
 
     class DigitalClock implements Runnable {
@@ -7257,40 +7312,37 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             if (MasterIN == true) {
                                 MasterCardinput.append(s);
                                 MasterCardInput2.setText("**********");
-                            } else {
-                                if (s.compareToIgnoreCase(mastercard1) != 0 && s.compareToIgnoreCase(mastercard2) != 0
-                                        && s.compareToIgnoreCase(mastercard3) != 0 && s.compareToIgnoreCase(mastercard4) != 0) {
-                                    Cardinput.delete(0, Cardinput.length());
-                                    CardInput2.setText(s);
-                                    Cardinput.append(s);
-                                    if (ExitSwitch == true) {
-                                        ExitAPI ea = new ExitAPI(ui);
-                                        if (printer.compareToIgnoreCase("enabled") == 0) {
-                                            PrinterEnabled = true;
-                                        } else {
-                                            PrinterEnabled = false;
-                                        }
-                                        if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
-                                            firstscan = true;
-                                        }
+                            } else if (s.compareToIgnoreCase(mastercard1) != 0 && s.compareToIgnoreCase(mastercard2) != 0
+                                    && s.compareToIgnoreCase(mastercard3) != 0 && s.compareToIgnoreCase(mastercard4) != 0) {
+                                Cardinput.delete(0, Cardinput.length());
+                                CardInput2.setText(s);
+                                Cardinput.append(s);
+                                if (ExitSwitch == true) {
+                                    ExitAPI ea = new ExitAPI(ui);
+                                    if (printer.compareToIgnoreCase("enabled") == 0) {
+                                        PrinterEnabled = true;
+                                    } else {
+                                        PrinterEnabled = false;
                                     }
-                                } else if (s.compareToIgnoreCase(mastercard1) == 0) {
-                                    if (CashierName.compareToIgnoreCase("") == 0) {
-                                        MasterCardinput.append(mastercard1);
-                                        MasterCardInput2.setText("**********");
-                                        WestPanel.setVisible(true);
-                                        MainFuncPad.setVisible(true);
-                                        SecretFuncPad.setVisible(false);
-//                                        CenterPanel.setVisible(false);
+                                    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
+                                        firstscan = true;
                                     }
-                                } else if (s.compareToIgnoreCase(mastercard2) == 0) {
-                                    WestPanel.setVisible(true);
-                                    MainFuncPad.setVisible(false);
-                                    SecretFuncPad.setVisible(true);
                                 }
-                                //this.repaint();
-                                //this.validate();
-                            }
+                            } else if (s.compareToIgnoreCase(mastercard1) == 0) {
+                                if (CashierName.compareToIgnoreCase("") == 0) {
+                                    MasterCardinput.append(mastercard1);
+                                    MasterCardInput2.setText("**********");
+                                    WestPanel.setVisible(true);
+                                    MainFuncPad.setVisible(true);
+                                    SecretFuncPad.setVisible(false);
+//                                        CenterPanel.setVisible(false);
+                                }
+                            } else if (s.compareToIgnoreCase(mastercard2) == 0) {
+                                WestPanel.setVisible(true);
+                                MainFuncPad.setVisible(false);
+                                SecretFuncPad.setVisible(true);
+                            } //this.repaint();
+                            //this.validate();
 
                             if (mifare.terminal.waitForCardAbsent(0)) {
                                 isEnterPressed = false;
@@ -7751,6 +7803,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel ctrlMsg9;
     private javax.swing.JLabel datedisplay;
     private javax.swing.JLabel daydisplay;
+    public javax.swing.JLabel dispenserCam;
     public javax.swing.JLabel entryCamera;
     private javax.swing.JLabel error1;
     private javax.swing.JLabel error2;
@@ -7802,6 +7855,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private datechooser.beans.DateChooserCombo manualEntryDate;
     private javax.swing.JTextField manualEntryPlate;
     private com.github.lgooddatepicker.components.TimePicker manualEntryTime;
+    private javax.swing.JPanel messages;
     private javax.swing.JPanel newMidPanel;
     private javax.swing.JLabel num0;
     private javax.swing.JLabel num1;
