@@ -31,7 +31,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        log.info("Starting Hybrid");
+        log.info("Starting Hybrid v.5.2 VIP Sockets");
         HybridPanelUI tpUI = new HybridPanelUI();
 //        
 //        System.out.print("OK, only this instance is running");

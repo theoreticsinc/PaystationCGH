@@ -74,6 +74,7 @@ import misc.SerialEpsonHandler;
 import misc.LogUtility;
 import misc.XMLreader;
 import misc.ServerDataHandler;
+import models.VIPPlates;
 import modules.LoginMOD;
 import modules.MPPchecker;
 import modules.NOSfiles;
@@ -293,8 +294,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
                                     ctrlMsg5.setText(cardToDisplay);
                                     ctrlMsg8.setText(msgs[2]);
                                     ctrlMsg11.setText(msgs[3]);
-                                }
-                                else if (msgs[0].toString().compareToIgnoreCase("DISPENSER") == 0) {
+                                } else if (msgs[0].toString().compareToIgnoreCase("DISPENSER") == 0) {
                                     ctrlMsg2.setText(msgs[0]);
                                     String cardToDisplay = "";
                                     if (msgs[1].startsWith("card number:") == true) {
@@ -324,6 +324,72 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
                                     ctrlMsg5.setText(cardToDisplay);
                                     ctrlMsg8.setText(msgs[2]);
                                     ctrlMsg11.setText(msgs[3]);
+                                } else if (msgs[0].toString().compareToIgnoreCase("EXITVIP") == 0) {
+                                    ctrlMsg3.setText(msgs[0]);
+                                    String cardToDisplay = "";
+                                    if (msgs[1].startsWith("card number:") == true) {
+                                        final String cardFromReader = msgs[1].substring(12, msgs[1].length());
+                                        //cardFromReader = "4234996A";
+                                        cardToDisplay = cardFromReader;
+                                        if (dbh.findVIPEntranceCard(cardFromReader)) {
+                                            BufferedImage buf = dbh.GetVIPImageFromDB(cardFromReader);
+                                            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                                            Image img = getScaledImage(buf, screenSize.width / 4 + 120, screenSize.height / 3 + 120);
+                                            //Image img = getScaledImage(buf, 170, 115);
+                                            entryCamera.setIcon(new ImageIcon(img));
+                                            String plates[] = null;
+                                            String vehicleTypes[] = null;
+                                            VIPPlates vpPlates = dbh.findAllPlatesfromVIPCard(cardFromReader);
+                                            if (vpPlates.getPlateNumber().isEmpty() == false) {
+                                                plates = vpPlates.getPlateNumber().get(0).split(",");
+                                                //ctrlMsg3.setText(cardToDisplay + " = " + plates.length);
+                                                //ctrlMsg6.setText(plates[0]);                                                       
+                                            }
+                                            if (vpPlates.getVehicleTypes().isEmpty() == false) {
+                                                vehicleTypes = vpPlates.getVehicleTypes().get(0).split(",");
+                                                //ctrlMsg9.setText("vehicleTypes = " + vehicleTypes.length);
+                                            }
+
+                                            String vipData = "<html>";
+                                            for (int x = 0; x < plates.length; x++) {
+                                                if (null != vehicleTypes[x]) {
+                                                    vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
+                                                } else {
+                                                    vipData = vipData + plates[x] + "<br>";
+                                                }
+                                            }
+                                            vipData = vipData + "</html>";
+                                            entryCamera.setText(vipData);
+                                        }
+                                        if (dbh.findVIP_MasterList(cardFromReader)) {
+                                            String plates[] = null;
+                                            String vehicleTypes[] = null;
+                                            VIPPlates vpPlates = dbh.findAllPlatesfromVIPCard(cardFromReader);
+                                            if (vpPlates.getPlateNumber().isEmpty() == false) {
+                                                plates = vpPlates.getPlateNumber().get(0).split(",");
+                                                //ctrlMsg3.setText(cardToDisplay + " = " + plates.length);
+                                                //ctrlMsg6.setText(plates[0]);                                                       
+                                            }
+                                            if (vpPlates.getVehicleTypes().isEmpty() == false) {
+                                                vehicleTypes = vpPlates.getVehicleTypes().get(0).split(",");
+                                                //ctrlMsg9.setText("vehicleTypes = " + vehicleTypes.length);
+                                            }
+
+                                            String vipData = "<html>";
+                                            vipData = vipData + "VIP/DOCTOR has no ENTRY RECORD<br><br>";
+                                            for (int x = 0; x < plates.length; x++) {
+                                                if (null != vehicleTypes[x]) {
+                                                    vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
+                                                } else {
+                                                    vipData = vipData + plates[x] + "<br>";
+                                                }
+                                            }
+                                            vipData = vipData + "</html>";
+                                            entryCamera.setText(vipData);
+                                        }
+
+                                    }
+
                                 }
                                 //ctrlMsg1.setText(msgs[0]);
                                 // Echo back to the caller
@@ -4418,23 +4484,19 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         CamPanel.setLayout(flowLayout1);
 
         entryCamera.setText("ENTRY");
-        entryCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         entryCamera.setFocusable(false);
-        entryCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        entryCamera.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         entryCamera.setForeground(new java.awt.Color(255, 255, 0));
         entryCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         entryCamera.setRequestFocusEnabled(false);
-        entryCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         CamPanel.add(entryCamera);
 
         exitCamera.setText("EXIT");
-        exitCamera.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         exitCamera.setFocusable(false);
         exitCamera.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         exitCamera.setForeground(new java.awt.Color(255, 255, 0));
         exitCamera.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         exitCamera.setRequestFocusEnabled(false);
-        exitCamera.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         exitCamera.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 exitCameraMouseClicked(evt);
@@ -8467,7 +8529,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             case 122:
                 startLostCardSearch();
                 return false;
-
             case 524:
                 this.validate();
                 return false;

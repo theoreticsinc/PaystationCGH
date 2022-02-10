@@ -64,6 +64,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import models.VIPPlates;
 //import org.apache.commons.httpclient.util.HttpURLConnection;
 
 import org.apache.log4j.LogManager;
@@ -792,6 +793,31 @@ public class DataBaseHandler extends Thread {
         return null;
     }
     
+    public VIPPlates findAllPlatesfromVIPCard(String cardNumber) {
+        VIPPlates vplates = new VIPPlates();
+        try {            
+            try {
+                connection = getServerConnection(true);
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            ResultSet rs = selectDatabyFields("SELECT plate, vehicletype FROM vips.cghplates WHERE cardCode = '" + cardNumber + "'");
+            DateConversionHandler dch = new DateConversionHandler();
+            // iterate through the java resultset
+            while (rs.next()) {
+                vplates.getPlateNumber().add(rs.getString("plate"));
+                vplates.getVehicleTypes().add(rs.getString("vehicletype"));
+                //found = true;
+            }
+            st.close();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return vplates;
+    }
+    
     public boolean findVIPEntranceCard(String cardNumber) {
         boolean found = false;
         try {            
@@ -800,11 +826,35 @@ public class DataBaseHandler extends Thread {
             } catch (SQLException ex) {
                 java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
-            ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+            ResultSet rs = selectDatabyFields("SELECT Timein FROM vips.dtr WHERE CardCode = '" + cardNumber + "'");
             DateConversionHandler dch = new DateConversionHandler();
             // iterate through the java resultset
             while (rs.next()) {
                 dateTimeIN = rs.getString("Timein");
+                found = true;
+            }
+            st.close();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return found;
+    }
+    
+    public boolean findVIP_MasterList(String cardNumber) {
+        boolean found = false;
+        try {            
+            try {
+                connection = getServerConnection(true);
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            ResultSet rs = selectDatabyFields("SELECT lastName FROM vips.masterlist WHERE cardCode = '" + cardNumber + "'");
+            DateConversionHandler dch = new DateConversionHandler();
+            // iterate through the java resultset
+            while (rs.next()) {
+                //dateTimeIN = rs.getString("lastName");
                 found = true;
             }
             st.close();
