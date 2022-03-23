@@ -402,6 +402,7 @@ public class ComputeAPI {
             PrksMsg[2] = Plateno;
             stn.npd.PlsPay.setText(Plateno + " please pay");
             PrksMsg[3] = SP.checkPTypeFromDB(ParkerType);
+            
             stn.trtype = ParkerType;
             //ParkerInfo5.setText(datetime);
             if (sets == true) {
@@ -625,6 +626,16 @@ public class ComputeAPI {
             stn.PlateInput2.setText(Plateno);
             stn.Plateinput.delete(0, stn.Plateinput.length());
             stn.Plateinput.append(Plateno);
+            
+            if (ParkerType.compareToIgnoreCase("IP") == 0) {
+                stn.PlateInput2.setText("IPP No charge");
+                stn.SysMessage1.setText("IPP Free 7 days");
+           } else if (ParkerType.compareToIgnoreCase("PP") == 0) {
+                stn.PlateInput2.setText("PAID IPP");
+                stn.SysMessage1.setText("PAID IPP");
+                stn.SysMessage1.setText("Please TAKE CARD");               
+           }
+            
             stn.processRightPanelMsgs(PrksMsg);
             stn.repaint();
             stn.requestFocus();

@@ -32,6 +32,7 @@ public class ReadMIFARE {
 
     public CardChannel channel;
     public CardTerminal terminal;
+    public CardTerminal vipterminal;
     private byte _4th = 0x04;
     private byte _5th = 0x05;
     private byte _6th = 0x06;
@@ -59,6 +60,8 @@ public class ReadMIFARE {
         
         try {
             terminal = null;
+            vipterminal = null;
+            
             // show the list of available terminals
             factory = null;
             factory = TerminalFactory.getDefault();
@@ -74,10 +77,14 @@ public class ReadMIFARE {
                         .toString()
                         .substring(terminals.get(i).toString().length() - 2);
                 //log.info("readerName" + readerName + terminals);
-                if (readerName.equalsIgnoreCase("0")) {
-                    terminal = terminals.get(i);
-                }
-                terminal = terminals.get(i);
+                //if (readerName.equalsIgnoreCase("0")) {
+                //    terminal = terminals.get(i);
+                //}
+                if (i == 0)
+                    terminal = terminals.get(0);
+                if (i == 1)
+                    vipterminal = terminals.get(1);
+                
             }
 
         } catch (CardException ex) {

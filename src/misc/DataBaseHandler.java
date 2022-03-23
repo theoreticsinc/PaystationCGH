@@ -65,6 +65,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import models.VIPPlates;
+import models.VIPS;
 //import org.apache.commons.httpclient.util.HttpURLConnection;
 
 import org.apache.log4j.LogManager;
@@ -842,20 +843,24 @@ public class DataBaseHandler extends Thread {
         return found;
     }
     
-    public boolean findVIP_MasterList(String cardNumber) {
-        boolean found = false;
+    public VIPS findVIP_MasterList(String cardNumber) {
+        //boolean found = false;
+        VIPS vips = new VIPS();
         try {            
             try {
                 connection = getServerConnection(true);
             } catch (SQLException ex) {
                 java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
-            ResultSet rs = selectDatabyFields("SELECT lastName FROM vips.masterlist WHERE cardCode = '" + cardNumber + "'");
+            ResultSet rs = selectDatabyFields("SELECT * FROM vips.masterlist WHERE cardCode = '" + cardNumber + "'");
             DateConversionHandler dch = new DateConversionHandler();
             // iterate through the java resultset
             while (rs.next()) {
-                //dateTimeIN = rs.getString("lastName");
-                found = true;
+                vips.setFirstName(rs.getString("firstName"));
+                vips.setMiddleName(rs.getString("middleName"));
+                vips.setLastName(rs.getString("lastName"));
+                vips.setCardCode(rs.getString("cardCode"));
+                //found = true;
             }
             st.close();
             connection.close();
@@ -863,7 +868,7 @@ public class DataBaseHandler extends Thread {
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        return found;
+        return vips;
     }
 
     public boolean findEntranceCard(String cardNumber) {

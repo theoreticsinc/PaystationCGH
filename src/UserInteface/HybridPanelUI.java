@@ -75,6 +75,7 @@ import misc.LogUtility;
 import misc.XMLreader;
 import misc.ServerDataHandler;
 import models.VIPPlates;
+import models.VIPS;
 import modules.LoginMOD;
 import modules.MPPchecker;
 import modules.NOSfiles;
@@ -158,6 +159,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     private Thread ThrNetworkClock;
     private Thread ThrDigitalClock;
     private Thread ThrMIFARE;
+    private Thread ThrVIPMIFARE;
     private Thread ThrUpdaterClock;
     private Thread ThrSlotsClock;
     private Thread ThrShowExitCamera;
@@ -216,6 +218,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public static ServerSocket s;
 
     ReadMIFARE mifare;
+    ReadMIFARE VIPmifare;
 
     private int width;
     private int height;
@@ -361,7 +364,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
                                             vipData = vipData + "</html>";
                                             entryCamera.setText(vipData);
                                         }
-                                        if (dbh.findVIP_MasterList(cardFromReader)) {
+
+                                        VIPS vips = new VIPS();
+                                        vips = dbh.findVIP_MasterList(cardFromReader);
+                                        if (null != vips) {
                                             String plates[] = null;
                                             String vehicleTypes[] = null;
                                             VIPPlates vpPlates = dbh.findAllPlatesfromVIPCard(cardFromReader);
@@ -377,11 +383,14 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
                                             String vipData = "<html>";
                                             vipData = vipData + "VIP/DOCTOR has no ENTRY RECORD<br><br>";
-                                            for (int x = 0; x < plates.length; x++) {
-                                                if (null != vehicleTypes[x]) {
-                                                    vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
-                                                } else {
-                                                    vipData = vipData + plates[x] + "<br>";
+                                            vipData = vipData + vips.getFirstName() + " " + vips.getMiddleName() + " " + vips.getLastName() + " ";
+                                            if (null != plates) {
+                                                for (int x = 0; x < plates.length; x++) {
+                                                    if (null != vehicleTypes[x]) {
+                                                        vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
+                                                    } else {
+                                                        vipData = vipData + plates[x] + "<br>";
+                                                    }
                                                 }
                                             }
                                             vipData = vipData + "</html>";
@@ -749,9 +758,13 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     private void initDevices() {
         startMIFAREReader();
         MIFAREpolling nc = new MIFAREpolling(this);
+        vipMIFAREpolling vc = new vipMIFAREpolling(this);
         ThrMIFARE = new Thread(nc);
         ThrMIFARE.start();
         this.ThrMIFARE.setPriority(8);
+        ThrVIPMIFARE = new Thread(vc);
+        ThrVIPMIFARE.start();
+        this.ThrVIPMIFARE.setPriority(7);
     }
     //------------------
 
@@ -6649,8 +6662,12 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     private void startMIFAREReader() {
         mifare = new ReadMIFARE();
+        VIPmifare = new ReadMIFARE();
         try {
             if (null != mifare.terminal) {
+                mifare.terminal.waitForCardPresent(0);
+            }
+            if (null != VIPmifare.terminal) {
                 mifare.terminal.waitForCardPresent(0);
             }
         } catch (Exception ex) {
@@ -7457,6 +7474,122 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     } catch (InterruptedException ex) {
                         mifare = null;
                         mifare = new ReadMIFARE();
+                        log.error(ex.getMessage());
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+    class vipMIFAREpolling implements Runnable {
+
+        HybridPanelUI ui;
+
+        private vipMIFAREpolling(HybridPanelUI aThis) {
+            ui = aThis;
+        }
+
+        @Override
+        public void run() {
+
+            while (true) {
+
+                if (null != VIPmifare.vipterminal) {
+                    try {
+                        if (VIPmifare.vipterminal.waitForCardPresent(0)) {
+                            Card card = VIPmifare.vipterminal.connect("T=1");
+                            VIPmifare.channel = card.getBasicChannel();
+                            String s = VIPmifare.readUID();
+//                            log.info(s);
+                            if (MasterIN == true) {
+                                MasterCardinput.append(s);
+                                MasterCardInput2.setText("**********");
+                            } else if (s.compareToIgnoreCase(mastercard1) != 0 && s.compareToIgnoreCase(mastercard2) != 0
+                                    && s.compareToIgnoreCase(mastercard3) != 0 && s.compareToIgnoreCase(mastercard4) != 0) {
+                                Cardinput.delete(0, Cardinput.length());
+                                CardInput2.setText(s);
+                                Cardinput.append(s);
+                                if (ExitSwitch == true) {
+                                    ExitAPI ea = new ExitAPI(ui);
+                                    if (printer.compareToIgnoreCase("enabled") == 0) {
+                                        PrinterEnabled = true;
+                                    } else {
+                                        PrinterEnabled = false;
+                                    }
+                                    if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
+                                        firstscan = true;
+                                    }
+                                }
+                            } else if (s.compareToIgnoreCase(mastercard1) == 0) {
+                                if (CashierName.compareToIgnoreCase("") == 0) {
+                                    MasterCardinput.append(mastercard1);
+                                    MasterCardInput2.setText("**********");
+                                    WestPanel.setVisible(true);
+                                    MainFuncPad.setVisible(true);
+                                    SecretFuncPad.setVisible(false);
+//                                        CenterPanel.setVisible(false);
+                                }
+                            } else if (s.compareToIgnoreCase(mastercard2) == 0) {
+                                WestPanel.setVisible(true);
+                                MainFuncPad.setVisible(false);
+                                SecretFuncPad.setVisible(true);
+                            } //this.repaint();
+                            //this.validate();
+
+                            if (VIPmifare.vipterminal.waitForCardAbsent(0)) {
+                                isEnterPressed = false;
+                                if (MasterIN == true) {
+                                    resetMasterCard();
+                                    MasterIN = false;
+                                } else if (CashierName.compareToIgnoreCase("") == 0) {
+                                    WestPanel.setVisible(false);
+                                    CamPanel.setVisible(true);
+                                    MainFuncPad.setVisible(false);
+                                    SecretFuncPad.setVisible(false);
+                                    LoginPanelX.setVisible(true);
+//                                    CenterPanel.setVisible(true);
+                                } else {
+                                    Cardinput.delete(0, CardInput2.toString().length());
+                                    CardInput2.setText("");
+                                    clearLeftMIDMsgPanel();
+                                    clearRightPanel();
+                                    resetAllOverrides();
+                                    Plateinput.delete(0, Plateinput.length());
+                                    PlateInput2.setText("");
+                                    MainFuncPad.setVisible(true);
+                                    SecretFuncPad.setVisible(false);
+                                    entryCamera.setIcon(new ImageIcon(""));
+                                    entryCamera.setText("");
+                                    AmtTendered.setText("");
+                                    ChangeDisplay.setText("");
+                                }
+                            }
+                        }
+                        Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                        VIPmifare = null;
+                        VIPmifare = new ReadMIFARE();
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex2) {
+                            VIPmifare = null;
+                            VIPmifare = new ReadMIFARE();
+                            log.error(ex2.getMessage());
+                        }
+
+                    }
+                } else {
+                    VIPmifare = null;
+                    VIPmifare = new ReadMIFARE();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ex) {
+                        VIPmifare = null;
+                        VIPmifare = new ReadMIFARE();
                         log.error(ex.getMessage());
                     }
                 }

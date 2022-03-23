@@ -6,14 +6,12 @@
 package models;
 
 import java.util.ArrayList;
-import misc.DataBaseHandler;
 
 /**
  *
  * @author Theoretics
  */
 public class VIPPlates {
-    private DataBaseHandler dbh = new DataBaseHandler();
     private String cardFromReader;
     private ArrayList<String> plateNumbers; //array2
     private ArrayList<String> vehicleTypes; //array1
