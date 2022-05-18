@@ -9,6 +9,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -402,7 +404,7 @@ public class ComputeAPI {
             PrksMsg[2] = Plateno;
             stn.npd.PlsPay.setText(Plateno + " please pay");
             PrksMsg[3] = SP.checkPTypeFromDB(ParkerType);
-            
+
             stn.trtype = ParkerType;
             //ParkerInfo5.setText(datetime);
             if (sets == true) {
@@ -626,16 +628,16 @@ public class ComputeAPI {
             stn.PlateInput2.setText(Plateno);
             stn.Plateinput.delete(0, stn.Plateinput.length());
             stn.Plateinput.append(Plateno);
-            
+
             if (ParkerType.compareToIgnoreCase("IP") == 0) {
                 stn.PlateInput2.setText("IPP No charge");
                 stn.SysMessage1.setText("IPP Free 7 days");
-           } else if (ParkerType.compareToIgnoreCase("PP") == 0) {
+            } else if (ParkerType.compareToIgnoreCase("PP") == 0) {
                 stn.PlateInput2.setText("PAID IPP");
                 stn.SysMessage1.setText("PAID IPP");
-                stn.SysMessage1.setText("Please TAKE CARD");               
-           }
-            
+                stn.SysMessage1.setText("Please TAKE CARD");
+            }
+
             stn.processRightPanelMsgs(PrksMsg);
             stn.repaint();
             stn.requestFocus();
@@ -893,6 +895,7 @@ public class ComputeAPI {
         //boolean saveParkerTrans = PDH.saveEXParkerTrans2CGHDB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, CGHRNos, stn.CashierID, stn.CashierName, Cardno, Plateno, SaveParkerType, datetimeIN, datetimeOUT, String.valueOf(CGHAmountGross), String.valueOf(CGHAmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, CGHvat12, CGHvatsale, CGHvatexempt, CGHdiscount, CGHtenderFloat, stn.ChangeDisplay.getText());
         //OLD CGH Receipt Numbers
         //RNos = stn.EX_SentinelID + "" + RNos.substring(2, RNos.length());
+        checkREGEX();
         try {
             saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vatAdjustment, vat12, vatsale, vatExemptedSales, discountDbl, tenderFloat, stn.ChangeDisplay.getText());
         } catch (Exception ex) {
@@ -903,7 +906,7 @@ public class ComputeAPI {
         while (saveParkerTrans == false) {
             try {
                 tries++;
-                if(tries >= 3) {
+                if (tries >= 3) {
                     //OFFLINE SAVE Insert Here
                     break;
                 }
@@ -921,7 +924,7 @@ public class ComputeAPI {
             tries = 0;
             while (updateTrans2DB() == false) {//Updates Car Served and Total Amount
                 tries++;
-                if(tries >= 3) {
+                if (tries >= 3) {
                     //OFFLINE SAVE Insert Here
                     break;
                 }
@@ -975,14 +978,26 @@ public class ComputeAPI {
 
         stn.resetAllOverrides();
 
-        stn.Cardinput.delete(
-                0, stn.Cardinput.length());
-        stn.CardInput2.setText(
-                "PRINTING...");
-        stn.AmtTendered.setText(
-                "");
+        stn.Cardinput.delete(0, stn.Cardinput.length());
+        stn.CardInput2.setText("PRINTING...");
+        stn.AmtTendered.setText("");
         stn.isEnterPressed = false;
         stn.PrevPlate = "";
+        //000       Added for Teller babad Problems 
+        stn.Cardinput.delete(0, stn.CardInput2.toString().length());
+        stn.CardInput2.setText("");
+        stn.clearLeftMIDMsgPanel();
+        stn.clearRightPanel();
+        stn.resetAllOverrides();
+        stn.Plateinput.delete(0, stn.Plateinput.length());
+        stn.PlateInput2.setText("");
+        //stn.MainFuncPad.setVisible(true);
+        //stn.SecretFuncPad.setVisible(false);
+        //stn.entryCamera.setIcon(new ImageIcon(""));
+        stn.entryCamera.setText("");
+        stn.AmtTendered.setText("");
+        stn.ChangeDisplay.setText("");
+        //000       
     }
 
     private String getAmountDue(float AmountDue) {
@@ -2150,7 +2165,7 @@ public class ComputeAPI {
             int tries = 0;
             while (scd.UpdateImptCountDB(fieldName + "Count", stn.loginID) == false) {
                 tries++;
-                if(tries >= 3) {
+                if (tries >= 3) {
                     //OFFLINE SAVE Insert Here
                     break;
                 }
@@ -2159,7 +2174,7 @@ public class ComputeAPI {
             tries = 0;
             while (scd.UpdateImptAmountDB(fieldName + "Amount", stn.loginID, Amount) == false) {
                 tries++;
-                if(tries >= 3) {
+                if (tries >= 3) {
                     //OFFLINE SAVE Insert Here
                     break;
                 }
@@ -2672,7 +2687,72 @@ public class ComputeAPI {
         }
         return lastHrwidNonZero;
     }
-
+    
+    private void checkREGEX() {
+        try {
+            Pattern p = null;
+            Matcher matcher = null;
+            stn.settlementRef = stn.settlementRef.replaceAll("\\s+", " ");
+            stn.settlementName = stn.settlementName.replaceAll("\\s+", " ");
+            stn.settlementAddr = stn.settlementAddr.replaceAll("\\s+", " ");
+            stn.settlementTIN = stn.settlementTIN.replaceAll("\\s+", " ");
+            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("\\s+", " ");
+            stn.settlementRef = stn.settlementRef.replaceAll("/", " ");
+            stn.settlementName = stn.settlementName.replaceAll("/", " ");
+            stn.settlementAddr = stn.settlementAddr.replaceAll("/", " ");
+            stn.settlementTIN = stn.settlementTIN.replaceAll("/", " ");
+            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("/", " ");
+            stn.settlementRef = stn.settlementRef.replaceAll("'", " ");
+            stn.settlementName = stn.settlementName.replaceAll("'", " ");
+            stn.settlementAddr = stn.settlementAddr.replaceAll("'", " ");
+            stn.settlementTIN = stn.settlementTIN.replaceAll("'", " ");
+            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("'", " ");
+            stn.settlementRef = stn.settlementRef.replaceAll("\"", " ");
+            stn.settlementName = stn.settlementName.replaceAll("\"", " ");
+            stn.settlementAddr = stn.settlementAddr.replaceAll("\"", " ");
+            stn.settlementTIN = stn.settlementTIN.replaceAll("\"", " ");
+            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("\"", " ");
+            
+            p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+            matcher = p.matcher(stn.settlementRef.toString());
+            if (matcher.find()) {
+                stn.settlementRef = "Special Characters Violated";
+            } 
+            matcher = p.matcher(stn.settlementName.toString());
+            if (matcher.find()) {
+                stn.settlementName = "Special Characters Violated";
+            }
+            matcher = p.matcher(stn.settlementAddr.toString());
+            if (matcher.find()) {
+                stn.settlementAddr = "Special Characters Violated";
+            }
+            matcher = p.matcher(stn.settlementTIN.toString());
+            if (matcher.find()) {
+                stn.settlementTIN = "Special Characters Violated";
+            }
+            matcher = p.matcher(stn.settlementBusStyle.toString());
+            if (matcher.find()) {
+                stn.settlementBusStyle = "Special Characters Violated";
+            }
+            
+            if (stn.settlementName.length() > 41) {
+                stn.settlementName = stn.settlementName.substring(0, 40);
+            }
+            if (stn.settlementAddr.length() > 50) {
+                stn.settlementAddr = stn.settlementAddr.substring(0, 49);
+            }
+            if (stn.settlementTIN.length() > 41) {
+                stn.settlementTIN = stn.settlementTIN.substring(0, 40);
+            }
+            if (stn.settlementBusStyle.length() > 41) {
+                stn.settlementBusStyle = stn.settlementBusStyle.substring(0, 40);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage());
+        }
+    }
+    
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();
@@ -2770,4 +2850,5 @@ public class ComputeAPI {
 
         System.exit(0);
     }
+
 }

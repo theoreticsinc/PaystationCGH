@@ -31,7 +31,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        log.info("Starting Hybrid v.5.3 IPP v.1");
+        log.info("Starting Hybrid v.5.4 CURRTIME Settlement v.1");
         HybridPanelUI tpUI = new HybridPanelUI();
 //        
 //        System.out.print("OK, only this instance is running");

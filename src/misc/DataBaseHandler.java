@@ -73,7 +73,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 //import sun.misc.BASE64Encoder;
-
 //import com.sun.jersey.core.util.Base64;
 import sun.net.www.protocol.http.HttpURLConnection;
 
@@ -469,7 +468,7 @@ public class DataBaseHandler extends Thread {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
-    
+
     public BufferedImage GetVIPImageFromDB(String CardCode) {
         BufferedImage img = null;
         try {
@@ -524,7 +523,6 @@ public class DataBaseHandler extends Thread {
         }
         return img;
     }
-
 
     public BufferedImage GetImageFromDB(String CardCode) {
         BufferedImage img = null;
@@ -735,10 +733,8 @@ public class DataBaseHandler extends Thread {
     public String getLoginUsername(String loginCode, String password) {
         String username = "";
         try {
-
             connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM pos_users.main WHERE usercode='" + loginCode + "' AND password = MD5('" + password + "')");
-
             // iterate through the java resultset
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -793,12 +789,12 @@ public class DataBaseHandler extends Thread {
         }
         return null;
     }
-    
+
     public VIPPlates findAllPlatesfromVIPCard(String cardNumber) {
         VIPPlates vplates = new VIPPlates();
-        try {            
+        try {
             try {
-                connection = getServerConnection(true);
+                connection = getLocalConnection(true);
             } catch (SQLException ex) {
                 java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
@@ -812,16 +808,16 @@ public class DataBaseHandler extends Thread {
             }
             st.close();
             connection.close();
-            
+
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         return vplates;
     }
-    
+
     public boolean findVIPEntranceCard(String cardNumber) {
         boolean found = false;
-        try {            
+        try {
             try {
                 connection = getServerConnection(true);
             } catch (SQLException ex) {
@@ -836,19 +832,19 @@ public class DataBaseHandler extends Thread {
             }
             st.close();
             connection.close();
-            
+
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         return found;
     }
-    
+
     public VIPS findVIP_MasterList(String cardNumber) {
         //boolean found = false;
         VIPS vips = new VIPS();
-        try {            
+        try {
             try {
-                connection = getServerConnection(true);
+                connection = getLocalConnection(true);
             } catch (SQLException ex) {
                 java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
@@ -864,7 +860,7 @@ public class DataBaseHandler extends Thread {
             }
             st.close();
             connection.close();
-            
+
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -873,7 +869,7 @@ public class DataBaseHandler extends Thread {
 
     public boolean findEntranceCard(String cardNumber) {
         boolean found = false;
-        try {            
+        try {
             try {
                 connection = getServerConnection(true);
             } catch (SQLException ex) {
@@ -888,7 +884,7 @@ public class DataBaseHandler extends Thread {
             }
             st.close();
             connection.close();
-            
+
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -1969,9 +1965,9 @@ public class DataBaseHandler extends Thread {
                     if (primaryKey.compareToIgnoreCase(colName) == 0) {
                         if (colName.compareToIgnoreCase("logINID") == 0) {
                             remotePST.setString(x, rs.getString(colName));
-                        } else { 
+                        } else {
                             remotePST.setNull(x, Types.NULL);
-                        }                        
+                        }
                     } else {
                         int dataType = rsmd.getColumnType(x);
                         if (dataType == 12) {
@@ -2032,7 +2028,7 @@ public class DataBaseHandler extends Thread {
                     //System.out.println(remotePST.getResultSet().getStatement());
                     remotePST.executeUpdate();
                     //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
-                    System.out.println("\n" + " " + destdb + "." + desttbl + "=" +lTime + " BACKUP Copied Successfully");
+                    System.out.println("\n" + " " + destdb + "." + desttbl + "=" + lTime + " BACKUP Copied Successfully");
                     copySuccessful = true;
                 } catch (Exception ex) {
                     try {
@@ -2053,12 +2049,10 @@ public class DataBaseHandler extends Thread {
                     st = (Statement) connection.createStatement();
                     st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
                     st.close();
-                }
-                else {
+                } else {
                     try {
                         st.close();
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                         log.error(ex.getMessage());
                     }
@@ -2066,6 +2060,348 @@ public class DataBaseHandler extends Thread {
             }
         }
 
+        rs.close();
+        st.close();
+
+        connection.close();
+    }
+
+    public void copyTransToLocalfromServer(String srcdb, String srctbl, String destdb, String desttbl, String dateTimeOutName) throws SQLException {
+        String primaryKey = "";
+        String insertSQL, lastDT = "";
+        String lTime = "2018-1-1 00:00:00";
+        boolean copySuccessful = false;
+        connection = getLocalConnection(true);
+                    
+        ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = '" + srcdb + "." + srctbl + "'", connection);
+        while (res.next()) {
+            lTime = res.getString("lastTime");
+        }
+        connection = getBACKUPConnection();
+        DatabaseMetaData dbmd = connection.getMetaData();
+        
+        
+        ResultSet rs = selectDatabyFields("SELECT * FROM " + srcdb + "." + srctbl + " where " + dateTimeOutName + " > '" + lTime + "' AND " + dateTimeOutName + " <> '0000-00-00 00:00:00' ORDER BY " + dateTimeOutName + " ASC");
+
+        ResultSetMetaData rsmd = rs.getMetaData();
+
+        ResultSet rrs = dbmd.getPrimaryKeys(srcdb, null, srctbl);
+        //Printing the column name and size
+        while (rrs.next()) {
+//            System.out.println("Table name: " + rrs.getString("TABLE_NAME"));
+            primaryKey = rrs.getString("COLUMN_NAME");
+//            System.out.println("Column name: " + primaryKey);
+//            System.out.println("Catalog name: " + rrs.getString("TABLE_CAT"));
+//            System.out.println("Primary key sequence: " + rrs.getString("KEY_SEQ"));
+//            System.out.println("Primary key name: " + rrs.getString("PK_NAME"));
+//            System.out.println(" ");
+        }
+
+        int columnNumber = rsmd.getColumnCount();
+        while (rs.next()) {
+            int x = 1;
+            Connection localConnection = null;
+            try {
+                localConnection = getLocalConnection(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
+            if (null != localConnection) {
+//            boolean res = remoteST.execute(insertSQL);
+                insertSQL = "INSERT INTO " + destdb + "." + desttbl + " ";
+                /*
+                insertSQL = insertSQL + "(";
+                while (x <= columnNumber) {
+                    insertSQL = insertSQL + rsmd.getColumnName(x);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + ", ";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + ") ";
+                 */
+                insertSQL = insertSQL + "VALUES (";
+                x = 1;
+                while (x <= columnNumber) {
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + "?, ";
+                    } else {
+                        insertSQL = insertSQL + "?)";
+                    }
+                    x++;
+                }
+//                System.out.println("INSERT SQL: " + insertSQL);
+                PreparedStatement remotePST = (PreparedStatement) localConnection.prepareStatement(insertSQL);
+                x = 1;
+                while (x <= columnNumber) {
+                    String colName = rsmd.getColumnName(x);
+                    if (primaryKey.compareToIgnoreCase(colName) == 0) {
+                        if (colName.compareToIgnoreCase("logINID") == 0) {
+                            remotePST.setString(x, rs.getString(colName));
+                        } else {
+                            remotePST.setNull(x, Types.NULL);
+                        }
+                    } else {
+                        int dataType = rsmd.getColumnType(x);
+                        if (dataType == 12) {
+                            String cardNumber = rs.getString(colName);
+                            remotePST.setString(x, rs.getString(colName));
+//                        System.out.print(cardNumber + " ");
+                        } else if (dataType == -5) {
+                            long cardNo = rs.getLong(colName);
+                            remotePST.setLong(x, rs.getLong(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == -6) {
+                            int cardNo = rs.getInt(colName);
+                            remotePST.setInt(x, rs.getInt(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == 4) {
+                            int cardNo = rs.getInt(colName);
+                            remotePST.setInt(x, rs.getInt(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == 93) {
+                            Timestamp dt = rs.getTimestamp(colName);
+                            remotePST.setTimestamp(x, rs.getTimestamp(colName));
+//                        System.out.print(dt + " ");
+                        } else if (dataType == 91) {
+                            Date dt = rs.getDate(colName);
+                            remotePST.setDate(x, rs.getDate(colName));
+//                        System.out.print(dt + " ");
+                        } else if (dataType == -7) {
+                            boolean isLost = rs.getBoolean(colName);
+                            remotePST.setBoolean(x, rs.getBoolean(colName));
+//                        System.out.print(isLost + " ");
+                        } else if (dataType == 8) {
+                            double amount = rs.getDouble(colName);
+                            remotePST.setDouble(x, rs.getDouble(colName));
+//                        System.out.print(amount + " ");
+                        } else if (dataType == 7) {
+                            float amount = rs.getFloat(colName);
+                            remotePST.setFloat(x, rs.getFloat(colName));
+//                        System.out.print(amount + " ");
+                        } else if (dataType == -4) {
+                            remotePST.setBlob(x, rs.getBlob(colName));
+//                    InputStream is = rs.getBinaryStream(colName);
+//                    try {
+//                        if (null != is) {
+//                            img[x] = ImageIO.read(is);
+//                            show(x + "", img[x], x);
+//                        }
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(DataBaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+                        } else {
+                            System.out.print(" dataType:[" + dataType + "] = ");
+                        }
+                    }
+                    x++;
+
+                }
+                try {
+                    //System.out.println(remotePST.getResultSet().getStatement());
+                    remotePST.executeUpdate();
+                    //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+                    System.out.println("\n" + " " + destdb + "." + desttbl + "=" + lTime + " BACKUP Copied Successfully");
+                    copySuccessful = true;
+                } catch (Exception ex) {
+                    try {
+                        ex.printStackTrace();
+                        //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+//                        System.out.println("\n" + rs.getString("cardNumber") + " Overwritten Successfully");
+                    } catch (Exception ex2) {
+
+                        ex2.printStackTrace();
+                    }
+                }
+                lastDT = rs.getString(dateTimeOutName);
+//                System.out.println("");
+                remotePST.close();
+//                localConnection.close();
+                if (copySuccessful) {
+                    connection = getLocalConnection(true);
+                    st = (Statement) connection.createStatement();
+                    st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
+                    st.close();
+                } else {
+                    try {
+                        st.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        log.error(ex.getMessage());
+                    }
+                }
+            }
+        }
+
+        rs.close();
+        st.close();
+
+        connection.close();
+    }
+
+    public void modifyTransToLocalfromServer(String srcdb, String srctbl, String destdb, String desttbl, String dateTimeOutName, String primary) throws SQLException {
+        String primaryKey = "";
+        boolean copySuccessful = false;
+        String insertSQL, lastDT = "";
+        String lTime = "2018-1-1 00:00:00";
+        connection = getLocalConnection(true);
+        
+        ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = '" + srcdb + "." + srctbl + "'", connection);
+        while (res.next()) {
+            lTime = res.getString("lastTime");
+        }
+        
+        //connection = getServerConnection(true);
+        DatabaseMetaData dbmd = connection.getMetaData();
+        connection = getBACKUPConnection();
+        ResultSet rs = selectDatabyFields("SELECT * FROM " + srcdb + "." + srctbl + " where " + dateTimeOutName + " > '" + lTime + "' AND " + dateTimeOutName + " <> '0000-00-00 00:00:00' ORDER BY " + dateTimeOutName + " ASC");
+
+        ResultSetMetaData rsmd = rs.getMetaData();
+
+        int columnNumber = rsmd.getColumnCount();
+        while (rs.next()) {
+            int x = 1;
+            Connection localConnection = null;
+            try {
+                localConnection = getLocalConnection(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
+            if (null != localConnection) {
+//            boolean res = remoteST.execute(insertSQL);
+                insertSQL = "UPDATE " + destdb + "." + desttbl + " ";
+                /*
+                insertSQL = insertSQL + "(";
+                while (x <= columnNumber) {
+                    insertSQL = insertSQL + rsmd.getColumnName(x);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + ", ";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + ") ";
+                "UPDATE Messages SET description = ?, author = ? WHERE id = ? AND seq_num = ?");
+
+                 */
+                insertSQL = insertSQL + "SET ";
+                x = 1;
+                while (x <= columnNumber) {
+                    String colName = rsmd.getColumnName(x);
+                    System.out.println("Column name: " + colName);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + colName + " = ?, ";
+                    } else {
+                        insertSQL = insertSQL + colName +  " = ?";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + " WHERE " + primary + " = '" + rs.getString(primary) + "'";
+                System.out.println("UPDATE SQL: " + insertSQL);
+                PreparedStatement remotePST = (PreparedStatement) localConnection.prepareStatement(insertSQL);
+                x = 1;
+                while (x <= columnNumber) {
+                    String colName = rsmd.getColumnName(x);
+                    System.out.println("Column name: " + colName);
+                    if (primaryKey.compareToIgnoreCase(colName) == 0) {
+                        if (colName.compareToIgnoreCase("logINID") == 0) {
+                            remotePST.setString(x, rs.getString(colName));
+                        } else {
+                            remotePST.setNull(x, Types.NULL);
+                        }
+                    } else {
+                        int dataType = rsmd.getColumnType(x);
+                        if (dataType == 12) {
+                            String cardNumber = rs.getString(colName);
+                            remotePST.setString(x, rs.getString(colName));
+//                        System.out.print(cardNumber + " ");
+                        } else if (dataType == -5) {
+                            long cardNo = rs.getLong(colName);
+                            remotePST.setLong(x, rs.getLong(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == -6) {
+                            int cardNo = rs.getInt(colName);
+                            remotePST.setInt(x, rs.getInt(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == 4) {
+                            int cardNo = rs.getInt(colName);
+                            remotePST.setInt(x, rs.getInt(colName));
+//                        System.out.print(cardNo + " ");
+                        } else if (dataType == 93) {
+                            Timestamp dt = rs.getTimestamp(colName);
+                            remotePST.setTimestamp(x, rs.getTimestamp(colName));
+//                        System.out.print(dt + " ");
+                        } else if (dataType == 91) {
+                            Date dt = rs.getDate(colName);
+                            remotePST.setDate(x, rs.getDate(colName));
+//                        System.out.print(dt + " ");
+                        } else if (dataType == -7) {
+                            boolean isLost = rs.getBoolean(colName);
+                            remotePST.setBoolean(x, rs.getBoolean(colName));
+//                        System.out.print(isLost + " ");
+                        } else if (dataType == 8) {
+                            double amount = rs.getDouble(colName);
+                            remotePST.setDouble(x, rs.getDouble(colName));
+//                        System.out.print(amount + " ");
+                        } else if (dataType == 7) {
+                            float amount = rs.getFloat(colName);
+                            remotePST.setFloat(x, rs.getFloat(colName));
+//                        System.out.print(amount + " ");
+                        } else if (dataType == -4) {
+                            remotePST.setBlob(x, rs.getBlob(colName));
+//                    InputStream is = rs.getBinaryStream(colName);
+//                    try {
+//                        if (null != is) {
+//                            img[x] = ImageIO.read(is);
+//                            show(x + "", img[x], x);
+//                        }
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(DataBaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+                        } else {
+                            System.out.print(" dataType:[" + dataType + "] = ");
+                        }
+                    }
+                    x++;
+
+                }
+                try {
+                    //System.out.println(remotePST.getResultSet().getStatement());
+                    remotePST.executeUpdate();
+                    //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+                    System.out.println("\n" + " " + destdb + "." + desttbl + "=" + lTime + " BACKUP Copied Successfully");
+                    copySuccessful = true;
+                } catch (Exception ex) {
+                    try {
+                        ex.printStackTrace();
+                        //this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+//                        System.out.println("\n" + rs.getString("cardNumber") + " Overwritten Successfully");
+                    } catch (Exception ex2) {
+
+                        ex2.printStackTrace();
+                    }
+                }
+                lastDT = rs.getString(dateTimeOutName);
+//                System.out.println("");
+                remotePST.close();
+//                serverConnection.close();
+                if (copySuccessful) {
+                    connection = getLocalConnection(true);
+                    st = (Statement) connection.createStatement();
+                    st.execute("UPDATE netmanager.main SET lastTime = '" + lastDT + "' WHERE main.tableName = '" + srcdb + "." + srctbl + "';");
+                    st.close();
+                } else {
+                    try {
+                        st.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        log.error(ex.getMessage());
+                    }
+
+                }
+            }
+        }
         rs.close();
         st.close();
 
@@ -2534,7 +2870,7 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getLocalConnection(true);
             //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
-            ResultSet rs = selectDatabyFields("SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate WHERE sentinelID = '"+sentinel + "'");
+            ResultSet rs = selectDatabyFields("SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate WHERE sentinelID = '" + sentinel + "'");
 
             if (rs.next()) {
                 zreadActive = rs.getBoolean("active");
@@ -2597,7 +2933,7 @@ public class DataBaseHandler extends Thread {
 
         return newString;
     }
-    
+
     public String getLastZRead(String SentinelID) {
         String data = null;
         try {
@@ -2616,7 +2952,7 @@ public class DataBaseHandler extends Thread {
 
         return data;
     }
-    
+
     public String getMaxZRead(String SentinelID) {
         String data = null;
         try {
@@ -2692,7 +3028,7 @@ public class DataBaseHandler extends Thread {
                     data = formatNos("1");
                 } else {
                     count++;
-                    data = formatNos(count + "" );
+                    data = formatNos(count + "");
                 }
             }
             st.close();
@@ -2741,7 +3077,7 @@ public class DataBaseHandler extends Thread {
             return false;
         }
     }
-    
+
     public boolean updateRemoteCarparkMaster(String fieldName, String value, String sentinelID) {
         try {
             connection = getServerConnection(true);
@@ -3378,7 +3714,7 @@ public class DataBaseHandler extends Thread {
         }
         return rs;
     }
-    
+
     public String getZReadLastRead(String sentinelID) {
         ResultSet rs = null;
         String res = "";
@@ -3427,7 +3763,7 @@ public class DataBaseHandler extends Thread {
         }
         return rs;
     }
-    
+
     public ResultSet getPrevZReadTilTodayColl(String Exitpoint, Float totalCollected, Double Sale12Vat, Double vatSale) {
         ResultSet rs = null;
         try {
@@ -3440,7 +3776,7 @@ public class DataBaseHandler extends Thread {
                     + "LPAD(TRIM(MIN(beginTrans)+0),16,0) AS beginTrans, LPAD(TRIM(MAX(endTrans)+0),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(20,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(20,2)) AS newGrand, "
                     + "zCount AS startZCount,  zCount AS endZCount FROM zread.main m "
-                    + "INNER JOIN zread.lastdate l WHERE m.terminalnum = '" + Exitpoint +"' AND l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date "
+                    + "INNER JOIN zread.lastdate l WHERE m.terminalnum = '" + Exitpoint + "' AND l.sentinelID = m.terminalnum AND m.datetimeOut >= l.date "
                     + "GROUP BY DATE(datetimeOut) ORDER BY m.datetimeOut ASC";
 //            System.out.println(sql);
             rs = selectDatabyFields(sql);
@@ -3452,7 +3788,7 @@ public class DataBaseHandler extends Thread {
         }
         return rs;
     }
-    
+
     public ResultSet getTodaysZReadbydateColl(Float totalCollected, Double Sale12Vat, Double vatSale) {
         ResultSet rs = null;
         try {
@@ -3749,7 +4085,33 @@ public class DataBaseHandler extends Thread {
             return false;
         }
     }
-    
+        
+    public boolean findCGHVIPCard(String cardNumber) {
+        try {
+            connection = getLocalConnection(true);
+            if (null != connection) {
+                ResultSet rs = selectDatabyFields("SELECT * FROM vips.masterlist WHERE cardCode='" + cardNumber + "'");
+                // iterate through the java resultset
+                String CardCode = "";
+                String TimeIn = "";
+                while (rs.next()) {
+                    CardCode = rs.getString("CardCode");
+                    //TimeIn = rs.getString("Timein");
+                    System.out.println("CardCode is :" + CardCode + " TIME IN:" + TimeIn + " CardNumber is: " + cardNumber);
+                }
+                st.close();
+                connection.close();
+                if (cardNumber.compareToIgnoreCase(CardCode) == 0) {
+                    return true;
+                }
+            }
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
     public int getMissingReceipt(String ExitID) {
         int dup = 0;
         int missingCount = 0;
@@ -3770,38 +4132,38 @@ public class DataBaseHandler extends Thread {
             rs.close();
             connection.close();
             /* Sort statement*/
-	   Collections.sort(origlist);
-	   //Collections.sort(copylist);
-           int startRecNum = 0;
-           int endRecNum = 5561;
+            Collections.sort(origlist);
+            //Collections.sort(copylist);
+            int startRecNum = 0;
+            int endRecNum = 5561;
             Enumeration<String> orig = Collections.enumeration(origlist);
-	    while(startRecNum < endRecNum){
+            while (startRecNum < endRecNum) {
                 startRecNum++;
-		//System.out.println(ReceiptNum);
-                        
-             //           Enumeration<String> copy = Collections.enumeration(copylist);
-            connection = getLocalConnection(true);
-            String receipt2find = ExitID + formatNos(startRecNum + "");
-            String SQL = "SELECT ReceiptNumber FROM carpark.exit_trans WHERE ReceiptNumber = '" + receipt2find + "' AND ExitID = '" + ExitID + "' ORDER BY ReceiptNumber";
-            //System.out.println(SQL);
-            ResultSet rs1 = selectDatabyFields(SQL);
-            recNum = "";
-            while (rs1.next()) {
-                recNum = rs1.getString("ReceiptNumber");                
-                //copylist.add(recNum);                
-                //System.out.println(recNum.substring(4));
-            }
-            if(recNum.compareTo("") == 0) {
+                //System.out.println(ReceiptNum);
+
+                //           Enumeration<String> copy = Collections.enumeration(copylist);
+                connection = getLocalConnection(true);
+                String receipt2find = ExitID + formatNos(startRecNum + "");
+                String SQL = "SELECT ReceiptNumber FROM carpark.exit_trans WHERE ReceiptNumber = '" + receipt2find + "' AND ExitID = '" + ExitID + "' ORDER BY ReceiptNumber";
+                //System.out.println(SQL);
+                ResultSet rs1 = selectDatabyFields(SQL);
+                recNum = "";
+                while (rs1.next()) {
+                    recNum = rs1.getString("ReceiptNumber");
+                    //copylist.add(recNum);                
+                    //System.out.println(recNum.substring(4));
+                }
+                if (recNum.compareTo("") == 0) {
                     System.out.println(receipt2find + " is missing");
                     System.out.println(SQL);
                     missingCount++;
                 } else {
-            //        System.out.println(recNum + " OK");
-            }
-            //System.out.print(".");
-            rs1.close();
-            connection.close();
-                            /*
+                    //        System.out.println(recNum + " OK");
+                }
+                //System.out.print(".");
+                rs1.close();
+                connection.close();
+                /*
                             String receipts = copy.nextElement().substring(4);
                             int CopyReceiptNum = 0;
                             CopyReceiptNum = Integer.parseInt(receipts);
@@ -3815,12 +4177,12 @@ public class DataBaseHandler extends Thread {
                                     break;
                                 }
                             }
-                            */
-                                                
-		}
+                 */
+
+            }
             System.out.println("Missing Receipts Checking Completed");
             System.out.println("Missing: " + missingCount);
-            
+
             return dup;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -3841,7 +4203,10 @@ public class DataBaseHandler extends Thread {
 //            DBH.insertImageToDB();
 //            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
 //            DBH.ShowImageFromDB();
-            DBH.getMissingReceipt("EX03");
+            DBH.copyTransToLocalfromServer("vips", "masterlist", "vips", "masterlist", "dateCreated");
+                        
+            DBH.modifyTransToLocalfromServer("vips", "masterlist", "vips", "masterlist", "dateCreated", "cardCode");
+            //DBH.getMissingReceipt("EX03");
 
 //            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
 //            String destinationFile = "C:/avaimage.jpg";

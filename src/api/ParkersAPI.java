@@ -975,7 +975,7 @@ public class ParkersAPI {
         }
     }
 
-    public void printCGHUSBReceipt(boolean firstRun, boolean isReprint, String SentinenlID, String Entrypoint,
+    public void printoldCGHUSBReceipt(boolean firstRun, boolean isReprint, String SentinenlID, String Entrypoint,
             String Plateno, String Cardno, String ParkerType, String TimeIN, String TimeOUT, long HoursParked, long MinutesParked,
             double AmountDue, double AmountGross, double vat12, double vatsale, double vatexempt, String RNos, String CashierID, String CashierName, String settlementRef,
             String settlementName, String settlementAddr, String settlementTIN, String settlementBusStyle,
