@@ -2760,7 +2760,7 @@ public class ComputeAPI {
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ComputeAPI ca = new ComputeAPI(null);
-        stn.settlementRef = "Hello*War";
+        stn.settlementRef = "H+_)(*&^%\\/;':\"$#@!-={}|:;'<>/?,.[]\\ello*War";
         stn.settlementName = "Angelo+!@#$%%^&*()_+-=Dizon";
         stn.settlementAddr = "15 Taiwan St. BetterLiving Subd. Paranaque";
         stn.settlementTIN = "234-34634-356";
