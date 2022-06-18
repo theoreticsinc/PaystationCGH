@@ -2692,26 +2692,18 @@ public class ComputeAPI {
         try {
             Pattern p = null;
             Matcher matcher = null;
-            stn.settlementRef = stn.settlementRef.replaceAll("\\s+", " ");
-            stn.settlementName = stn.settlementName.replaceAll("\\s+", " ");
-            stn.settlementAddr = stn.settlementAddr.replaceAll("\\s+", " ");
-            stn.settlementTIN = stn.settlementTIN.replaceAll("\\s+", " ");
-            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("\\s+", " ");
-            stn.settlementRef = stn.settlementRef.replaceAll("/", " ");
-            stn.settlementName = stn.settlementName.replaceAll("/", " ");
-            stn.settlementAddr = stn.settlementAddr.replaceAll("/", " ");
-            stn.settlementTIN = stn.settlementTIN.replaceAll("/", " ");
-            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("/", " ");
-            stn.settlementRef = stn.settlementRef.replaceAll("'", " ");
-            stn.settlementName = stn.settlementName.replaceAll("'", " ");
-            stn.settlementAddr = stn.settlementAddr.replaceAll("'", " ");
-            stn.settlementTIN = stn.settlementTIN.replaceAll("'", " ");
-            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("'", " ");
-            stn.settlementRef = stn.settlementRef.replaceAll("\"", " ");
-            stn.settlementName = stn.settlementName.replaceAll("\"", " ");
-            stn.settlementAddr = stn.settlementAddr.replaceAll("\"", " ");
-            stn.settlementTIN = stn.settlementTIN.replaceAll("\"", " ");
-            stn.settlementBusStyle = stn.settlementBusStyle.replaceAll("\"", " ");
+            String[] x = {"!","\\s+", "/", ",", "'", "\"", "\\+", "\\-", "\\^", "@", "#", "$", "%", "\\&", "\\*", "\\(", "\\)",
+            "\\{", "\\}", "\\|", "\\[", "\\]", "\\:", "\\;", "\\'", "\"", "\\<", "\\>", "\\.", "\\,", "\\?", "\\/", "\\_", "\\="};
+            
+            for (int i = 0; i < x.length; i++) {
+                System.out.print(x[i]);
+                stn.settlementRef = stn.settlementRef.replaceAll(x[i], " ");
+                stn.settlementName = stn.settlementName.replaceAll(x[i], " ");
+                stn.settlementAddr = stn.settlementAddr.replaceAll(x[i], " ");
+                stn.settlementTIN = stn.settlementTIN.replaceAll(x[i], " ");
+                stn.settlementBusStyle = stn.settlementBusStyle.replaceAll(x[i], " ");
+                
+            }
             
             p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
             matcher = p.matcher(stn.settlementRef.toString());
@@ -2750,10 +2742,35 @@ public class ComputeAPI {
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
+            stn.settlementRef = "Special Characters Violated";
+            stn.settlementName = "Special Characters Violated";
+            stn.settlementAddr = "Special Characters Violated";
+            stn.settlementTIN = "Special Characters Violated";
+            stn.settlementBusStyle = "Special Characters Violated";
+            System.out.println(stn.settlementRef);
         }
+        System.out.println(stn.settlementRef);
+        System.out.println(stn.settlementName);
+        System.out.println(stn.settlementAddr);
+        System.out.println(stn.settlementTIN);
+        System.out.println(stn.settlementBusStyle);
+        
     }
     
     public static void main(String args[]) {
+        HybridPanelUI stn = new HybridPanelUI();
+        ComputeAPI ca = new ComputeAPI(null);
+        stn.settlementRef = "Hello*War";
+        stn.settlementName = "Angelo+!@#$%%^&*()_+-=Dizon";
+        stn.settlementAddr = "15 Taiwan St. BetterLiving Subd. Paranaque";
+        stn.settlementTIN = "234-34634-356";
+        stn.settlementBusStyle = "psycho/4-10-1990";
+        ca.stn = stn;
+        ca.checkREGEX();
+        System.exit(0);
+    }
+    
+    public static void main2(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");

@@ -118,7 +118,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     private int zoomSize, zoomFactor;
     boolean online = false;
     boolean KeyAccepted = true;
-    boolean withVIPReader = false;
+    boolean withVIPReader = true;
     //--exit
     boolean mountedonce = false;
     boolean Password = false;
@@ -5864,7 +5864,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         LoginPanelX.setVisible(true);
         String logname = "";
         LoginMOD lm = new LoginMOD();
-        Date logStamp = new Date();
+        
 
         try {
             String tempID = lm.getCashierID();
@@ -5893,6 +5893,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 } else if (logname.compareTo(LogUsercode2.getText()) == 0) {
                     clearLeftMIDMsgPanel();
                     CashierID = LogUsercode2.getText().toString();
+                    Date logStamp = new Date();
                     String logID = logStamp.getYear() + logStamp.getMonth() + logStamp.getDate() + LogUsercode2.getText() + logStamp.getHours() + logStamp.getMinutes() + logStamp.getSeconds();
                     //lm.printLoginSTUB(logname, LogUsercode2.getText(), EX_SentinelID);
                     //lm.saveLogintoFile(logname, LogUsercode2.getText());
@@ -6185,7 +6186,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             LoginMOD lm = new LoginMOD();
             String compcode = "";
             compcode = lm.getCashierID().trim();
-            Date logStamp = new Date();
+            
             if (compcode.compareToIgnoreCase(LogUsercode1.getText().toString().trim()) == 0 && lm.getCashierPassword(LogUsercode1.getText().toString().trim(), LogPassword1.getText().toString().trim())) {//Startlog out if code is valid
                 SaveCollData scd = new SaveCollData();
                 DataBaseHandler dbh = new DataBaseHandler();
@@ -6960,37 +6961,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         if (dbh.findCGHVIPCard(cardFromReader) == false) {
             return;
         }
-        if (dbh.findVIPEntranceCard(cardFromReader)) {
-            BufferedImage buf = dbh.GetVIPImageFromDB(cardFromReader);
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Image img = getScaledImage(buf, screenSize.width / 4 + 120, screenSize.height / 3 + 120);
-            //Image img = getScaledImage(buf, 170, 115);
-            entryCamera.setIcon(new ImageIcon(img));
-            String plates[] = null;
-            String vehicleTypes[] = null;
-            VIPPlates vpPlates = dbh.findAllPlatesfromVIPCard(cardFromReader);
-            if (vpPlates.getPlateNumber().isEmpty() == false) {
-                plates = vpPlates.getPlateNumber().get(0).split(",");
-                //ctrlMsg3.setText(cardToDisplay + " = " + plates.length);
-                //ctrlMsg6.setText(plates[0]);                                                       
-            }
-            if (vpPlates.getVehicleTypes().isEmpty() == false) {
-                vehicleTypes = vpPlates.getVehicleTypes().get(0).split(",");
-                //ctrlMsg9.setText("vehicleTypes = " + vehicleTypes.length);
-            }
-
-            String vipData = "<html>";
-            for (int x = 0; x < plates.length; x++) {
-                if (null != vehicleTypes[x]) {
-                    vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
-                } else {
-                    vipData = vipData + plates[x] + "<br>";
-                }
-            }
-            vipData = vipData + "</html>";
-            entryCamera.setText(vipData);
-        }
-
         VIPS vips = new VIPS();
         vips = dbh.findVIP_MasterList(cardFromReader);
         if (null != vips) {
@@ -7021,7 +6991,39 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             }
             vipData = vipData + "</html>";
             entryCamera.setText(vipData);
+            this.repaint();
+            this.validate();
         }
+        if (dbh.findVIPEntranceCard(cardFromReader)) {
+            BufferedImage buf = dbh.GetVIPImageFromDB(cardFromReader);
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Image img = getScaledImage(buf, screenSize.width / 4 + 120, screenSize.height / 3 + 120);
+            //Image img = getScaledImage(buf, 170, 115);
+            entryCamera.setIcon(new ImageIcon(img));
+            String plates[] = null;
+            String vehicleTypes[] = null;
+            VIPPlates vpPlates = dbh.findAllPlatesfromVIPCard(cardFromReader);
+            if (vpPlates.getPlateNumber().isEmpty() == false) {
+                plates = vpPlates.getPlateNumber().get(0).split(",");
+                //ctrlMsg3.setText(cardToDisplay + " = " + plates.length);
+                //ctrlMsg6.setText(plates[0]);                                                       
+            }
+            if (vpPlates.getVehicleTypes().isEmpty() == false) {
+                vehicleTypes = vpPlates.getVehicleTypes().get(0).split(",");
+                //ctrlMsg9.setText("vehicleTypes = " + vehicleTypes.length);
+            }
+
+            String vipData = "<html>";
+            for (int x = 0; x < plates.length; x++) {
+                if (null != vehicleTypes[x]) {
+                    vipData = vipData + plates[x] + " = " + vehicleTypes[x] + "<br>";
+                } else {
+                    vipData = vipData + plates[x] + "<br>";
+                }
+            }
+            vipData = vipData + "</html>";
+            entryCamera.setText(vipData);
+        }        
 
     }
 
@@ -8202,7 +8204,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             this.processLeftPanelMsgs(pw.SysMsg);
         } else if (CashierID.compareToIgnoreCase("") == 0) //ENTER button
         {
-            this.StartLogInX();
+            //this.StartLogInX();
         } else if (currentmode.compareToIgnoreCase("logout") == 0) {
 //            if (this.isLogoutValid() == true) {
 //                currentmode = "logout";
