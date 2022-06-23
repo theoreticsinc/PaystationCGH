@@ -2687,29 +2687,29 @@ public class ComputeAPI {
         }
         return lastHrwidNonZero;
     }
-    
+
     private void checkREGEX() {
         try {
             Pattern p = null;
             Matcher matcher = null;
-            String[] x = {"!","\\s+", "/", ",", "'", "\"", "\\+", "\\-", "\\^", "@", "#", "$", "%", "\\&", "\\*", "\\(", "\\)",
-            "\\{", "\\}", "\\|", "\\[", "\\]", "\\:", "\\;", "\\'", "\"", "\\<", "\\>", "\\.", "\\,", "\\?", "\\/", "\\_", "\\="};
-            
+            String[] x = {"!", "\\s+", "/", ",", "'", "\"", "\\+", "\\-", "\\^", "@", "#", "$", "%", "\\&", "\\*", "\\(", "\\)",
+                "\\{", "\\}", "\\|", "\\[", "\\]", "\\:", "\\;", "\\'", "\"", "\\<", "\\>", "\\.", "\\,", "\\?", "\\/", "\\_", "\\="};
+
             for (int i = 0; i < x.length; i++) {
-                System.out.print(x[i]);
+                //System.out.print(x[i]);
                 stn.settlementRef = stn.settlementRef.replaceAll(x[i], " ");
                 stn.settlementName = stn.settlementName.replaceAll(x[i], " ");
                 stn.settlementAddr = stn.settlementAddr.replaceAll(x[i], " ");
                 stn.settlementTIN = stn.settlementTIN.replaceAll(x[i], " ");
                 stn.settlementBusStyle = stn.settlementBusStyle.replaceAll(x[i], " ");
-                
+
             }
-            
+            //System.out.println("");
             p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
             matcher = p.matcher(stn.settlementRef.toString());
             if (matcher.find()) {
                 stn.settlementRef = "Special Characters Violated";
-            } 
+            }
             matcher = p.matcher(stn.settlementName.toString());
             if (matcher.find()) {
                 stn.settlementName = "Special Characters Violated";
@@ -2726,7 +2726,7 @@ public class ComputeAPI {
             if (matcher.find()) {
                 stn.settlementBusStyle = "Special Characters Violated";
             }
-            
+
             if (stn.settlementName.length() > 41) {
                 stn.settlementName = stn.settlementName.substring(0, 40);
             }
@@ -2742,34 +2742,34 @@ public class ComputeAPI {
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
-            stn.settlementRef = "Special Characters Violated";
-            stn.settlementName = "Special Characters Violated";
-            stn.settlementAddr = "Special Characters Violated";
-            stn.settlementTIN = "Special Characters Violated";
-            stn.settlementBusStyle = "Special Characters Violated";
-            System.out.println(stn.settlementRef);
+            stn.settlementRef = "Special Characters Error";
+            stn.settlementName = "Special Characters Error";
+            stn.settlementAddr = "Special Characters Error";
+            stn.settlementTIN = "Special Characters Error";
+            stn.settlementBusStyle = "Special Characters Error";
+            //System.out.println(stn.settlementRef);
         }
-        System.out.println(stn.settlementRef);
-        System.out.println(stn.settlementName);
-        System.out.println(stn.settlementAddr);
-        System.out.println(stn.settlementTIN);
-        System.out.println(stn.settlementBusStyle);
-        
+        //System.out.println(stn.settlementRef);
+        //System.out.println(stn.settlementName);
+        //System.out.println(stn.settlementAddr);
+        //System.out.println(stn.settlementTIN);
+        //System.out.println(stn.settlementBusStyle);
+
     }
-    
+
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ComputeAPI ca = new ComputeAPI(null);
         stn.settlementRef = "H+_)(*&^%\\/;':\"$#@!-={}|:;'<>/?,.[]\\ello*War";
-        stn.settlementName = "Angelo+!@#$%%^&*()_+-=Dizon";
-        stn.settlementAddr = "15 Taiwan St. BetterLiving Subd. Paranaque";
-        stn.settlementTIN = "234-34634-356";
-        stn.settlementBusStyle = "psycho/4-10-1990";
+        stn.settlementName = "renato r espiritu";
+        stn.settlementAddr = "[manila]";
+        stn.settlementTIN = "/1 /2 /3 /4 /5 /6 /7 /8 /9 /0   2-16-1955";
+        stn.settlementBusStyle = "\\1 \\2 \\3 \\4 \\5 \\6 \\7 \\8 \\9 \\0";
         ca.stn = stn;
         ca.checkREGEX();
         System.exit(0);
     }
-    
+
     public static void main2(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();

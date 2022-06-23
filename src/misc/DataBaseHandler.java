@@ -83,8 +83,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-    private String USERNAME = "base";
-    private String PASSWORD = "theoreticsinc";
+    private String USERNAME = "mustangs";
+    private String PASSWORD = "permanentRanger";
+//    private String USERNAME = "base";
+//    private String PASSWORD = "theoreticsinc";
 //    private String USERNAME = "root";
 //    private String PASSWORD = "sa";
     public String EX_SentinelID;
@@ -2722,11 +2724,11 @@ public class DataBaseHandler extends Thread {
     public ResultSet getReceipt4Reprint(String plate2check, String date2check) {
         ResultSet rs;
         String SQL;
-        if (plate2check.compareToIgnoreCase("*") == 0) {
-            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode";
-        } else {
-            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber LIKE '%" + plate2check + "'";
-        }
+//        if (plate2check.compareToIgnoreCase("*") == 0) {
+//            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode";
+//        } else {
+            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber LIKE '%" + date2check + "'";
+//        }
         //SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode";
 
         try {

@@ -118,7 +118,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     private int zoomSize, zoomFactor;
     boolean online = false;
     boolean KeyAccepted = true;
-    String withVIPReader = "false";
+    public String withVIPReader = "false";
     //--exit
     boolean mountedonce = false;
     boolean Password = false;
@@ -481,7 +481,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             printerType = xr.getElementValue("C://JTerminals/initH.xml", "printerType");
             SlotsResetEnabled = xr.getElementValue("C://JTerminals/initH.xml", "reset");
             sResetTime = xr.getAttributeValue("C://JTerminals/initH.xml", "reset", "time");
-            withVIPReader = xr.getAttributeValue("C://JTerminals/initH.xml", "withVIPReader", "false");
+            withVIPReader = xr.getElementValue("C://JTerminals/initH.xml", "withVIPReader");
+            System.out.println("***withVIP = " + withVIPReader);
             loginID = dbh.getLogID();
             //loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             defaultType = xr.getElementValue("C://JTerminals/initH.xml", "defaultType");
@@ -6622,15 +6623,14 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     private void startMIFAREReader() {
         mifare = new ReadMIFARE();
-
         try {
             if (null != mifare.terminal) {
                 mifare.terminal.waitForCardPresent(0);
-            }
+            }            
             if (withVIPReader.compareToIgnoreCase("true") == 0) {
                 VIPmifare = new ReadMIFARE();
                 if (null != VIPmifare.terminal) {
-                    mifare.terminal.waitForCardPresent(0);
+                    VIPmifare.terminal.waitForCardPresent(0);
                 }
             }
         } catch (Exception ex) {

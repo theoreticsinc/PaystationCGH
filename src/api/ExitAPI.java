@@ -86,7 +86,9 @@ public class ExitAPI implements Runnable {
                     stn.PreviousCard = "";
                     stn.clearLeftMIDMsgPanel();
                     stn.clearRightPanel();
-                    stn.StartComparingCard2DB();
+                    if (stn.withVIPReader.compareToIgnoreCase("true") != 0) {
+                        stn.StartComparingCard2DB();
+                    }
                     //stn.firstscan = false;
                     //stn.trtype = "R";
                     //this.InitiateRescan();

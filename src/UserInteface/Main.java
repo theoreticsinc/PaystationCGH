@@ -35,7 +35,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        log.info("Starting Hybrid v.5.5 REPrint fix v.1");
+        log.info("Starting Hybrid v.5.7 reprint 3Checks fix v.1");
         HybridPanelUI tpUI = new HybridPanelUI();
 //        
 //        System.out.print("OK, only this instance is running");
