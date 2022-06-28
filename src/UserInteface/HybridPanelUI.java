@@ -74,6 +74,7 @@ import misc.SerialEpsonHandler;
 import misc.LogUtility;
 import misc.XMLreader;
 import misc.ServerDataHandler;
+import models.Seniors;
 import models.VIPPlates;
 import models.VIPS;
 import modules.LoginMOD;
@@ -86,9 +87,9 @@ import modules.SystemStatus;
 
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
-    public String entryIPCamera = "192.168.100.220";
+    public String entryIPCamera = "";
     //public String entryIPCamera = "192.168.1.64";
-    public String exitIPCamera = "192.168.100.219";
+    public String exitIPCamera = "";
     //public String exitIPCamera = "192.168.1.64";
     public String cameraAdmin = "admin";
     public String cameraPassword = "test";
@@ -207,6 +208,13 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String settlementTIN = "";
     public String settlementBusStyle = "";
     public String settlementRef = "";
+
+    public String settlementName2 = "";
+    public String settlementAddr2 = "";
+    public String settlementTIN2 = "";
+    public String settlementBusStyle2 = "";
+    public String settlementRef2 = "";
+
     //--exit
     public StringBuffer PWORDinput = new StringBuffer("");
     public StringBuffer MasterCardinput = new StringBuffer("");
@@ -939,7 +947,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         LowerRightPanel = new javax.swing.JPanel();
         SettPanel = new javax.swing.JPanel();
         PWDoscaID = new javax.swing.JTextField();
-        oscaName = new javax.swing.JTextField();
         oscaAddr = new javax.swing.JTextField();
         oscaTIN = new javax.swing.JTextField();
         oscaBusStyle = new javax.swing.JTextField();
@@ -2698,82 +2705,102 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SettPanel.setLayout(null);
 
         PWDoscaID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        PWDoscaID.setBackground(new java.awt.Color(51, 51, 255));
+        PWDoscaID.setBackground(new java.awt.Color(255, 168, 60));
         PWDoscaID.setCaretColor(new java.awt.Color(255, 255, 0));
         PWDoscaID.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         PWDoscaID.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        PWDoscaID.setForeground(new java.awt.Color(255, 255, 51));
-        PWDoscaID.setNextFocusableComponent(oscaName);
+        PWDoscaID.setForeground(new java.awt.Color(102, 102, 102));
         PWDoscaID.setOpaque(false);
+        PWDoscaID.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PWDoscaIDFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                PWDoscaIDFocusLost(evt);
+            }
+        });
         PWDoscaID.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 PWDoscaIDKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                PWDoscaIDKeyTyped(evt);
             }
         });
         SettPanel.add(PWDoscaID);
         PWDoscaID.setBounds(200, 0, 170, 40);
 
-        oscaName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        oscaName.setBackground(new java.awt.Color(51, 51, 255));
-        oscaName.setCaretColor(new java.awt.Color(255, 255, 0));
-        oscaName.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
-        oscaName.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaName.setForeground(new java.awt.Color(255, 255, 51));
-        oscaName.setNextFocusableComponent(oscaAddr);
-        oscaName.setOpaque(false);
-        oscaName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oscaNameActionPerformed(evt);
-            }
-        });
-        oscaName.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                oscaNameKeyPressed(evt);
-            }
-        });
-        SettPanel.add(oscaName);
-        oscaName.setBounds(80, 60, 170, 40);
-
         oscaAddr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        oscaAddr.setBackground(new java.awt.Color(51, 51, 255));
+        oscaAddr.setBackground(new java.awt.Color(255, 168, 60));
         oscaAddr.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaAddr.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaAddr.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaAddr.setForeground(new java.awt.Color(255, 255, 51));
+        oscaAddr.setForeground(new java.awt.Color(102, 102, 102));
         oscaAddr.setNextFocusableComponent(oscaTIN);
         oscaAddr.setOpaque(false);
+        oscaAddr.setToolTipText("");
+        oscaAddr.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                oscaAddrFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                oscaAddrFocusLost(evt);
+            }
+        });
         oscaAddr.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 oscaAddrKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                oscaAddrKeyTyped(evt);
             }
         });
         SettPanel.add(oscaAddr);
         oscaAddr.setBounds(80, 120, 170, 40);
 
         oscaTIN.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        oscaTIN.setBackground(new java.awt.Color(51, 51, 255));
+        oscaTIN.setBackground(new java.awt.Color(255, 168, 60));
         oscaTIN.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaTIN.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaTIN.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaTIN.setForeground(new java.awt.Color(255, 255, 51));
+        oscaTIN.setForeground(new java.awt.Color(102, 102, 102));
         oscaTIN.setNextFocusableComponent(oscaBusStyle);
         oscaTIN.setOpaque(false);
+        oscaTIN.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                oscaTINFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                oscaTINFocusLost(evt);
+            }
+        });
         oscaTIN.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 oscaTINKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                oscaTINKeyTyped(evt);
             }
         });
         SettPanel.add(oscaTIN);
         oscaTIN.setBounds(310, 60, 170, 40);
 
         oscaBusStyle.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        oscaBusStyle.setBackground(new java.awt.Color(51, 51, 255));
+        oscaBusStyle.setBackground(new java.awt.Color(255, 168, 60));
         oscaBusStyle.setCaretColor(new java.awt.Color(255, 255, 0));
         oscaBusStyle.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         oscaBusStyle.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
-        oscaBusStyle.setForeground(new java.awt.Color(255, 255, 51));
+        oscaBusStyle.setForeground(new java.awt.Color(102, 102, 102));
         oscaBusStyle.setNextFocusableComponent(PWDoscaID);
         oscaBusStyle.setOpaque(false);
+        oscaBusStyle.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                oscaBusStyleFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                oscaBusStyleFocusLost(evt);
+            }
+        });
         oscaBusStyle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 oscaBusStyleActionPerformed(evt);
@@ -2782,6 +2809,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         oscaBusStyle.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 oscaBusStyleKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                oscaBusStyleKeyTyped(evt);
             }
         });
         SettPanel.add(oscaBusStyle);
@@ -3236,12 +3266,12 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         KeyLabel10.setVerifyInputWhenFocusTarget(false);
         LettersPad.add(KeyLabel10);
 
-        KeyLabel11.setFont(KeyLabel11.getFont().deriveFont(KeyLabel11.getFont().getStyle() | java.awt.Font.BOLD, KeyLabel11.getFont().getSize()+14));
-        KeyLabel11.setForeground(new java.awt.Color(153, 153, 255));
         KeyLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         KeyLabel11.setLabelFor(K);
         KeyLabel11.setText("K"); // NOI18N
         KeyLabel11.setFocusable(false);
+        KeyLabel11.setFont(KeyLabel11.getFont().deriveFont(KeyLabel11.getFont().getStyle() | java.awt.Font.BOLD, KeyLabel11.getFont().getSize()+14));
+        KeyLabel11.setForeground(new java.awt.Color(153, 153, 255));
         KeyLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         KeyLabel11.setRequestFocusEnabled(false);
         KeyLabel11.setVerifyInputWhenFocusTarget(false);
@@ -5322,17 +5352,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         });
     }//GEN-LAST:event_voidTypeSelectionItemStateChanged
 
-    private void oscaNameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaNameKeyPressed
-        settlementFormKeyPressed(evt);
-    }//GEN-LAST:event_oscaNameKeyPressed
-
     private void oscaAddrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaAddrKeyPressed
         settlementFormKeyPressed(evt);
     }//GEN-LAST:event_oscaAddrKeyPressed
-
-    private void oscaNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oscaNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_oscaNameActionPerformed
 
     private void oscaTINKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaTINKeyPressed
         settlementFormKeyPressed(evt);
@@ -5605,6 +5627,74 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     }//GEN-LAST:event_LogPassword2KeyPressed
 
+    private void PWDoscaIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PWDoscaIDKeyTyped
+
+        this.repaint();
+        this.validate();
+    }//GEN-LAST:event_PWDoscaIDKeyTyped
+
+    private void oscaTINKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaTINKeyTyped
+
+        this.repaint();
+        this.validate();
+    }//GEN-LAST:event_oscaTINKeyTyped
+
+    private void oscaAddrKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaAddrKeyTyped
+
+        this.repaint();
+        this.validate();
+    }//GEN-LAST:event_oscaAddrKeyTyped
+
+    private void oscaBusStyleKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_oscaBusStyleKeyTyped
+
+        this.repaint();
+        this.validate();
+    }//GEN-LAST:event_oscaBusStyleKeyTyped
+
+    private void PWDoscaIDFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDoscaIDFocusGained
+        PWDoscaID.selectAll();
+        PWDoscaID.setForeground(Color.darkGray);
+        PWDoscaID.setOpaque(true);
+    }//GEN-LAST:event_PWDoscaIDFocusGained
+
+    private void PWDoscaIDFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDoscaIDFocusLost
+        PWDoscaID.setForeground(Color.gray);
+        PWDoscaID.setOpaque(false);
+    }//GEN-LAST:event_PWDoscaIDFocusLost
+
+    private void oscaAddrFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaAddrFocusGained
+        oscaAddr.selectAll();
+        oscaAddr.setForeground(Color.darkGray);
+        oscaAddr.setOpaque(true);
+    }//GEN-LAST:event_oscaAddrFocusGained
+
+    private void oscaAddrFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaAddrFocusLost
+        oscaAddr.setForeground(Color.gray);
+        oscaAddr.setOpaque(false);
+    }//GEN-LAST:event_oscaAddrFocusLost
+
+    private void oscaTINFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaTINFocusGained
+        oscaTIN.selectAll();
+        oscaTIN.setForeground(Color.darkGray);
+        oscaTIN.setOpaque(true);
+    }//GEN-LAST:event_oscaTINFocusGained
+
+    private void oscaTINFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaTINFocusLost
+        oscaTIN.setForeground(Color.gray);
+        oscaTIN.setOpaque(false);
+    }//GEN-LAST:event_oscaTINFocusLost
+
+    private void oscaBusStyleFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaBusStyleFocusGained
+        oscaBusStyle.selectAll();
+        oscaBusStyle.setForeground(Color.darkGray);
+        oscaBusStyle.setOpaque(true);
+    }//GEN-LAST:event_oscaBusStyleFocusGained
+
+    private void oscaBusStyleFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_oscaBusStyleFocusLost
+        oscaBusStyle.setForeground(Color.gray);
+        oscaBusStyle.setOpaque(false);
+    }//GEN-LAST:event_oscaBusStyleFocusLost
+
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
 //        this.clearRightPanel(); 
@@ -5692,6 +5782,37 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void StartPassword() {
         PasswordPanel.setVisible(true);
         Password = true;
+    }
+
+    public void autofillSeniorDB(String name) {
+        DataBaseHandler dbh = new DataBaseHandler();
+        Seniors s = new Seniors();
+        s = dbh.getSimilarSeniorsDB(name);
+        if (s.getOscaName().compareToIgnoreCase("") == 0 || oscaNameautofill.getText().compareToIgnoreCase("") == 0 ) {
+            oscaAddr.setText("");
+            oscaTIN.setText("");
+            oscaBusStyle.setText("");
+            PWDoscaID.setText("");
+            return;
+        }
+        if (oscaAddr.getText().compareToIgnoreCase("") == 0) {
+            oscaAddr.setText(s.getOscaAddr());
+        }
+        if (oscaTIN.getText().compareToIgnoreCase("") == 0) {
+            oscaTIN.setText(s.getOscaTIN());
+        }
+        if (oscaBusStyle.getText().compareToIgnoreCase("") == 0) {
+            oscaBusStyle.setText(s.getOscaBusStyle());
+        }
+        if (PWDoscaID.getText().compareToIgnoreCase("") == 0) {
+            PWDoscaID.setText(s.getOscaID());
+        }
+        if (s.getOscaAddr().compareTo(oscaAddr.getText()) != 0) {
+            oscaAddr.setText("");
+            oscaTIN.setText("");
+            oscaBusStyle.setText("");
+            PWDoscaID.setText("");
+        }
     }
 
     public void StartComparingCard2DB() {
@@ -5866,7 +5987,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         LoginPanelX.setVisible(true);
         String logname = "";
         LoginMOD lm = new LoginMOD();
-        
 
         try {
             String tempID = lm.getCashierID();
@@ -6188,7 +6308,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             LoginMOD lm = new LoginMOD();
             String compcode = "";
             compcode = lm.getCashierID().trim();
-            
+
             if (compcode.compareToIgnoreCase(LogUsercode1.getText().toString().trim()) == 0 && lm.getCashierPassword(LogUsercode1.getText().toString().trim(), LogPassword1.getText().toString().trim())) {//Startlog out if code is valid
                 SaveCollData scd = new SaveCollData();
                 DataBaseHandler dbh = new DataBaseHandler();
@@ -6548,7 +6668,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         //settAddr.setText("");
         //settTIN.setText("");
         PWDoscaID.setText("");
-        oscaName.setText("");
+        oscaNameautofill.setText("");
         oscaAddr.setText("");
         oscaTIN.setText("");
         oscaBusStyle.setText("");
@@ -6626,7 +6746,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         try {
             if (null != mifare.terminal) {
                 mifare.terminal.waitForCardPresent(0);
-            }            
+            }
             if (withVIPReader.compareToIgnoreCase("true") == 0) {
                 VIPmifare = new ReadMIFARE();
                 if (null != VIPmifare.terminal) {
@@ -6811,6 +6931,44 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //settAddr.setEditable(settlementEnabled);
             //settTIN.setEditable(settlementEnabled);
             PWDoscaID.requestFocus();
+
+            DataBaseHandler dbh = new DataBaseHandler();
+            seniorNamesValues = dbh.getSeniorNames();
+//            seniorNamesValues = new String[]{"camera", "camel",
+//                "cameleon", "car", "cards", "gorilla", "go", "game"};
+            //lookAhead = null;
+            //lookAhead = new StringArrayLookAhead(seniorNamesValues);
+            lookAhead.setValues(seniorNamesValues);
+            oscaNameautofill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+            oscaNameautofill.setBackground(new java.awt.Color(255, 204, 102));
+            oscaNameautofill.setCaretColor(new java.awt.Color(255, 255, 0));
+            oscaNameautofill.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+            oscaNameautofill.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+            oscaNameautofill.setForeground(new java.awt.Color(102, 102, 102));
+            oscaNameautofill.setNextFocusableComponent(oscaAddr);
+            oscaNameautofill.setOpaque(false);
+            oscaNameautofill.setToolTipText("");
+            SettPanel.add(oscaNameautofill);
+            oscaNameautofill.setBounds(80, 60, 170, 40);
+            oscaNameautofill.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyReleased(java.awt.event.KeyEvent evt) {
+                    checkAutoFill(evt);
+                }
+            });
+            oscaNameautofill.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent evt) {
+                    oscaNameautofill.selectAll();
+                    oscaNameautofill.setForeground(Color.darkGray);
+                    oscaNameautofill.setOpaque(true);
+                }
+
+                public void focusLost(java.awt.event.FocusEvent evt) {
+                    oscaNameautofill.selectAll();
+                    oscaNameautofill.setForeground(Color.gray);
+                    oscaNameautofill.setOpaque(true);
+                }
+            });
+
         }
     }
 
@@ -7024,7 +7182,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             }
             vipData = vipData + "</html>";
             entryCamera.setText(vipData);
-        }        
+        }
 
     }
 
@@ -7721,6 +7879,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
     //-------------------------------------------------
 
+    String[] seniorNamesValues = new String[]{""};
+    StringArrayLookAhead lookAhead = new StringArrayLookAhead(seniorNamesValues);
+    LookAheadTextField oscaNameautofill = new LookAheadTextField(20, lookAhead);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel A;
     public javax.swing.JLabel AMOUNTdisplay;
@@ -8106,7 +8267,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JPanel numpadPanel;
     private javax.swing.JTextField oscaAddr;
     private javax.swing.JTextField oscaBusStyle;
-    private javax.swing.JTextField oscaName;
     private javax.swing.JTextField oscaTIN;
     private javax.swing.JLabel printCollLbl;
     private javax.swing.JLabel printCollLbl1;
@@ -8183,7 +8343,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             }
             }*/
         settlementRef = PWDoscaID.getText();
-        settlementName = oscaName.getText();
+        settlementName = oscaNameautofill.getText();
         settlementAddr = oscaAddr.getText();
         settlementTIN = oscaTIN.getText();
         settlementBusStyle = oscaBusStyle.getText();
@@ -8935,6 +9095,13 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             SysMessage1.setText("Log IN");
             SysMessage3.setText("- first -");
         }
+    }
+
+    private void checkAutoFill(java.awt.event.KeyEvent evt) {
+        //settlementName2 = oscaNameautofill.getText() + evt.getKeyChar();
+        autofillSeniorDB(oscaNameautofill.getText());
+        this.repaint();
+        this.validate();
     }
 
     private void Numkeymouseoff(Object anyobj) {

@@ -934,6 +934,20 @@ public class ComputeAPI {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
+
+        try {
+            if (stn.settlementName.toString().compareToIgnoreCase("") != 0) {
+                DataBaseHandler dbh = new DataBaseHandler();
+                if (dbh.isExistSeniorDB(stn.settlementName)) {
+                    boolean updatedSeniorDetails = dbh.updateSenior2DB(stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle);
+                } else {
+                    boolean saveSeniorDetails = PDH.saveSenior2DB(stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage());
+        }
         /*
         if (stn.PrepaidOverride == true) {
             SP.updateCouponList(stn.Prepaid2Save);

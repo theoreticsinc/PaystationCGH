@@ -64,6 +64,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import models.Seniors;
 import models.VIPPlates;
 import models.VIPS;
 //import org.apache.commons.httpclient.util.HttpURLConnection;
@@ -2074,15 +2075,14 @@ public class DataBaseHandler extends Thread {
         String lTime = "2018-1-1 00:00:00";
         boolean copySuccessful = false;
         connection = getLocalConnection(true);
-                    
+
         ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = '" + srcdb + "." + srctbl + "'", connection);
         while (res.next()) {
             lTime = res.getString("lastTime");
         }
         connection = getBACKUPConnection();
         DatabaseMetaData dbmd = connection.getMetaData();
-        
-        
+
         ResultSet rs = selectDatabyFields("SELECT * FROM " + srcdb + "." + srctbl + " where " + dateTimeOutName + " > '" + lTime + "' AND " + dateTimeOutName + " <> '0000-00-00 00:00:00' ORDER BY " + dateTimeOutName + " ASC");
 
         ResultSetMetaData rsmd = rs.getMetaData();
@@ -2248,12 +2248,12 @@ public class DataBaseHandler extends Thread {
         String insertSQL, lastDT = "";
         String lTime = "2018-1-1 00:00:00";
         connection = getLocalConnection(true);
-        
+
         ResultSet res = selectDatabyFields("SELECT * FROM netmanager.main WHERE tableName = '" + srcdb + "." + srctbl + "'", connection);
         while (res.next()) {
             lTime = res.getString("lastTime");
         }
-        
+
         //connection = getServerConnection(true);
         DatabaseMetaData dbmd = connection.getMetaData();
         connection = getBACKUPConnection();
@@ -2295,7 +2295,7 @@ public class DataBaseHandler extends Thread {
                     if (x != columnNumber) {
                         insertSQL = insertSQL + colName + " = ?, ";
                     } else {
-                        insertSQL = insertSQL + colName +  " = ?";
+                        insertSQL = insertSQL + colName + " = ?";
                     }
                     x++;
                 }
@@ -2727,7 +2727,7 @@ public class DataBaseHandler extends Thread {
 //        if (plate2check.compareToIgnoreCase("*") == 0) {
 //            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode";
 //        } else {
-            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber LIKE '%" + date2check + "'";
+        SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber LIKE '%" + date2check + "'";
 //        }
         //SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode";
 
@@ -3241,6 +3241,90 @@ public class DataBaseHandler extends Thread {
             log.error(ex.getMessage());
         }
         return serverDate;
+    }
+
+    public Seniors getSimilarSeniorsDB(String text) {
+        Seniors s = new Seniors();
+        try {
+            connection = getLocalConnection(true);
+            //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
+            ResultSet rs = selectDatabyFields("SELECT * FROM carpark.seniors WHERE SettlementName LIKE '" + text + "%'");
+
+            if (rs != null && rs.next()) {
+                s.setOscaName(rs.getString("SettlementName"));
+                s.setOscaAddr(rs.getString("SettlementAddr"));
+                s.setOscaTIN(rs.getString("SettlementTIN"));
+                s.setOscaID(rs.getString("SettlementRef"));
+                s.setOscaBusStyle(rs.getString("SettlementBusStyle"));
+            }
+            st.close();
+            connection.close();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        } finally {
+
+        }
+        return s;
+    }
+
+    public String[] getSeniorNames() {
+        String[] seniorNamesValues = new String[]{""};
+        ArrayList<String> list = new ArrayList<String>();
+        try {
+            connection = getLocalConnection(true);
+            //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
+            ResultSet rs = selectDatabyFields("SELECT SettlementName FROM carpark.seniors");
+
+            while (rs.next()) {
+                list.add(rs.getString("SettlementName"));
+            }
+            seniorNamesValues = new String[list.size()];
+            list.toArray(seniorNamesValues);
+            st.close();
+            connection.close();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        } finally {
+
+        }
+        return seniorNamesValues;
+    }
+
+    public boolean isExistSeniorDB(String settlementName) {
+        boolean isExisting = false;
+        try {
+            connection = getLocalConnection(true);
+            //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
+            ResultSet rs = selectDatabyFields("SELECT SettlementName FROM carpark.seniors");
+
+            if (null != rs || rs.next()) {
+                isExisting = true;
+            }
+            st.close();
+            connection.close();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        } finally {
+
+        }
+        return isExisting;
+    }
+
+    public boolean updateSenior2DB(String settlementRef, String settlementName, String settlementAddr, String settlementTIN, String settlementBusStyle) {
+        try {
+            connection = getServerConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE carpark.seniors SET `SettlementRef` = '" + settlementRef + "', `SettlementAddr` = '" + settlementAddr + "', `SettlementTIN` = '" + settlementTIN + "', `SettlementBusStyle` = '" + settlementBusStyle + "' WHERE SettlementName = '" + settlementName + "'");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage());
+            return false;
+        }
     }
 
     class prewait extends Thread {
@@ -4087,7 +4171,7 @@ public class DataBaseHandler extends Thread {
             return false;
         }
     }
-        
+
     public boolean findCGHVIPCard(String cardNumber) {
         try {
             connection = getLocalConnection(true);
@@ -4107,7 +4191,7 @@ public class DataBaseHandler extends Thread {
                     return true;
                 }
             }
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -4206,7 +4290,7 @@ public class DataBaseHandler extends Thread {
 //            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
 //            DBH.ShowImageFromDB();
             DBH.copyTransToLocalfromServer("vips", "masterlist", "vips", "masterlist", "dateCreated");
-                        
+
             DBH.modifyTransToLocalfromServer("vips", "masterlist", "vips", "masterlist", "dateCreated", "cardCode");
             //DBH.getMissingReceipt("EX03");
 
