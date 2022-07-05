@@ -3295,9 +3295,9 @@ public class DataBaseHandler extends Thread {
         try {
             connection = getLocalConnection(true);
             //SELECT CURDATE(), DATE(date), IF(CURDATE()>DATE(date), true, false) as active FROM zread.lastdate
-            ResultSet rs = selectDatabyFields("SELECT SettlementName FROM carpark.seniors");
+            ResultSet rs = selectDatabyFields("SELECT SettlementName FROM carpark.seniors  WHERE SettlementName = '" + settlementName + "'");
 
-            if (null != rs || rs.next()) {
+            if (null != rs && rs.next()) {
                 isExisting = true;
             }
             st.close();
@@ -3312,10 +3312,10 @@ public class DataBaseHandler extends Thread {
 
     public boolean updateSenior2DB(String settlementRef, String settlementName, String settlementAddr, String settlementTIN, String settlementBusStyle) {
         try {
-            connection = getServerConnection(true);
+            connection = getLocalConnection(true);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE carpark.seniors SET `SettlementRef` = '" + settlementRef + "', `SettlementAddr` = '" + settlementAddr + "', `SettlementTIN` = '" + settlementTIN + "', `SettlementBusStyle` = '" + settlementBusStyle + "' WHERE SettlementName = '" + settlementName + "'");
+            st.execute("UPDATE carpark.seniors SET `SettlementRef` = '" + settlementRef + "', `SettlementName` = '" + settlementName + "', `SettlementAddr` = '" + settlementAddr + "', `SettlementTIN` = '" + settlementTIN + "', `SettlementBusStyle` = '" + settlementBusStyle + "' WHERE SettlementName = '" + settlementName + "'");
 
             st.close();
             connection.close();

@@ -49,7 +49,8 @@ public class SaveCollData {
 
     public boolean UpdateImptCountDB(String fieldName, String logcode) {
         try {
-            int oldCount = Integer.parseInt(dbh.getImptCount(fieldName, logcode)) + 1;
+            String tempCount = (dbh.getImptCount(fieldName, logcode));
+            int oldCount = Integer.parseInt(tempCount) + 1;
             int tries = 0;
             while (dbh.setImptCount(fieldName, logcode, oldCount) == false) {
                 tries++;
