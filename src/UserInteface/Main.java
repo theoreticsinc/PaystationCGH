@@ -1,5 +1,5 @@
 //Github Token
-//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
+//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
 package UserInteface;
 
 import org.apache.log4j.LogManager;
@@ -22,7 +22,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        log.info("Starting Hybrid v.5.7 Senior Enhancements v.1");
+        log.info("Starting Hybrid v.5.7 Senior Enhancements v.2");
         HybridPanelUI tpUI = new HybridPanelUI();
 //        
 //        System.out.print("OK, only this instance is running");
