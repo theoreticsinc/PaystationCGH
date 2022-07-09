@@ -32,6 +32,7 @@ public class ComputeAPI {
     static Logger log = LogManager.getLogger(ComputeAPI.class.getName());
 
     public String[] PrksMsg = new String[21];
+    public long DaysElapsed = 0;
     public long HoursElapsed = 0;
     public long MinutesElapsed = 0;
     public long HoursPaidElapsed = 0;
@@ -2233,6 +2234,8 @@ public class ComputeAPI {
             ex.printStackTrace();
             log.error(ex.getMessage());
         }
+        String defaultType = dbh.getDefaultType(ParkerType);
+        int daysValid = dbh.getDaysValid(ParkerType);
         int GracePeriod = dbh.getGracePeriod(ParkerType);
         int EveryNthHour = dbh.getEveryNthHour(ParkerType);
         String NthHourRate = dbh.getNthHourRate(ParkerType);
@@ -2245,14 +2248,23 @@ public class ComputeAPI {
         String SucceedingRate = dbh.getSucceedingRate(ParkerType);
         String HR[] = {" +1 ", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1"};
         String HRplus[] = {" +100 ", "+200", "+300", "+400", "+500", "+600", "+700", "+800", "+900", "+1000", "+1100", "+1200", "+1300", "+1400", "+1500", "+1600", "+1700", "+1800", "+1900", "+2000", "+2100", "+2200", "+2300", "+2400", "+2500", "+2600", "+2700", "+2800", "+2900", "+3000"};
+        String defaultHR[] = {" +1 ", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1"};
+        String defaultHRplus[] = {" +100 ", "+200", "+300", "+400", "+500", "+600", "+700", "+800", "+900", "+1000", "+1100", "+1200", "+1300", "+1400", "+1500", "+1600", "+1700", "+1800", "+1900", "+2000", "+2100", "+2200", "+2300", "+2400", "+2500", "+2600", "+2700", "+2800", "+2900", "+3000"};
         int newArraySize = (int) (HoursElapsed + 1);
 
+        DaysElapsed = HoursElapsed / 24;
         if (HoursElapsed > 24) {
             // For getting the nextDueStamp, add Extra 24Hrs to the array to find it
             newArraySize = newArraySize + (int) ((HoursElapsed / 24) * 24) - 1;
         }
+
         Boolean HRWaived1st[] = new Boolean[newArraySize];
         Boolean HRplusWaived1st[] = new Boolean[newArraySize];
+        //if (DaysElapsed > daysValid && defaultType.compareTo(ParkerType) != 0) {
+        if (TreatNextDayAsNewDay == 3) {
+            defaultHR = dbh.getHourParams(defaultType, newArraySize + 1);
+            defaultHRplus = dbh.getHourPlusParams(defaultType, newArraySize + 1);
+        }
         HR = dbh.getHourParams(ParkerType, newArraySize);
         HRplus = dbh.getHourPlusParams(ParkerType, newArraySize);
         HRWaived1st = dbh.getHourWaived1st(ParkerType, newArraySize);
@@ -2335,14 +2347,14 @@ public class ComputeAPI {
                 }
             }
         } else if (TreatNextDayAsNewDay == 2) {
-            if (HoursElapsed == 24) {
+            if (HoursElapsed == 23) {
                 for (int x = 25; x <= newArraySize; x++) {
                     HR[x] = HR[x - 25];
                     HRplus[x] = HRplus[x - 25];
                     HRWaived1st[x] = HRWaived1st[x - 25];
                     HRplusWaived1st[x] = HRplusWaived1st[x - 25];
                 }
-            } else if (HoursElapsed >= 25) {
+            } else if (HoursElapsed >= 24) {
                 for (int x = 24; x <= newArraySize - 1; x++) {
                     if (x % 24 == 0) {
                         HR[x] = HR[0];
@@ -2358,6 +2370,48 @@ public class ComputeAPI {
 ////                        System.out.println("HR["+x+"] : " + HR[x]);
                     }
                 }
+            }
+        } else if (TreatNextDayAsNewDay == 3) {
+            if (HoursElapsed == 23) {
+                for (int x = 25; x <= newArraySize; x++) {
+                    defaultHR[x] = defaultHR[x - 25];
+                    defaultHRplus[x] = defaultHRplus[x - 25];
+                    HRWaived1st[x] = HRWaived1st[x - 25];
+                    HRplusWaived1st[x] = HRplusWaived1st[x - 25];
+                }
+            } else if (HoursElapsed >= 24) {
+                for (int x = 25; x < newArraySize; x++) {
+                    defaultHR[x] = dbh.getSucceedingRate(defaultType);
+                    defaultHRplus[x] = "+0";
+                    HRWaived1st[x] = false;
+                    HRplusWaived1st[x] = false;
+                }
+            }
+            if (HoursElapsed == 23) {
+                for (int x = 25; x <= newArraySize; x++) {
+                    HR[x] = HR[x - 25];
+                    HRplus[x] = HRplus[x - 25];
+                    HRWaived1st[x] = HRWaived1st[x - 25];
+                    HRplusWaived1st[x] = HRplusWaived1st[x - 25];
+
+                }
+            } else if (HoursElapsed >= 24) {
+                for (int x = 24; x <= newArraySize - 1; x++) {
+                    if (x % 24 == 0) {
+                        HR[x] = HR[0];
+                        HRplus[x] = HRplus[0];
+                        HRWaived1st[x] = HRWaived1st[0];
+                        HRplusWaived1st[x] = HRplusWaived1st[0];
+//                        System.out.println("HR["+x+"] : " + HR[x]);                       
+                    } else {
+                        HR[x] = HR[x - 24];
+                        HRplus[x] = HRplus[x - 24];
+                        HRWaived1st[x] = HRWaived1st[x - 24];
+                        HRplusWaived1st[x] = HRplusWaived1st[x - 24];
+//                        System.out.println("HR["+x+"] : " + HR[x]);
+                    }
+                }
+
             }
         }
         //Add the Overnight Amount to the correct Array
@@ -2485,32 +2539,55 @@ public class ComputeAPI {
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
                         AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
                     }
+                    if (daysValid * 24 < HoursElapsed && i > daysValid * 24) {
+                        if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
+                            AmountComputed = AmountComputed + Float.parseFloat(defaultHR[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
+                            AmountComputed = AmountComputed - Float.parseFloat(defaultHR[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
+                            AmountComputed = Float.parseFloat(defaultHR[i].trim().substring(1));
+                        }
+                    }
+
                 }
             } //Check This ******************************************************
             //Category 2 = Hours >= 1 and Mins = 0
             else if (HoursElapsed > 0 && MinutesElapsed == 0) {
                 if (HRWaived1st[i] == false) {
-                    if (HR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
-                        //if (i > 0) {
-                        //    System.out.println("HR - 1 (" + i + ") "+ Float.parseFloat(HR[i - 1].trim().substring(1)));
-                        //    System.out.println("HRplus - 1 (" + i + ") "+ Float.parseFloat(HRplus[i - 1].trim().substring(1)));
-                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i - 1].trim().substring(1));// + Float.parseFloat(HRplus[i - 1].trim().substring(1));
-                        //} else {
-                        //    System.out.println("HR (" + i + ") "+ Float.parseFloat(HR[i].trim().substring(1)));
-                        //    System.out.println("HRplus (" + i + ") "+ Float.parseFloat(HRplus[i].trim().substring(1)));
-                        //    AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));// + Float.parseFloat(HRplus[i].trim().substring(1));                       
-                        //}
-                        //CHECK HERE
-                        //System.out.print("HR (" + i + ") " + Float.parseFloat(HR[i].trim().substring(1)));
-                        //System.out.println(" && HRplus (" + i + ") " + Float.parseFloat(HRplus[i].trim().substring(1)));                            
-                        AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));
-                        //if (i == 5)
-                        //    AmountComputed  = AmountComputed + 20;
-                    } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
-                        AmountComputed = AmountComputed - Float.parseFloat(HR[i].trim().substring(1));
-                    } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
-                        AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
+//                    if (i < daysValid * 24) {
+                        if (HR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
+                            //if (i > 0) {
+                            //    System.out.println("HR - 1 (" + i + ") "+ Float.parseFloat(HR[i - 1].trim().substring(1)));
+                            //    System.out.println("HRplus - 1 (" + i + ") "+ Float.parseFloat(HRplus[i - 1].trim().substring(1)));
+                            //    AmountComputed = AmountComputed + Float.parseFloat(HR[i - 1].trim().substring(1));// + Float.parseFloat(HRplus[i - 1].trim().substring(1));
+                            //} else {
+                            //    System.out.println("HR (" + i + ") "+ Float.parseFloat(HR[i].trim().substring(1)));
+                            //    System.out.println("HRplus (" + i + ") "+ Float.parseFloat(HRplus[i].trim().substring(1)));
+                            //    AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));// + Float.parseFloat(HRplus[i].trim().substring(1));                       
+                            //}
+                            //CHECK HERE
+                            //System.out.print("HR (" + i + ") " + Float.parseFloat(HR[i].trim().substring(1)));
+                            //System.out.println(" && HRplus (" + i + ") " + Float.parseFloat(HRplus[i].trim().substring(1)));                            
+                            AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));
+                            //if (i == 5)
+                            //    AmountComputed  = AmountComputed + 20;                        
+                        } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
+                            AmountComputed = AmountComputed - Float.parseFloat(HR[i].trim().substring(1));
+                        } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
+                            AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
+                        }
+//                    }
+                    if (daysValid * 24 < HoursElapsed && i > daysValid * 24 && TreatNextDayAsNewDay == 3) {
+//                        System.out.print("defaultHR (" + i + ") " + Float.parseFloat(defaultHR[i].trim().substring(1)));
+                        if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
+                            AmountComputed = AmountComputed + Float.parseFloat(defaultHR[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
+                            AmountComputed = AmountComputed - Float.parseFloat(defaultHR[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
+                            AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
+                        }
                     }
+
                 }
             } //Category 2 = Hours >= 1 and Mins >= 1
             else if (HoursElapsed > 0 && MinutesElapsed > 0) {
@@ -2538,6 +2615,16 @@ public class ComputeAPI {
                     } else if (HR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
                         AmountComputed = Float.parseFloat(HR[i].trim().substring(1));
                     }
+                    if (daysValid * 24 < HoursElapsed && i > daysValid * 24 && TreatNextDayAsNewDay == 3) {
+//                        System.out.println(Float.parseFloat(defaultHR[i].trim().substring(1)) + Float.parseFloat(defaultHRplus[i].trim().substring(1)));
+                        if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
+                            AmountComputed = AmountComputed + Float.parseFloat(defaultHR[i].trim().substring(1)) + Float.parseFloat(defaultHRplus[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
+                            AmountComputed = AmountComputed - Float.parseFloat(defaultHR[i].trim().substring(1)) - Float.parseFloat(defaultHRplus[i].trim().substring(1));
+                        } else if (defaultHR[i].trim().substring(0, 1).compareToIgnoreCase("=") == 0) {
+                            AmountComputed = Float.parseFloat(defaultHR[i].trim().substring(1));
+                        }
+                    }
                 }
 //                if (i == HoursElapsed && MinutesElapsed == 0) {
 //                    return AmountComputed;
@@ -2558,7 +2645,7 @@ public class ComputeAPI {
             //if (ParkerType.compareToIgnoreCase("IN") == 0) {
             //    AmountComputed = 150.0f;
             //}
-            System.out.print(".");
+//            System.out.print(".");
         }
 
         //i++; //Add 1 to check the next hour because the current hour is already paid 

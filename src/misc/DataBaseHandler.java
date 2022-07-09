@@ -1281,6 +1281,30 @@ public class DataBaseHandler extends Thread {
         return data;
     }
 
+    public int getDaysValid(String trtype) {
+        int data = 0;
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DaysValid FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
+            // iterate through the java resultset
+            while (rs.next()) {
+                //String gracePeriod = rs.getString("GracePeriod");
+                //String otCutoff = rs.getString("OTCutoff");
+                int DaysValid = rs.getInt("DaysValid");
+                // print the results
+                //System.out.format("%s, %s, %s\n", Hr0, Hr2, Hr3);
+                data = DaysValid;
+
+            }
+            st.close();
+            connection.close();
+            return data;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return data;
+    }
+    
     public int getGracePeriod(String trtype) {
         int data = 0;
         try {
@@ -1295,6 +1319,29 @@ public class DataBaseHandler extends Thread {
                 //System.out.format("%s, %s, %s\n", Hr0, Hr2, Hr3);
                 data = GracePeriod;
 
+            }
+            st.close();
+            connection.close();
+            return data;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return data;
+    }
+    
+    public String getDefaultType(String trtype) {
+        String data = "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT pTypeAfterValidity FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
+            // iterate through the java resultset
+            while (rs.next()) {
+                //String gracePeriod = rs.getString("GracePeriod");
+                //String otCutoff = rs.getString("OTCutoff");
+                data = rs.getString("pTypeAfterValidity");
+                // print the results
+                //System.out.format("%s, %s, %s\n", Hr0, Hr2, Hr3);
+                
             }
             st.close();
             connection.close();

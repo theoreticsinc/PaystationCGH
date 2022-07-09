@@ -6531,6 +6531,18 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         MasterCardInput2.setText("");
     }
 
+    private void resetSettPanel() {
+        oscaAddr.setText("");
+        oscaBusStyle.setText("");
+        oscaNameautofill.setText("");
+        oscaTIN.setText("");
+        PWDoscaID.setText("");
+        PWDoscaID.setEditable(true);
+        SettPanel.setVisible(false);
+        settlementEnabled = true;
+        SettlementFunction();
+    }
+    
     private void resetSearchCard() {
         Plateinput.delete(0, Cardinput.length() + 1);
         CardInput2.setText("");
@@ -6911,7 +6923,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             PWDoscaID.setBackground(new Color(255, 255, 255));
             PWDoscaID.setForeground(new Color(255, 255, 255));
             PWDoscaID.setEditable(settlementEnabled);
+            oscaNameautofill.setEditable(true);
+            oscaNameautofill.requestFocus();
             SettPanel.setVisible(settlementEnabled);
+            
             this.repaint();
             this.requestFocus();
             this.validate();
@@ -6930,8 +6945,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             PWDoscaID.setEditable(settlementEnabled);
             //settAddr.setEditable(settlementEnabled);
             //settTIN.setEditable(settlementEnabled);
-            PWDoscaID.requestFocus();
-
+            //PWDoscaID.requestFocus();
+            oscaNameautofill.requestFocus();
             DataBaseHandler dbh = new DataBaseHandler();
             seniorNamesValues = dbh.getSeniorNames();
 //            seniorNamesValues = new String[]{"camera", "camel",
@@ -6951,6 +6966,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             SettPanel.add(oscaNameautofill);
             oscaNameautofill.setBounds(80, 60, 170, 40);
             oscaNameautofill.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    settlementFormKeyPressed(evt);
+                }
                 public void keyReleased(java.awt.event.KeyEvent evt) {
                     checkAutoFill(evt);
                 }
@@ -7644,6 +7662,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                     entryCamera.setText("");
                                     AmtTendered.setText("");
                                     ChangeDisplay.setText("");
+                                    
+                                    resetSettPanel();
                                 }
                             }
 
