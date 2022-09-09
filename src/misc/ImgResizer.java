@@ -37,8 +37,8 @@ public class ImgResizer {
      * @param height the height of the region that will be crop
      * @return the image that was cropped.
      */
-    public static BufferedImage cropImage(BufferedImage bufferedImage, int x, int y, int width, int height) {
-        BufferedImage croppedImage = bufferedImage.getSubimage(x, y, width, height);
+    public static BufferedImage cropImage(BufferedImage bufferedImage, int x, int y, int width, int height) throws Exception{
+        BufferedImage croppedImage = bufferedImage.getSubimage(x, y, width, height);        
         return croppedImage;
     }
 

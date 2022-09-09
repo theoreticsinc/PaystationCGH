@@ -157,6 +157,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public boolean TicketInput = false;
     public boolean ManualCard = false;
     public boolean PrinterEnabled = false;
+    private IdleEncoding idleEnc;
 
     private Thread ThrNetworkClock;
     private Thread ThrDigitalClock;
@@ -472,7 +473,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     private void initSentinelValues() {
         try {
             log.info("Initializing Values");
-
+            idleEnc = new IdleEncoding();
             XMLreader xr = new XMLreader();
             SlotsStatus ss = new SlotsStatus();
             computeEntry = ss.loadENslots();
@@ -1120,6 +1121,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         jSeparator1 = new javax.swing.JSeparator();
         XFunc11 = new javax.swing.JLabel();
         XFunc12 = new javax.swing.JLabel();
+        XFunc4Idle = new javax.swing.JLabel();
         SecretFuncPad = new javax.swing.JPanel();
         XFunc9 = new javax.swing.JLabel();
         XFunc10 = new javax.swing.JLabel();
@@ -4344,6 +4346,14 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         });
         MainFuncPad.add(XFunc12);
 
+        XFunc4Idle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/plate_encoding.png"))); // NOI18N
+        XFunc4Idle.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                XFunc4IdleMouseClicked(evt);
+            }
+        });
+        MainFuncPad.add(XFunc4Idle);
+
         WestPanel.add(MainFuncPad);
 
         SecretFuncPad.setFocusable(false);
@@ -5694,6 +5704,15 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         oscaBusStyle.setForeground(Color.gray);
         oscaBusStyle.setOpaque(false);
     }//GEN-LAST:event_oscaBusStyleFocusLost
+
+    private void XFunc4IdleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc4IdleMouseClicked
+        idleEnc.initialize();
+        idleEnc.setVisible(true);
+        idleEnc.requestFocus();
+        idleEnc.validate();
+        System.out.println("Panel Loaded...");
+                
+    }//GEN-LAST:event_XFunc4IdleMouseClicked
 
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
@@ -8176,6 +8195,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel XFunc12;
     private javax.swing.JLabel XFunc2;
     private javax.swing.JLabel XFunc4;
+    private javax.swing.JLabel XFunc4Idle;
     private javax.swing.JLabel XFunc5;
     private javax.swing.JLabel XFunc6;
     private javax.swing.JLabel XFunc7;

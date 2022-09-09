@@ -71,7 +71,7 @@ public class ComputeAPI {
     private double NetOfDiscount;
     private double tenderFloat;
     private double CGHtenderFloat;
-    private String LostPrice;
+    private String LostPrice = "0";
     private float AmountPaid = 0;
     private String CGHRNos = "";
     private String RNos = "";
@@ -472,6 +472,7 @@ public class ComputeAPI {
                 //AmountDue = this.NewComputeforAmount(NowStamp, ParkerStamp);
                 if (ParkerType.compareToIgnoreCase("V") == 0) {
                     AmountDue = 0;
+                    LostPrice = "";
                 } else {
                     firstscan = true;
                     AmountDue = this.Computation(ParkerType, firstscan, isLost);
@@ -2246,9 +2247,9 @@ public class ComputeAPI {
         Boolean OTWaived1st = dbh.getOTWaived1st(ParkerType);
         int TreatNextDayAsNewDay = dbh.getTreatNextDayAsNewDay(ParkerType);
         String SucceedingRate = dbh.getSucceedingRate(ParkerType);
-        String HR[] = {" +1 ", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1"};
+        String HR[] = {" +0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0"};
         String HRplus[] = {" +100 ", "+200", "+300", "+400", "+500", "+600", "+700", "+800", "+900", "+1000", "+1100", "+1200", "+1300", "+1400", "+1500", "+1600", "+1700", "+1800", "+1900", "+2000", "+2100", "+2200", "+2300", "+2400", "+2500", "+2600", "+2700", "+2800", "+2900", "+3000"};
-        String defaultHR[] = {" +1 ", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1"};
+        String defaultHR[] = {" +0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0", "+0"};
         String defaultHRplus[] = {" +100 ", "+200", "+300", "+400", "+500", "+600", "+700", "+800", "+900", "+1000", "+1100", "+1200", "+1300", "+1400", "+1500", "+1600", "+1700", "+1800", "+1900", "+2000", "+2100", "+2200", "+2300", "+2400", "+2500", "+2600", "+2700", "+2800", "+2900", "+3000"};
         int newArraySize = (int) (HoursElapsed + 1);
 

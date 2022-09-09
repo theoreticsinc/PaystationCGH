@@ -701,6 +701,65 @@ public class DataBaseHandler extends Thread {
 
         return res;
     }
+    
+    
+    public String getPlateReady4Encoding() {
+        String CardCode = "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT CardCode FROM unidb.timeindb WHERE Plate = '' AND ISNULL(PIC) = 0 ORDER BY `Timein` ASC LIMIT 1");
+            
+            // iterate through the java resultset
+            if (rs.next()) {
+                CardCode = rs.getString("CardCode");
+            }
+            st.close();
+            connection.close();
+            return CardCode;
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return CardCode;
+    }
+    
+    public String getNextPlateReady4Encoding(int position) {
+        String CardCode = "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT CardCode FROM unidb.timeindb WHERE Plate = '' AND ISNULL(PIC) = 0 ORDER BY `Timein` ASC LIMIT " + position);
+            
+            // iterate through the java resultset
+            for (int i = 0; i < position; i ++) {
+                rs.next();
+                CardCode = rs.getString("CardCode");
+            }
+            st.close();
+            connection.close();
+            return CardCode;
+        } catch (Exception ex) {
+            //java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            CardCode = "";
+        }
+        return CardCode;
+    }
+
+    
+    public int updateEncodedPlate(String plateNumber, String cardNumber) {
+        int data = 0;
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE unidb.timeindb SET Plate = '" + plateNumber + "' WHERE CardCode = '" + cardNumber + "'");
+            st.close();
+            connection.close();
+            return data;
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return data;
+    }
+
 
     public void getActiveRatesParameter() throws SQLException {
         connection = getLocalConnection(true);
