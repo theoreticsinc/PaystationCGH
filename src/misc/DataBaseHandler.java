@@ -706,7 +706,7 @@ public class DataBaseHandler extends Thread {
     public String getPlateReady4Encoding() {
         String CardCode = "";
         try {
-            connection = getLocalConnection(true);
+            connection = getServerConnection(true);
             ResultSet rs = selectDatabyFields("SELECT CardCode FROM unidb.timeindb WHERE Plate = '' AND ISNULL(PIC) = 0 ORDER BY `Timein` ASC LIMIT 1");
             
             // iterate through the java resultset
@@ -725,7 +725,7 @@ public class DataBaseHandler extends Thread {
     public String getNextPlateReady4Encoding(int position) {
         String CardCode = "";
         try {
-            connection = getLocalConnection(true);
+            connection = getServerConnection(true);
             ResultSet rs = selectDatabyFields("SELECT CardCode FROM unidb.timeindb WHERE Plate = '' AND ISNULL(PIC) = 0 ORDER BY `Timein` ASC LIMIT " + position);
             
             // iterate through the java resultset

@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -146,6 +148,7 @@ public class IdleEncoding extends javax.swing.JFrame {
         sliderStartX = new javax.swing.JSlider();
         sliderStartY = new javax.swing.JSlider();
         nextButton = new javax.swing.JButton();
+        statusLbl = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -254,6 +257,13 @@ public class IdleEncoding extends javax.swing.JFrame {
         getContentPane().add(nextButton);
         nextButton.setBounds(670, 535, 90, 30);
 
+        statusLbl.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        statusLbl.setForeground(new java.awt.Color(255, 255, 255));
+        statusLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        statusLbl.setText(".");
+        getContentPane().add(statusLbl);
+        statusLbl.setBounds(580, 457, 150, 30);
+
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Zoom Out");
@@ -354,6 +364,13 @@ public class IdleEncoding extends javax.swing.JFrame {
         plateField.setSelectionEnd(plateField.getText().length());
         plateField.requestFocus();
         plateField.validate();
+        statusLbl.setText(cardCode + " saved!");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                statusLbl.setText("");
+            }
+        }, 2000);
     }//GEN-LAST:event_updateBtnMousePressed
 
     /**
@@ -406,6 +423,7 @@ public class IdleEncoding extends javax.swing.JFrame {
     private javax.swing.JSlider sliderStartX;
     private javax.swing.JSlider sliderStartY;
     private javax.swing.JSlider sliderWidth;
+    private javax.swing.JLabel statusLbl;
     private javax.swing.JLabel updateBtn;
     private javax.swing.JLabel zoomEntryCamRecord;
     // End of variables declaration//GEN-END:variables
