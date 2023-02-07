@@ -4028,7 +4028,7 @@ public class DataBaseHandler extends Thread {
         return rs;
     }
 
-    public ResultSet getTotalCollectionBydateColl(String datetimeOut) {
+    public ResultSet getTotalCollectionBydateColl(String datetimeOut, String Exitpoint) {
         ResultSet rs = null;
         try {
             Map<String, String> parkerTypeNames = new HashMap<String, String>();
@@ -4063,7 +4063,7 @@ public class DataBaseHandler extends Thread {
             sql = sql + "SUM(extendedCount) as extendedCount, SUM(extendedAmount) as extendedAmount,"
                     + "SUM(overnightCount) as overnightCount, SUM(overnightAmount) as overnightAmount"
                     + " FROM colltrain.main"
-                    + " WHERE DATE(logoutStamp) = DATE('" + datetimeOut + "')";
+                    + " WHERE DATE(logoutStamp) = DATE('" + datetimeOut + "') AND SentinelID = '" + Exitpoint + "'";
             rs = selectDatabyFields(sql);
 
         } catch (SQLException ex) {

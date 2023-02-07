@@ -85,6 +85,13 @@ import modules.SaveCollData;
 import modules.SlotsStatus;
 import modules.SystemStatus;
 
+
+/**
+ * IMPT NOTES: 
+ * Add the ff for running RFID Reader on Linux
+ * -Dsun.security.smartcardio.library=/lib/x86_64-linux-gnu/libpcsclite.so.1  -verbose -Djdk.httpclient.allowRestrictedHeaders=true
+ * @author Theoretics
+ */
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
     public String entryIPCamera = "";

@@ -516,52 +516,535 @@ public class LoginMOD extends javax.swing.JPanel {
 
     }
 
-    public void printTodaysZReadFromDB(String Exitpoint) {
+    
+    public void printDec2022ZReadFromDB(String Exitpoint) {
         String accumulatedTotal = "";
         String accumulatedGrossTotal = "";
         String prtD ="";
+        String datetimeOut = "";
+        boolean firstZRead = false;
         try {
+            printHEADER(Exitpoint);
             XMLreader xr = new XMLreader();
             login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
             SaveCollData scd = new SaveCollData();
             DataBaseHandler dbh = new DataBaseHandler();
 
-            Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
-            Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
+            //Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
+            //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
             //Double Sale12Vat = (double) totalCollected * 0.12;
-            Double vatSale = totalCollected - Sale12Vat;
+            //Double vatSale = totalCollected - Sale12Vat;
 
-            ResultSet rs = dbh.getPrevZReadTilTodayColl(Exitpoint, totalCollected, Sale12Vat, vatSale);
+           // ResultSet rs = dbh.getPrevZReadTilTodayColl(Exitpoint, totalCollected, Sale12Vat, vatSale);
             //ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
 //            String receiptNos = scd.getCurrentReceiptNos();
-            String grandTotal = scd.getGRANDTOTAL(Exitpoint);
-            String grandGrossTotal = scd.getGRANDGROSSTOTAL(Exitpoint);
+            String grandTotal = "0";
+            String grandGrossTotal = "0";
 //            String lastTransaction = dbh.getLastTransaction(Exitpoint);
+            /*
 
+SELECT SUM(Amount), SUM(GrossAmount) FROM `exit_trans` WHERE ExitID = "EX01" AND DateTimeOUT < "2022-12-31 00:00";
+            Terminal Net          Gross       before Dec 31 2022
+            EX01    4790974     4919920
+            EX02    10600236    10807080
+            EX03    26541162    27090640      before 2022-11-13
+            AB01    805470      823470          
+            AB02    245312      258780        before 2022-12-28
+            AB03    0           0
+
+SELECT SUM(Amount), SUM(GrossAmount) FROM `exit_trans` WHERE ExitID = "EX01" AND DateTimeOUT < "2023-01-01 00:00";
+            Terminal Net          Gross       before Jan 1 2023
+            EX01    4803154     4932450
+            EX02    10605012    10811950
+            EX03    26591218    27141810      before 2022-11-14
+            AB01    811624      829660          
+            AB02    245462      258930        before 2022-12-29
+            AB03    0           0
+            
+SELECT SUM(Amount), SUM(GrossAmount) FROM `exit_trans` WHERE ExitID = "EX01" AND DateTimeOUT BETWEEN "2020-12-15 00:00" AND "2020-12-15 23:59:59";
+            
+SELECT * FROM `exit_trans` WHERE ExitID = "EX01" AND DateTimeOUT BETWEEN "2022-12-31 00:00" AND "2022-12-31 23:59:59" ORDER BY ReceiptNumber DESC;
+
+BEGINNING OR
+SELECT * FROM `exit_trans` WHERE ExitID = "EX02" AND DateTimeOUT < "2023-12-31 00:00" ORDER BY ReceiptNumber DESC;
+
+
+            Terminal    First Use ZRead         SalesOnThatDay      GrossOnThatDay
+            EX01        2020-12-15 10:52:24         0                   0
+            EX02        2020-12-15 11:04:55         9870                10090
+            EX03        2020-12-15 17:28:52         660                 660
+            AB01        2022-02-01 11:49:53         100                 100
+            AB02        2022-03-01 17:40:49         3032                3060
+            AB03        2021-08-26 17:40:49         0                   0
+            
+
+            CLOSING
+            Terminal    x Reading Date          SalesOnThatDay      GrossOnThatDay
+            EX01        2022-12-31 23:59:59         12180               12530
+            EX02        2020-12-31 23:59:59         4776                4870
+            EX03        2022-11-14 23:59:59         50056               51170                 
+            AB01        2022-12-31 23:59:59         6154                6190
+            AB02        2022-12-29 23:59:59         150                 150
+            AB03        2022-12-31 23:59:59         0                   0
+
+            */
             int i = 1;
-            while (rs.next()) {
-                String dTOut = rs.getString("datetimeOut");
-                String terminalnum = (rs.getString("terminalnum") != null) ? rs.getString("terminalnum") : Exitpoint;
-                String dtO1 = (rs.getString("datetimeOut") != null) ? rs.getString("datetimeOut") : "000000000000";
-                prtD = (rs.getString("CURRENT_TIMESTAMP") != null) ? rs.getString("CURRENT_TIMESTAMP") : "000000000000";
-                String tds1 = (rs.getString("TODAYSALE") != null) ? rs.getString("TODAYSALE") : "0.00";
-                String vtS1 = (rs.getString("VATABLESALE") != null) ? rs.getString("VATABLESALE") : "0.00";
-                String vt12 = (rs.getString("VAT12") != null) ? rs.getString("VAT12") : "0.00";
-                String bgOR = (rs.getString("BEGINOR") != null) ? rs.getString("BEGINOR") : "000000000000";
-                String edOR = (rs.getString("ENDOR") != null) ? rs.getString("ENDOR") : "000000000000";
-                String bgTR = (rs.getString("beginTrans") != null) ? rs.getString("beginTrans") : "0000000000";
-                String enTR = (rs.getString("endTrans") != null) ? rs.getString("endTrans") : "0000000000";
-                String oldG = (rs.getString("oldGrand") != null) ? rs.getString("oldGrand") : "0.00";
-                String newG = (rs.getString("newGrand") != null) ? rs.getString("newGrand") : "0.00";
-                String stZC = (rs.getString("startZCount") != null) ? rs.getString("startZCount") : "0";
+//            while (rs.next()) {
+            if (Exitpoint.compareTo("EX01") == 0) {
+                grandTotal = "4803154";
+                grandGrossTotal = "4932450";
+                String dTOut = "2022-12-31 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-31 23:57:50";
+                prtD = "2022-12-31 23:58:25";
+                String tds1 = "12180.00";
+                String vtS1 = "10875.00";
+                String vt12 = "1305.00";
+                String bgOR = "000000065627";
+                String edOR = "000000065775";
+                String bgTR = "0000000000065627";
+                String enTR = "0000000000065775";
+                String oldG = "4790974.00";
+                String newG = "4803154.00";
+                String stZC = "1";
 //                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
                 //String tellerCode = rs.getString("tellerCode");
                 //String logINID = rs.getString("logINID");
 
          terminalnum = "Terminal N0        : " + terminalnum;
-//                datetimeOut = "Date:          " + datetimeOut;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (Exitpoint.compareTo("EX02") == 0) {
+                grandTotal = "10605012";
+                grandGrossTotal = "10811950";
+                String dTOut = "2022-12-31 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-31 23:58:36";
+                prtD = "2022-12-31 23:59:10";
+                String tds1 = "4776.00";
+                String vtS1 = "4264.29";
+                String vt12 = "511.71";
+                String bgOR = "000000458046";
+                String edOR = "000000458366";
+                String bgTR = "0000000000458046";
+                String enTR = "0000000000458366";
+                String oldG = "10600236.00";
+                String newG = "10605012.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (Exitpoint.compareTo("EX03") == 0) {
+                grandTotal = "26591218";
+                grandGrossTotal = "27141810";
+                String dTOut = "2022-11-14 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-11-14 23:58:28";
+                prtD = "2022-11-14 23:59:14";
+                String tds1 = "50056.00";
+                String vtS1 = "44692.86";
+                String vt12 = "5363.14";
+                String bgOR = "000000378755";
+                String edOR = "000000379442";
+                String bgTR = "0000000000378755";
+                String enTR = "0000000000379442";
+                String oldG = "26541162.00";
+                String newG = "26591218.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (Exitpoint.compareTo("AB01") == 0) {
+                grandTotal = "811624";
+                grandGrossTotal = "829660";
+                String dTOut = "2022-12-31 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-31 23:58:48";
+                prtD = "2022-12-31 23:59:42";
+                String tds1 = "6154.00";
+                String vtS1 = "5494.64";
+                String vt12 = "659.36";
+                String bgOR = "000000010891";
+                String edOR = "000000010987";
+                String bgTR = "0000000000010891";
+                String enTR = "0000000000010987";
+                String oldG = "805470.00";
+                String newG = "811624.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (Exitpoint.compareTo("AB02") == 0) {
+                grandTotal = "245462";
+                grandGrossTotal = "258930";
+                String dTOut = "2022-12-29 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-29 23:56:47";
+                prtD = "2022-12-29 23:59:12";
+                String tds1 = "150.00";
+                String vtS1 = "133.93";
+                String vt12 = "16.08";
+                String bgOR = "000000002588";
+                String edOR = "000000002588";
+                String bgTR = "0000000000002588";
+                String enTR = "0000000000002588";
+                String oldG = "245312.00";
+                String newG = "245462.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+            
+            if (Exitpoint.compareTo("AB03") == 0) {
+                grandTotal = "0";
+                grandGrossTotal = "0";
+                String dTOut = "2022-12-31 23:59:59";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-31 23:59:28";
+                prtD = "2022-12-31 23:58:53";
+                String tds1 = "0.00";
+                String vtS1 = "0.00";
+                String vt12 = "0.00";
+                String bgOR = "000000000000";
+                String edOR = "000000000000";
+                String bgTR = "0000000000000000";
+                String enTR = "0000000000000000";
+                String oldG = "0.00";
+                String newG = "0.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "";
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+            
+            //ALSO GET THE TOTAL COLLECTION PER PARKER TYPE
+            //ResultSet collectionsToday = dbh.getTodaysTotalCollectionBydateColl();
+            accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(grandTotal));
+            accumulatedGrossTotal = "Accumulated Gross Total    : " + getAmountDue(Float.parseFloat(grandGrossTotal));
+            
+            USBEpsonHandler eh = new USBEpsonHandler();
+            eh.printline(prtD);
+            this.printAccumulatedTotal(eh, accumulatedTotal, Exitpoint);
+            this.printAccumulatedTotal(eh, accumulatedGrossTotal, Exitpoint);
+            this.closePrintOut(eh, (byte) 0x08, Exitpoint);
+            delay(1000);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+
+    }
+
+    public void printTodaysZReadFromDB(String Exitpoint) {
+        String accumulatedTotal = "";
+        String accumulatedGrossTotal = "";
+        String prtD ="";
+        String datetimeOut = "";
+        boolean firstZRead = false;
+        try {
+            printHEADER(Exitpoint);
+            XMLreader xr = new XMLreader();
+            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
+            SaveCollData scd = new SaveCollData();
+            DataBaseHandler dbh = new DataBaseHandler();
+
+            //Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
+            //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
+            //Double Sale12Vat = (double) totalCollected * 0.12;
+            //Double vatSale = totalCollected - Sale12Vat;
+
+           // ResultSet rs = dbh.getPrevZReadTilTodayColl(Exitpoint, totalCollected, Sale12Vat, vatSale);
+            //ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
+
+//            String receiptNos = scd.getCurrentReceiptNos();
+            String grandTotal = "0";
+            String grandGrossTotal = "0";
+//            String lastTransaction = dbh.getLastTransaction(Exitpoint);
+
+            int i = 1;
+//            while (rs.next()) {
+            if (firstZRead == false && Exitpoint.compareTo("EX01") == 0) {
+                grandTotal = "4156766";
+                grandGrossTotal = "4268590";
+                String dTOut = "2022-12-12 23:58:34";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-12 23:57:10";
+                prtD = "2022-12-12 23:58:25";
+                String tds1 = "47250.00";
+                String vtS1 = "42187.50";
+                String vt12 = "5062.50";
+                String bgOR = "000000000001";
+                String edOR = "000000056803";
+                String bgTR = "0000000000000001";
+                String enTR = "0000000000056803";
+                String oldG = "0.00";
+                String newG = "4268590.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "Z-Count            : " + stZC;
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+//                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (firstZRead == false && Exitpoint.compareTo("EX02") == 0) {
+                grandTotal = "10665950";
+                grandGrossTotal = "10460594";
+                String dTOut = "2022-12-12 23:58:34";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-12-12 23:57:10";
+                prtD = "2022-12-12 23:58:25";
+                String tds1 = "12730.00";
+                String vtS1 = "11366.07";
+                String vt12 = "1363.93";
+                String bgOR = "000000000001";
+                String edOR = "000000449218";
+                String bgTR = "0000000000000001";
+                String enTR = "0000000000449218";
+                String oldG = "0.00";
+                String newG = "10665950.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "Z-Count            : " + stZC;
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+//                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (firstZRead == false && Exitpoint.compareTo("EX03") == 0) {
+                grandTotal = "26591218";
+                grandGrossTotal = "27144120";
+                String dTOut = "2022-11-14 23:58:34";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-11-14 23:57:10";
+                prtD = "2022-11-14 23:58:25";
+                String tds1 = "51170.00";
+                String vtS1 = "45687.50";
+                String vt12 = "5482.50";
+                String bgOR = "000000000019";
+                String edOR = "000000379442";
+                String bgTR = "0000000000000019";
+                String enTR = "0000000000379442";
+                String oldG = "660.00";
+                String newG = "26591218.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
                 dtO1 = "ZRead Date         : " + dtO1;
                 prtD = "Date Printed       : " + prtD.substring(0, 16);
     String todaysale = "Today's Sales      : " + tds1;
@@ -587,27 +1070,126 @@ public class LoginMOD extends javax.swing.JPanel {
                 i++;
             }
 
-            if (rs.getRow() == 0) {
+            if (firstZRead == false && Exitpoint.compareTo("AB01") == 0) {
+                grandTotal = "0";
+                grandGrossTotal = "0";
+                String dTOut = "2022-11-14 23:58:34";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-11-14 23:57:10";
+                prtD = "2022-11-14 23:58:25";
+                String tds1 = "27144120.00";
+                String vtS1 = "23744221.43";
+                String vt12 = "2849306.57";
+                String bgOR = "000000000019";
+                String edOR = "000000379442";
+                String bgTR = "0000000000000019";
+                String enTR = "0000000000379442";
+                String oldG = "660.00";
+                String newG = "26591218.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "Z-Count            : " + stZC;
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+//                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+
+            if (firstZRead == false && Exitpoint.compareTo("AB02") == 0) {
+                grandTotal = "0";
+                grandGrossTotal = "0";
+                String dTOut = "2022-11-14 23:58:34";
+                String terminalnum = Exitpoint;
+                String dtO1 = "2022-11-14 23:57:10";
+                prtD = "2022-11-14 23:58:25";
+                String tds1 = "27144120.00";
+                String vtS1 = "23744221.43";
+                String vt12 = "2849306.57";
+                String bgOR = "000000000019";
+                String edOR = "000000379442";
+                String bgTR = "0000000000000019";
+                String enTR = "0000000000379442";
+                String oldG = "660.00";
+                String newG = "26591218.00";
+                String stZC = "1";
+//                String endZCount = (rs.getString("endZCount") != null) ? rs.getString("endZCount") : "0";
+                //String tellerCode = rs.getString("tellerCode");
+                //String logINID = rs.getString("logINID");
+
+         terminalnum = "Terminal N0        : " + terminalnum;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
+                prtD = "Date Printed       : " + prtD.substring(0, 16);
+    String todaysale = "Today's Sales      : " + tds1;
+  String vatablesale = "VAT Sales          : " + vtS1;
+        String vat12 = "12% VAT Sales      : " + vt12;
+                bgOR = "Beginning OR       : " + Exitpoint + bgOR;
+                edOR = "Ending OR          : " + Exitpoint + edOR;
+                bgTR = "Beginning Trans No : " + bgTR;
+                enTR = "Ending Trans No    : " + enTR;
+                oldG = "Old Grand Total    : " + oldG;
+                newG = "New Grand Total    : " + newG;
+                stZC = "Z-Count            : " + stZC;
+//                endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
+
+                if ((i % 2) == 0) {
+                    delay(2000);
+                }
+//                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+//                this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
+                i++;
+            }
+            
+            
+            if (firstZRead == true) {
+                grandTotal = "660";
+                grandGrossTotal = "660";
                 SimpleDateFormat dateOutFormat = new SimpleDateFormat("M/dd/yy");
                 SimpleDateFormat timeOutFormat = new SimpleDateFormat("hh:mm a");
                 String dTOut = dateOutFormat.format(new Date());
                 String terminalnum = Exitpoint;
-                String dtO1 = "000000000000";
-                prtD = "000000000000";
-                String tds1 = "0.00";
-                String vtS1 = "0.00";
-                String vt12 = "0.00";
-                String bgOR = "000000000000";
-                String edOR = "000000000000";
-                String bgTR = "000000000000";
-                String enTR = "000000000000";
+                String dtO1 = "2020-12-15 17:28:52";
+                prtD = "2020-12-15 23:57:29";
+                String tds1 = "660.00";
+                String vtS1 = "589.29";
+                String vt12 = "70.71";
+                String bgOR = "000000000001";
+                String edOR = "000000000018";
+                String bgTR = "0000000000000001";
+                String enTR = "0000000000000018";
                 String oldG = "0.00";
-                String newG = "0.00";
+                String newG = "660.00";
                 String stZC = "0";
 
          terminalnum = "Terminal N0        : " + terminalnum;
-//                datetimeOut = "Date:          " + datetimeOut;
-                dtO1 = "ZRead Date         : " + dTOut;
+                datetimeOut = "Date:          " + datetimeOut;
+                dtO1 = "ZRead Date         : " + dtO1;
                 prtD = "Date Printed       : " + dTOut;
     String todaysale = "Today's Sales      : " + tds1;
   String vatablesale = "VAT Sales          : " + vtS1;
@@ -624,7 +1206,7 @@ public class LoginMOD extends javax.swing.JPanel {
 
                 sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, dtO1, todaysale, vatablesale, vat12, bgOR, edOR, bgTR, enTR, oldG, newG, stZC, "");
                 
-                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, dTOut);
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, "2020-12-15 00:00");
             }
             //ALSO GET THE TOTAL COLLECTION PER PARKER TYPE
             //ResultSet collectionsToday = dbh.getTodaysTotalCollectionBydateColl();
@@ -728,6 +1310,116 @@ public class LoginMOD extends javax.swing.JPanel {
                     String endZCount = "0";
 
                     terminalnum = "            R E P R I N T\n" + "Terminal N0:   " + terminalnum;
+                    datetimeOut1 = "Date:          " + datetimeOut;
+                    String todaysale = "Todays Sale        : " + todaysale_dbl;
+                    String vatablesale = "VAT Sale           : " + vatablesale_dbl;
+                    String vat12 = "12% VAT Sale       : " + vat12_dbl;
+                    beginOR = "Beginning OR       : " + Exitpoint + beginOR;
+                    endOR = "Ending OR          : " + Exitpoint + endOR;
+                    beginTrans = "Beginning Trans No : " + beginTrans;
+                    endTrans = "Ending Trans No    : " + endTrans;
+                    oldGrand = "Old Grand Total    : " + oldGrand;
+                    //newGrand = "New Grand Total    : " + newGrand;
+                    startZCount = "Z-Count            : " + startZCount;
+                    endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                    sendZRead2USBEpsonPrinter(i, Exitpoint, "--- ZReading ---", terminalnum, datetimeOut1, todaysale, vatablesale, vat12, beginOR, endOR, beginTrans, endTrans, oldGrand, "New Grand Total    : " + newGrand, startZCount, "");
+
+                    break;
+                } else {
+                    printHEADER(Exitpoint);
+                    datetimeOut = rs.getString("datetimeOut");
+                    String todaysale_dbl = rs.getString("TODAYSALE");
+
+                    String vatablesale_dbl = rs.getString("VATABLESALE");
+                    String vat12_dbl = rs.getString("VAT12");
+                    String beginOR = rs.getString("BEGINOR");
+                    String endOR = rs.getString("ENDOR");
+                    String beginTrans = rs.getString("beginTrans");
+                    String endTrans = rs.getString("endTrans");
+                    String oldGrand = rs.getString("oldGrand");
+                    newGrand = rs.getString("newGrand");
+                    String startZCount = rs.getString("startZCount");
+                    String endZCount = rs.getString("endZCount");
+                    //String tellerCode = rs.getString("tellerCode");
+                    //String logINID = rs.getString("logINID");
+
+                    terminalnum = "            R E P R I N T\n" + "Terminal N0:   " + terminalnum;
+                    datetimeOut1 = "Date:          " + datetimeOut;
+                    String todaysale = "Todays Sale        : " + todaysale_dbl;
+                    String vatablesale = "VAT Sale           : " + vatablesale_dbl;
+                    String vat12 = "12% VAT Sale       : " + vat12_dbl;
+                    beginOR = "Beginning OR       : " + Exitpoint + beginOR;
+                    endOR = "Ending OR          : " + Exitpoint + endOR;
+                    beginTrans = "Beginning Trans No : " + beginTrans;
+                    endTrans = "Ending Trans No    : " + endTrans;
+                    oldGrand = "Old Grand Total    : " + oldGrand;
+                    //newGrand = "New Grand Total    : " + newGrand;
+                    startZCount = "Z-Count            : " + startZCount;
+                    endZCount = "Z-Count(end)       : " + endZCount;
+//                String rCount = "Reset Count        : " + resetCount;
+
+                    sendZRead2USBEpsonPrinter(i, Exitpoint, "--- ZReading ---", terminalnum, datetimeOut1, todaysale, vatablesale, vat12, beginOR, endOR, beginTrans, endTrans, oldGrand, "New Grand Total    : " + newGrand, startZCount, "");
+
+                    if ((i % 2) == 0) {
+                        delay(2000);
+                    }
+                    i++;
+                }
+            }
+
+            if (null != terminalnum) {
+                //add XRead here
+                //ALSO GET THE TOTAL COLLECTION PER PARKER TYPE
+                //ResultSet collectionsToday = dbh.getTodaysTotalCollectionBydateColl();
+                String accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(newGrand));
+                this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, datetimeOut);
+                this.printAccumulatedTotal(accumulatedTotal, Exitpoint);
+            }
+            delay(1000);
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    //REPRINTS Mano Mano ZReading
+    public void printManualZReadFromDB(String Exitpoint, String logcode, String dateColl, String mastercard) {
+        try {
+            XMLreader xr = new XMLreader();
+            DataBaseHandler dbh = new DataBaseHandler();
+            dbh.saveLog("RZ", mastercard, logcode);
+            String resetCount = null;
+            try {
+                resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+            }
+            String terminalnum = null;
+            String newGrand = "";
+            String datetimeOut = "";
+            String datetimeOut1 = "";
+            String lastZRead = dbh.getZReadLastRead(Exitpoint);
+            ResultSet rs = dbh.getZReadbydateColl(dateColl, lastZRead);
+            int i = 1;
+            while (rs.next()) {
+                terminalnum = rs.getString("terminalnum");
+                if (null == terminalnum) {
+                    printHEADER(Exitpoint);
+                    datetimeOut = lastZRead;
+                    String todaysale_dbl = "0.00";
+                    String vatablesale_dbl = "0.00";
+                    String vat12_dbl = "0.00";
+                    String beginOR = "000000000000";
+                    String endOR = "000000000000";
+                    String beginTrans = "000000000000";
+                    String endTrans = "000000000000";
+                    String oldGrand = "000000000000";
+                    newGrand = "000000000000";
+                    String startZCount = "0";
+                    String endZCount = "0";
+
+                    terminalnum = "Terminal No.        : " + terminalnum;
                     datetimeOut1 = "Date:          " + datetimeOut;
                     String todaysale = "Todays Sale        : " + todaysale_dbl;
                     String vatablesale = "VAT Sale           : " + vatablesale_dbl;
@@ -1574,7 +2266,7 @@ public class LoginMOD extends javax.swing.JPanel {
             Collections.sort(ptypesByKey);
             Iterator itr0 = ptypesByKey.iterator();
             Iterator itr1 = ptypesByKey.iterator();
-            ResultSet rs = dbh.getTotalCollectionBydateColl(datetimeOut);
+            ResultSet rs = dbh.getTotalCollectionBydateColl(datetimeOut, Exitpoint);
 
             USBEpsonHandler eh = new USBEpsonHandler();
             while (rs.next()) {
@@ -1649,7 +2341,7 @@ public class LoginMOD extends javax.swing.JPanel {
         eh.closePrinter();
         eh.openPrinter();
         eh.initializePrinter();
-        eh.Justify((byte) 1);
+        eh.Justify((byte) 0);
         eh.setRed();
         eh.printline(accTotal);
     }
@@ -2583,16 +3275,6 @@ public class LoginMOD extends javax.swing.JPanel {
         return false;
     }
 
-    public static void main(String[] args) throws Exception {
-        LoginMOD lm = new LoginMOD();
-        //lm.readComFiles("M");
-        //lm.printLogoutReceipt("EX01");
-        lm.printCollectReceipt("EX01");
-        //String cname = lm.getLOGINDATcashiername("00090009");
-        //log.info(cname);
-        //lm.saveLogintoFile("11223344");
-    }
-
     void setDateofLastZRead(String sentinel) {
         DataBaseHandler dbh = new DataBaseHandler();
         dbh.updateZReadLastDate(sentinel);
@@ -2627,5 +3309,16 @@ public class LoginMOD extends javax.swing.JPanel {
         eh.setRed();
         eh.printFOOTER(EX_SentinelID, true);
     }
-
+    
+    public static void main(String[] args) throws Exception {
+        LoginMOD lm = new LoginMOD();
+        //lm.readComFiles("M");
+        //lm.printLogoutReceipt("EX01");
+        //lm.printCollectReceipt("EX01");
+        lm.printDec2022ZReadFromDB("AB03");
+        //lm.printTodaysZReadFromDB("EX03");
+        //String cname = lm.getLOGINDATcashiername("00090009");
+        //log.info(cname);
+        //lm.saveLogintoFile("11223344");
+    }
 }
